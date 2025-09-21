@@ -1,3 +1,71 @@
+
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-background",
+      "description": "Woman hugging a happy dog outdoors",
+      "imageUrl": "https://picsum.photos/seed/hero/1920/1080",
+      "imageHint": "woman dog"
+    },
+    {
+      "id": "pet-buddy",
+      "description": "Golden Retriever puppy sitting in grass",
+      "imageUrl": "https://picsum.photos/seed/buddy/600/400",
+      "imageHint": "golden retriever"
+    },
+    {
+      "id": "pet-lucy",
+      "description": "Playful Beagle with a toy",
+      "imageUrl": "https://picsum.photos/seed/lucy/600/400",
+      "imageHint": "beagle puppy"
+    },
+    {
+      "id": "pet-max",
+      "description": "German Shepherd standing in a field",
+      "imageUrl": "https://picsum.photos/seed/max/600/400",
+      "imageHint": "german shepherd"
+    },
+    {
+      "id": "pet-luna",
+      "description": "Siamese cat with blue eyes looking at the camera",
+      "imageUrl": "https://picsum.photos/seed/luna/600/400",
+      "imageHint": "siamese cat"
+    },
+    {
+      "id": "pet-milo",
+      "description": "Ginger tabby cat lounging in the sun",
+      "imageUrl": "https://picsum.photos/seed/milo/600/400",
+      "imageHint": "ginger cat"
+    },
+    {
+      "id": "pet-bella",
+      "description": "Fluffy Maine Coon cat on a sofa",
+      "imageUrl": "https://picsum.photos/seed/bella/600/400",
+      "imageHint": "maine coon"
+    },
+    {
+      "id": "pet-kiwi",
+      "description": "Colorful parrot on a perch",
+      "imageUrl": "https://picsum.photos/seed/kiwi/600/400",
+      "imageHint": "parrot bird"
+    },
+    {
+      "id": "pet-daisy",
+      "description": "Small terrier mix wagging its tail",
+      "imageUrl": "https://picsum.photos/seed/daisy/600/400",
+      "imageHint": "terrier dog"
+    },
+    {
+      "id": "pet-smokey",
+      "description": "Grey domestic shorthair cat with green eyes",
+      "imageUrl": "https://picsum.photos/seed/smokey/600/400",
+      "imageHint": "grey cat"
+    },
+    {
+      "id": "pet-rocky",
+      "description": "Boxer dog with a friendly expression",
+      "imageUrl": "https://picsum.photos/seed/rocky/600/400",
+      "imageHint": "boxer dog"
+    }
+  ]
 }
