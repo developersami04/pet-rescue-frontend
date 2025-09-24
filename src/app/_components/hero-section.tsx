@@ -12,7 +12,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { Card, CardContent } from '@/components/ui/card';
 import { pets } from '@/lib/data';
 import Autoplay from "embla-carousel-autoplay";
 
@@ -26,6 +25,7 @@ export function HeroSection() {
         plugins={[
           Autoplay({
             delay: 5000,
+            stopOnInteraction: true,
           }),
         ]}
         opts={{
@@ -33,7 +33,7 @@ export function HeroSection() {
         }}
       >
         <CarouselContent className="h-full">
-          {featuredPets.map((pet) => {
+          {featuredPets.map((pet, index) => {
             const petImage = PlaceHolderImages.find(
               (p) => p.id === pet.imageIds[0]
             );
@@ -47,7 +47,7 @@ export function HeroSection() {
                       fill
                       className="object-cover"
                       data-ai-hint={petImage.imageHint}
-                      priority={featuredPets.indexOf(pet) === 0}
+                      priority={index === 0}
                     />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20" />
