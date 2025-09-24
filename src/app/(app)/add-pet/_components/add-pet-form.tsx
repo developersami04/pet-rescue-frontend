@@ -24,7 +24,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Upload } from 'lucide-react';
-import { organizations } from '@/lib/data';
 import { useState } from 'react';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
@@ -36,7 +35,6 @@ const addPetSchema = z.object({
   age: z.coerce.number().min(0, 'Age must be a positive number.'),
   size: z.enum(['Small', 'Medium', 'Large']),
   gender: z.enum(['Male', 'Female']),
-  organizationId: z.string({ required_error: 'Please select an organization.' }),
   description: z.string().min(10, 'Description must be at least 10 characters.'),
   image: z
     .any()
@@ -68,7 +66,7 @@ export function AddPetForm() {
     console.log('New pet data submitted:', values);
     toast({
       title: 'Pet Added!',
-      description: `${values.name} has been added to the adoption list.`,
+      description: `${values.name} has been listed for adoption.`,
     });
     form.reset();
     setImagePreview(null);
@@ -192,28 +190,6 @@ export function AddPetForm() {
                     </FormItem>
                     )}
                 />
-                <FormField
-                    control={form.control}
-                    name="organizationId"
-                    render={({ field }) => (
-                    <FormItem className="md:col-span-2">
-                        <FormLabel>Rescue Organization</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                            <SelectTrigger>
-                            <SelectValue placeholder="Select an organization" />
-                            </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                            {organizations.map(org => (
-                                <SelectItem key={org.id} value={org.id}>{org.name}</SelectItem>
-                            ))}
-                        </SelectContent>
-                        </Select>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
             </div>
             <div className="lg:col-span-1 space-y-4">
                  <FormField
@@ -281,5 +257,3 @@ export function AddPetForm() {
     </Form>
   );
 }
-
-    
