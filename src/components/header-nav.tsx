@@ -176,7 +176,7 @@ export function HeaderNav() {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="#">
+                <Link href="/profile">
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </Link>
@@ -280,5 +280,3 @@ export function HeaderNav() {
     </header>
   );
 }
-
-    
