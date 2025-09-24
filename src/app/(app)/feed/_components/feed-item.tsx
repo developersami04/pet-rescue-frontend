@@ -1,71 +1,108 @@
 
-import Link from "next/link";
-import Image from "next/image";
+'use client';
+
+import Link from 'next/link';
+import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Heart } from 'lucide-react';
+import { useState } from 'react';
 
 type FeedEvent = {
-    id: string;
-    type: 'new-pet' | 'adoption' | 'new-user';
-    timestamp: Date;
-    title: string;
-    description: string;
-    imageUrl?: string;
-    imageHint?: string;
-    icon: React.ElementType;
-    petId?: string;
-}
+  id: string;
+  type: 'new-pet' | 'adoption' | 'new-user';
+  timestamp: Date;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  imageHint?: string;
+  icon: React.ElementType;
+  petId?: string;
+};
 
 type FeedItemProps = {
-    event: FeedEvent;
-}
+  event: FeedEvent;
+};
 
 export function FeedItem({ event }: FeedItemProps) {
-    const { icon: Icon } = event;
-    const timeAgo = formatDistanceToNow(event.timestamp, { addSuffix: true });
+  const { icon: Icon } = event;
+  const timeAgo = formatDistanceToNow(event.timestamp, { addSuffix: true });
+  const [isLiked, setIsLiked] = useState(false);
 
-    return (
-        <Card className="overflow-hidden">
-            <CardHeader className="flex flex-row items-start gap-4 p-4">
-                <div className="flex-shrink-0">
-                    <div className={cn("flex h-10 w-10 items-center justify-center rounded-full bg-primary/10", 
-                        event.type === 'adoption' && "bg-destructive/10",
-                        event.type === 'new-user' && "bg-accent/10"
-                    )}>
-                        <Icon className={cn("h-5 w-5 text-primary",
-                            event.type === 'adoption' && "text-destructive",
-                            event.type === 'new-user' && "text-accent-foreground"
-                        )} />
-                    </div>
-                </div>
-                <div className="flex-grow">
-                    <h3 className="font-semibold text-base">{event.title}</h3>
-                    <p className="text-sm text-muted-foreground">{timeAgo}</p>
-                </div>
-            </CardHeader>
-            <CardContent className="px-4 pb-4 space-y-4">
-                <p className="text-sm text-muted-foreground">{event.description}</p>
-                {event.imageUrl && (
-                    <div className="relative aspect-video w-full rounded-lg overflow-hidden border">
-                         <Image
-                            src={event.imageUrl}
-                            alt={event.title}
-                            fill
-                            className="object-cover"
-                            data-ai-hint={event.imageHint}
-                        />
-                    </div>
+  return (
+    <Card className="overflow-hidden">
+      <CardHeader className="flex flex-row items-start gap-4 p-4">
+        <div className="flex-shrink-0">
+          <div
+            className={cn(
+              'flex h-10 w-10 items-center justify-center rounded-full bg-primary/10',
+              event.type === 'adoption' && 'bg-destructive/10',
+              event.type === 'new-user' && 'bg-accent/10'
+            )}
+          >
+            <Icon
+              className={cn(
+                'h-5 w-5 text-primary',
+                event.type === 'adoption' && 'text-destructive',
+                event.type === 'new-user' && 'text-accent-foreground'
+              )}
+            />
+          </div>
+        </div>
+        <div className="flex-grow">
+          <h3 className="font-semibold text-base">{event.title}</h3>
+          <p className="text-sm text-muted-foreground">{timeAgo}</p>
+        </div>
+      </CardHeader>
+      <CardContent className="px-4 pb-4 space-y-4">
+        <p className="text-sm text-muted-foreground">{event.description}</p>
+        {event.imageUrl && (
+          <div className="relative aspect-video w-full rounded-lg overflow-hidden border">
+            <Image
+              src={event.imageUrl}
+              alt={event.title}
+              fill
+              className="object-cover"
+              data-ai-hint={event.imageHint}
+            />
+          </div>
+        )}
+      </CardContent>
+      {(event.petId || event.type === 'new-pet') && (
+        <CardFooter className="px-4 pb-4 flex items-center gap-2">
+          {event.petId && (
+            <Button variant="secondary" size="sm" asChild className="flex-grow">
+              <Link href={`/pets/${event.petId}`}>
+                {event.type === 'new-pet'
+                  ? 'View Profile'
+                  : `See ${event.title.split(' ')[0]}'s story`}
+              </Link>
+            </Button>
+          )}
+          {event.type !== 'new-user' && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsLiked(!isLiked)}
+              aria-label="Like"
+            >
+              <Heart
+                className={cn(
+                  'h-5 w-5',
+                  isLiked && 'fill-destructive text-destructive'
                 )}
-                 {event.petId && (
-                    <Button variant="secondary" size="sm" asChild>
-                        <Link href={`/pets/${event.petId}`}>
-                            {event.type === 'new-pet' ? 'View Profile' : `See ${event.title.split(' ')[0]}'s story`}
-                        </Link>
-                    </Button>
-                )}
-            </CardContent>
-        </Card>
-    )
+              />
+            </Button>
+          )}
+        </CardFooter>
+      )}
+    </Card>
+  );
 }
