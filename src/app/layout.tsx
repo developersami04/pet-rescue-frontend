@@ -9,6 +9,7 @@ import { LandingHeader } from './_components/landing-header';
 import { HeaderNav } from '@/components/header-nav';
 import { LandingFooter } from './_components/landing-footer';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export default function RootLayout({
   children,
@@ -36,21 +37,28 @@ export default function RootLayout({
           'min-h-screen bg-background font-body antialiased flex flex-col'
         )}
       >
-        {isLoading ? (
-          <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-16 items-center justify-between px-4 md:px-6">
-              <Skeleton className="h-8 w-24" />
-              <Skeleton className="h-9 w-9 rounded-full" />
-            </div>
-          </header>
-        ) : (
-          <Header />
-        )}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {isLoading ? (
+            <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+              <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+                <Skeleton className="h-8 w-24" />
+                <Skeleton className="h-9 w-9 rounded-full" />
+              </div>
+            </header>
+          ) : (
+            <Header />
+          )}
 
-        <main className="flex-1">{children}</main>
-        
-        {!isLoading && !isAuthenticated && <LandingFooter />}
-        <Toaster />
+          <main className="flex-1">{children}</main>
+          
+          {!isLoading && !isAuthenticated && <LandingFooter />}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );
