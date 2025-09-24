@@ -54,7 +54,7 @@ export function LoginForm() {
         // In a real app, you'd get a token from the server
         localStorage.setItem('authToken', 'dummy_auth_token_for_demo');
         window.dispatchEvent(new Event('storage')); // Manually trigger storage event
-        router.push('/dashboard');
+        router.push('/feed');
       } else {
         toast({
           variant: 'destructive',
