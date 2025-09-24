@@ -53,6 +53,7 @@ const navItems = {
   more: [
     { href: "/matching", icon: Sparkles, label: "AI Pet Matcher" },
     { href: "/pet-care", icon: HeartHandshake, label: "Pet Care AI" },
+    { href: "/", icon: Home, label: "Landing Page" },
   ],
   resources: [
     { href: "/resources", icon: BookOpen, label: "Resources" },
