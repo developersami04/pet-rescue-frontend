@@ -146,7 +146,7 @@ export function HeaderNav() {
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2 mr-4">
             <Logo className="h-7 w-7 text-primary" />
-            <span className="hidden text-lg font-semibold tracking-wider font-headline sm:inline-block">
+            <span className="text-lg font-semibold tracking-wider font-headline">
               Pet-Pal
             </span>
           </Link>
