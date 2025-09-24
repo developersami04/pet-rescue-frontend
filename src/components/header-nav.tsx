@@ -31,10 +31,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { Logo } from "./icons";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const navItems = {
   main: [{ href: "/dashboard", icon: LayoutGrid, label: "Dashboard" }],
@@ -211,26 +212,31 @@ export function HeaderNav() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-full max-w-xs p-0">
+              <SheetHeader className="flex flex-row items-center justify-between border-b p-4">
+                 <SheetTitle>
+                  <VisuallyHidden>Mobile Navigation Menu</VisuallyHidden>
+                </SheetTitle>
+                <Link
+                  href="/"
+                  className="flex items-center gap-2"
+                  onClick={closeMobileMenu}
+                >
+                  <Logo className="h-7 w-7 text-primary" />
+                  <span className="text-lg font-semibold tracking-wider font-headline">
+                    PetPal Finder
+                  </span>
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={closeMobileMenu}
+                  className="absolute right-4 top-3"
+                >
+                  <X className="h-6 w-6" />
+                   <span className="sr-only">Close menu</span>
+                </Button>
+              </SheetHeader>
               <div className="flex h-full flex-col">
-                <div className="flex items-center justify-between border-b p-4">
-                  <Link
-                    href="/"
-                    className="flex items-center gap-2"
-                    onClick={closeMobileMenu}
-                  >
-                    <Logo className="h-7 w-7 text-primary" />
-                    <span className="text-lg font-semibold tracking-wider font-headline">
-                      PetPal Finder
-                    </span>
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={closeMobileMenu}
-                  >
-                    <X className="h-6 w-6" />
-                  </Button>
-                </div>
                 <div className="flex-1 overflow-y-auto p-4">
                   <div className="relative mb-4">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -274,3 +280,5 @@ export function HeaderNav() {
     </header>
   );
 }
+
+    
