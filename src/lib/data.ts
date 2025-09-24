@@ -17,6 +17,7 @@ export type Organization = {
   location: {
     lat: number;
     lng: number;
+    state: string;
   };
 };
 
@@ -153,17 +154,17 @@ export const organizations: Organization[] = [
   {
     id: 'org1',
     name: 'Happy Paws Rescue',
-    location: { lat: 34.0522, lng: -118.2437 },
+    location: { lat: 19.0760, lng: 72.8777, state: "Maharashtra" },
   },
   {
     id: 'org2',
     name: 'Second Chance Shelter',
-    location: { lat: 40.7128, lng: -74.006 },
+    location: { lat: 28.6139, lng: 77.2090, state: "Delhi" },
   },
   {
     id: 'org3',
     name: 'Furry Friends Foundation',
-    location: { lat: 41.8781, lng: -87.6298 },
+    location: { lat: 12.9716, lng: 77.5946, state: "Karnataka" },
   },
 ];
 
