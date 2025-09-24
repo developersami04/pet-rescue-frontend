@@ -19,6 +19,7 @@ import {
   Settings,
   Inbox,
   LogOut,
+  MoreHorizontal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,15 +41,16 @@ import { sampleUser } from "@/lib/user-data";
 const navItems = {
   main: [
       { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
-      { href: "/profile", icon: User, label: "Profile" },
     ],
   pets: [
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },
     { href: "/map", icon: Map, label: "Map View" },
+  ],
+  more: [
     { href: "/matching", icon: Sparkles, label: "AI Pet Matcher" },
+    { href: "/pet-care", icon: HeartHandshake, label: "Pet Care AI" },
   ],
   resources: [
-    { href: "/pet-care", icon: HeartHandshake, label: "Pet Care AI" },
     { href: "/resources", icon: BookOpen, label: "Resources" },
   ],
 };
@@ -165,6 +167,7 @@ export function HeaderNav() {
             )})}
             <DropdownNav label="Pets" items={navItems.pets} />
             <DropdownNav label="Resources" items={navItems.resources} />
+            <DropdownNav label="More" items={navItems.more} />
           </nav>
         </div>
 
@@ -255,7 +258,7 @@ export function HeaderNav() {
                     />
                   </div>
                   <nav className="flex flex-col gap-1">
-                    {[...navItems.main, ...navItems.pets, ...navItems.resources].map(
+                    {[...navItems.main, ...navItems.pets, ...navItems.resources, ...navItems.more].map(
                       (item) => (
                         <NavLink
                           key={item.href}
