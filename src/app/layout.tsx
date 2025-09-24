@@ -2,6 +2,10 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
+import { isAuthenticated } from '@/lib/auth';
+import { LandingHeader } from './_components/landing-header';
+import { HeaderNav } from '@/components/header-nav';
+import { LandingFooter } from './_components/landing-footer';
 
 export const metadata: Metadata = {
   title: 'Pet-Pal',
@@ -25,10 +29,12 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          'min-h-screen bg-background font-body antialiased'
+          'min-h-screen bg-background font-body antialiased flex flex-col'
         )}
       >
-        {children}
+        {isAuthenticated ? <HeaderNav /> : <LandingHeader />}
+        <main className="flex-1">{children}</main>
+        {isAuthenticated ? null : <LandingFooter />}
         <Toaster />
       </body>
     </html>
