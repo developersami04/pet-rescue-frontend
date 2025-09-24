@@ -7,7 +7,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { useAuth } from '@/lib/auth';
 import { LandingHeader } from './_components/landing-header';
 import { HeaderNav } from '@/components/header-nav';
-import { LandingFooter } from './_components/landing-footer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeProvider } from '@/components/theme-provider';
 
@@ -56,7 +55,6 @@ export default function RootLayout({
 
           <main className="flex-1">{children}</main>
           
-          <LandingFooter />
           <Toaster />
         </ThemeProvider>
       </body>
