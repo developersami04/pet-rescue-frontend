@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/page-header";
-import { PetMatchingForm } from "./_components/pet-matching-form";
+import { PetMatching } from "./_components/pet-matching";
 
 export default function PetMatchingPage() {
   return (
@@ -8,7 +8,7 @@ export default function PetMatchingPage() {
         title="AI-Powered Pet Matching"
         description="Tell us about yourself, and our AI will find the perfect pet for you."
       />
-      <PetMatchingForm />
+      <PetMatching />
     </div>
   );
 }
