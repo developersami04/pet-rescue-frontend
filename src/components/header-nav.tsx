@@ -226,7 +226,7 @@ export function HeaderNav() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-full max-w-xs p-0">
-              <SheetHeader className="flex flex-row items-center justify-between border-b p-4">
+              <SheetHeader className="border-b p-4">
                  <SheetTitle>
                   <VisuallyHidden>Mobile Navigation Menu</VisuallyHidden>
                 </SheetTitle>
@@ -240,15 +240,6 @@ export function HeaderNav() {
                     Pet-Pal
                   </span>
                 </Link>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={closeMobileMenu}
-                  className="absolute right-4 top-3"
-                >
-                  <X className="h-6 w-6" />
-                   <span className="sr-only">Close menu</span>
-                </Button>
               </SheetHeader>
               <div className="flex h-full flex-col">
                 <div className="flex-1 overflow-y-auto p-4">
