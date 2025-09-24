@@ -158,7 +158,7 @@ export function HeaderNav() {
               className="w-48 rounded-lg bg-background pl-10"
             />
           </div>
-          <Avatar className="h-9 w-9 hidden md:flex">
+          <Avatar className="h-9 w-9 flex">
             <AvatarImage src="https://picsum.photos/seed/user/100/100" />
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
