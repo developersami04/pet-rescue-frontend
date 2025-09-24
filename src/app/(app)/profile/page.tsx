@@ -1,6 +1,9 @@
 
+
 import { UserProfileCard } from "./_components/user-profile-card";
 import { FavoritePets } from "./_components/favorite-pets";
+import { MyPets } from "./_components/my-pets";
+import { Separator } from "@/components/ui/separator";
 
 export default function ProfilePage() {
   
@@ -10,8 +13,9 @@ export default function ProfilePage() {
         <div className="md:col-span-1">
           <UserProfileCard />
         </div>
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 space-y-8">
           <FavoritePets />
+          <MyPets />
         </div>
       </div>
     </div>
