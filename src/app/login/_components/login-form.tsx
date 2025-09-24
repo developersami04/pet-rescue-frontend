@@ -51,11 +51,11 @@ export function LoginForm() {
           title: 'Login Successful!',
           description: 'Welcome back!',
         });
-        // In a real app, you'd set an auth token here
-        // and update the global auth state.
-        // For now, we just redirect.
-        // This is a temporary solution. You would need to set isAuthenticated to true.
+        // In a real app, you'd get a token from the server
+        localStorage.setItem('authToken', 'dummy_auth_token_for_demo');
         router.push('/dashboard');
+        // Force a reload to update the layout's auth state
+        router.refresh(); 
       } else {
         toast({
           variant: 'destructive',

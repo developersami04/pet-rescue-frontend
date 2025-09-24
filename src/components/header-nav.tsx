@@ -1,10 +1,9 @@
 
-
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutGrid,
   PawPrint,
@@ -123,8 +122,16 @@ function DropdownNav({
 export function HeaderNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
+  
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    router.push('/');
+    router.refresh();
+  };
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -195,11 +202,9 @@ export function HeaderNav() {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                 <Link href="#">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </Link>
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -263,14 +268,20 @@ export function HeaderNav() {
                   </nav>
                 </div>
                  <div className="border-t p-4">
-                    <div className="flex items-center gap-3">
-                        <Avatar className="h-9 w-9">
-                            <AvatarImage src={sampleUser.profile_image ?? `https://picsum.photos/seed/${sampleUser.username}/100/100`} />
-                            <AvatarFallback>{sampleUser.first_name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="text-sm font-medium">{sampleUser.first_name} {sampleUser.last_name}</p>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <Avatar className="h-9 w-9">
+                                <AvatarImage src={sampleUser.profile_image ?? `https://picsum.photos/seed/${sampleUser.username}/100/100`} />
+                                <AvatarFallback>{sampleUser.first_name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="text-sm font-medium">{sampleUser.first_name} {sampleUser.last_name}</p>
+                            </div>
                         </div>
+                        <Button variant="ghost" size="icon" onClick={handleLogout}>
+                            <LogOut className="h-5 w-5" />
+                            <span className="sr-only">Log out</span>
+                        </Button>
                     </div>
                 </div>
               </div>

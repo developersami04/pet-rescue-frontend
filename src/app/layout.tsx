@@ -1,27 +1,27 @@
-import type { Metadata } from 'next';
+
+'use client';
+
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
-import { isAuthenticated } from '@/lib/auth';
+import { useAuth } from '@/lib/auth';
 import { LandingHeader } from './_components/landing-header';
 import { HeaderNav } from '@/components/header-nav';
 import { LandingFooter } from './_components/landing-footer';
-
-export const metadata: Metadata = {
-  title: 'Pet-Pal',
-  description: 'Find your forever friend.',
-};
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const isUserAuthenticated = isAuthenticated;
+  const { isAuthenticated, isLoading } = useAuth();
 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <title>Pet-Pal</title>
+        <meta name="description" content="Find your forever friend." />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -34,9 +34,22 @@ export default function RootLayout({
           'min-h-screen bg-background font-body antialiased flex flex-col'
         )}
       >
-        {isUserAuthenticated ? <HeaderNav /> : <LandingHeader />}
+        {isLoading ? (
+          <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+              <Skeleton className="h-8 w-24" />
+              <Skeleton className="h-9 w-9 rounded-full" />
+            </div>
+          </header>
+        ) : isAuthenticated ? (
+          <HeaderNav />
+        ) : (
+          <LandingHeader />
+        )}
+
         <main className="flex-1">{children}</main>
-        {isUserAuthenticated ? null : <LandingFooter />}
+        
+        {!isLoading && !isAuthenticated && <LandingFooter />}
         <Toaster />
       </body>
     </html>
