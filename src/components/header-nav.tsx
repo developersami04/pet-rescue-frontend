@@ -38,7 +38,10 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { sampleUser } from "@/lib/user-data";
 
 const navItems = {
-  main: [{ href: "/dashboard", icon: LayoutGrid, label: "Dashboard" }],
+  main: [
+      { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
+      { href: "/profile", icon: User, label: "Profile" },
+    ],
   pets: [
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },
     { href: "/map", icon: Map, label: "Map View" },
