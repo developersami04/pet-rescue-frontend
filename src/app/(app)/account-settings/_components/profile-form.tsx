@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { sampleUser } from "@/lib/user-data";
 
 export function ProfileForm() {
     return (
@@ -15,16 +16,16 @@ export function ProfileForm() {
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" defaultValue="Guest" />
+                        <Input id="firstName" defaultValue={sampleUser.first_name} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" defaultValue="User" />
+                        <Input id="lastName" defaultValue={sampleUser.last_name} />
                     </div>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" defaultValue="guest.user@example.com" />
+                    <Input id="email" type="email" defaultValue={sampleUser.email} />
                 </div>
                 <Separator />
                 <div className="space-y-2">

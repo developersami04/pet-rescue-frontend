@@ -36,6 +36,7 @@ import { cn } from "@/lib/utils";
 import { Logo } from "./icons";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { sampleUser } from "@/lib/user-data";
 
 const navItems = {
   main: [{ href: "/dashboard", icon: LayoutGrid, label: "Dashboard" }],
@@ -168,8 +169,8 @@ export function HeaderNav() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
                <Avatar className="h-9 w-9 cursor-pointer">
-                <AvatarImage src="https://picsum.photos/seed/user/100/100" />
-                <AvatarFallback>U</AvatarFallback>
+                <AvatarImage src={sampleUser.profile_image ?? `https://picsum.photos/seed/${sampleUser.username}/100/100`} />
+                <AvatarFallback>{sampleUser.first_name.charAt(0)}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
@@ -264,11 +265,11 @@ export function HeaderNav() {
                  <div className="border-t p-4">
                     <div className="flex items-center gap-3">
                         <Avatar className="h-9 w-9">
-                            <AvatarImage src="https://picsum.photos/seed/user/100/100" />
-                            <AvatarFallback>U</AvatarFallback>
+                            <AvatarImage src={sampleUser.profile_image ?? `https://picsum.photos/seed/${sampleUser.username}/100/100`} />
+                            <AvatarFallback>{sampleUser.first_name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div>
-                            <p className="text-sm font-medium">Guest User</p>
+                            <p className="text-sm font-medium">{sampleUser.first_name} {sampleUser.last_name}</p>
                         </div>
                     </div>
                 </div>
