@@ -17,6 +17,8 @@ export default function RootLayout({
 }>) {
   const { isAuthenticated, isLoading } = useAuth();
 
+  const Header = isAuthenticated ? HeaderNav : LandingHeader;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -41,10 +43,8 @@ export default function RootLayout({
               <Skeleton className="h-9 w-9 rounded-full" />
             </div>
           </header>
-        ) : isAuthenticated ? (
-          <HeaderNav />
         ) : (
-          <LandingHeader />
+          <Header />
         )}
 
         <main className="flex-1">{children}</main>
