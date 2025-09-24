@@ -132,7 +132,7 @@ export function HeaderNav() {
           <Link href="/" className="flex items-center gap-2 mr-4">
             <Logo className="h-7 w-7 text-primary" />
             <span className="hidden text-lg font-semibold tracking-wider font-headline sm:inline-block">
-              PetPal Finder
+              Pet-Pal
             </span>
           </Link>
           {/* Desktop Navigation */}
@@ -223,7 +223,7 @@ export function HeaderNav() {
                 >
                   <Logo className="h-7 w-7 text-primary" />
                   <span className="text-lg font-semibold tracking-wider font-headline">
-                    PetPal Finder
+                    Pet-Pal
                   </span>
                 </Link>
                 <Button

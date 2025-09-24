@@ -14,7 +14,7 @@ export default function LandingPage() {
           <Link href="/" className="flex items-center gap-2" prefetch={false}>
             <PawPrint className="h-8 w-8 text-primary" />
             <span className="text-xl font-bold tracking-wider text-foreground">
-              PetPal Finder
+              Pet-Pal
             </span>
           </Link>
           <nav className="flex items-center gap-4">
@@ -88,7 +88,7 @@ export default function LandingPage() {
       </main>
       <footer className="bg-secondary">
         <div className="container mx-auto py-6 px-4 md:px-6 text-center text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} PetPal Finder. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Pet-Pal. All rights reserved.</p>
         </div>
       </footer>
     </div>

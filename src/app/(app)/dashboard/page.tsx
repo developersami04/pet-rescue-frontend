@@ -14,7 +14,7 @@ export default function DashboardPage() {
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
       <PageHeader
-        title="Welcome to PetPal Finder"
+        title="Welcome to Pet-Pal"
         description="Your dashboard for finding a new companion."
       />
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
