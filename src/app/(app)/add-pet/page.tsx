@@ -1,6 +1,6 @@
 import { PageHeader } from "@/components/page-header";
 import { AddPetForm } from "./_components/add-pet-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function AddPetPage() {
   return (
@@ -12,6 +12,7 @@ export default function AddPetPage() {
       <Card>
         <CardHeader>
           <CardTitle>Pet Information</CardTitle>
+          <CardDescription>Provide the details of the pet you want to list for adoption.</CardDescription>
         </CardHeader>
         <CardContent>
           <AddPetForm />
