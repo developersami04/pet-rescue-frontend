@@ -20,7 +20,8 @@ import {
   Inbox,
   LogOut,
   MoreHorizontal,
-  Home
+  Home,
+  PlusCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +48,7 @@ const navItems = {
   pets: [
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },
     { href: "/map", icon: Map, label: "Map View" },
+    { href: "/add-pet", icon: PlusCircle, label: "Add Pet" },
   ],
   more: [
     { href: "/matching", icon: Sparkles, label: "AI Pet Matcher" },
