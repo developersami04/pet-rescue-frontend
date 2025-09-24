@@ -18,7 +18,7 @@ export function FavoritePets() {
                     const petImage = PlaceHolderImages.find(p => p.id === pet.imageIds[0]);
                     return (
                         <Card key={pet.id} className="overflow-hidden">
-                            <div className="relative h-40 w-full">
+                            <div className="relative aspect-square w-full">
                                 {petImage && (
                                     <Image
                                         src={petImage.imageUrl}

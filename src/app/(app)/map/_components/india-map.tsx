@@ -26,9 +26,10 @@ export function IndiaMap() {
     });
 
     return (
-        <Card className="grid md:grid-cols-3 h-[70vh] overflow-hidden">
+        <Card className="grid md:grid-cols-3 h-[75vh] overflow-hidden">
             <ScrollArea className="md:col-span-1 h-full border-r">
                 <div className="p-2">
+                    <p className="p-2 text-sm font-semibold text-muted-foreground">Select a State</p>
                     {indianStates.map(state => (
                         <Button
                             key={state}
@@ -41,16 +42,16 @@ export function IndiaMap() {
                     ))}
                 </div>
             </ScrollArea>
-            <div className="md:col-span-2 h-full">
+            <div className="md:col-span-2 h-full flex flex-col">
                 <CardHeader>
                     <CardTitle>
                         {selectedState ? `Available Pets in ${selectedState}` : "Select a State"}
                     </CardTitle>
                 </CardHeader>
-                <ScrollArea className="h-[calc(70vh-80px)]">
+                <ScrollArea className="flex-grow">
                     <CardContent>
                         {selectedState && petsInState.length > 0 ? (
-                            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {petsInState.map(pet => {
                                     const petImage = PlaceHolderImages.find(p => p.id === pet.imageIds[0]);
                                     return (
@@ -89,5 +90,3 @@ export function IndiaMap() {
         </Card>
     );
 }
-
-    

@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { pets } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -22,7 +21,7 @@ export function MyPets() {
                     const petImage = PlaceHolderImages.find(p => p.id === pet.imageIds[0]);
                     return (
                         <Card key={pet.id} className="overflow-hidden">
-                            <div className="relative h-40 w-full">
+                            <div className="relative aspect-square w-full">
                                 {petImage && (
                                     <Image
                                         src={petImage.imageUrl}
@@ -48,7 +47,7 @@ export function MyPets() {
                     )
                 })}
                  {myPets.length === 0 && (
-                    <p className="text-muted-foreground col-span-full">You haven't added any pets yet.</p>
+                    <p className="text-muted-foreground col-span-full text-center py-8">You haven't added any pets yet.</p>
                 )}
             </CardContent>
         </Card>

@@ -84,8 +84,8 @@ export function AddPetForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 grid md:grid-cols-2 gap-8 content-start">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8 content-start">
                 <FormField
                     control={form.control}
                     name="name"
@@ -207,6 +207,7 @@ export function AddPetForm() {
                                         onChange(e.target.files);
                                         handleImageChange(e);
                                     }}
+                                    className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                                 />
                             </FormControl>
                             <FormMessage />

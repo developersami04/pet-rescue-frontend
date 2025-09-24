@@ -36,7 +36,7 @@ export function PetMatchingResults({ state }: PetMatchingResultsProps) {
 
   if (isLoading) {
     return (
-      <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {[...Array(3)].map((_, i) => (
           <Card key={i}>
             <Skeleton className="h-56 w-full rounded-t-lg" />
@@ -70,7 +70,7 @@ export function PetMatchingResults({ state }: PetMatchingResultsProps) {
         <h2 className="text-2xl font-bold tracking-tight font-headline mb-4">
           Your Pet Matches
         </h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {state.suggestions.map((pet) => (
             <Card key={pet.petId} className="flex flex-col overflow-hidden">
               <div className="relative h-56 w-full">

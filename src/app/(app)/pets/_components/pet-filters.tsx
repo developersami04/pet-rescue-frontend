@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 
 type PetFiltersProps = {
   search: string;
@@ -36,7 +36,7 @@ export function PetFilters({
 }: PetFiltersProps) {
   return (
     <div className="mb-8 p-4 bg-card border rounded-lg shadow-sm">
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -71,6 +71,7 @@ export function PetFilters({
           </SelectContent>
         </Select>
         <Button onClick={onClearFilters} variant="secondary">
+          <X className="mr-2 h-4 w-4" />
           Clear Filters
         </Button>
       </div>

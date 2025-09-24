@@ -59,7 +59,7 @@ export function CreateAccountForm() {
   }
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
         <CardTitle>Create an Account</CardTitle>
         <CardDescription>Join Pet-Pal to find your new best friend.</CardDescription>
@@ -67,7 +67,7 @@ export function CreateAccountForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <FormField
                     control={form.control}
                     name="firstName"

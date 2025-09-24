@@ -44,13 +44,13 @@ export function PetList() {
         petSizes={petSizes}
         onClearFilters={handleClearFilters}
       />
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredPets.map((pet) => (
           <PetCard key={pet.id} pet={pet} />
         ))}
       </div>
       {filteredPets.length === 0 && (
-        <div className="text-center py-16">
+        <div className="text-center py-16 col-span-full">
           <h3 className="text-xl font-semibold">No Pets Found</h3>
           <p className="text-muted-foreground mt-2">
             Try adjusting your filters to find more friends.
