@@ -20,7 +20,7 @@ export const sampleUser: User = {
   email: "atrika8@gmail.com",
   first_name: "Atrika",
   last_name: "P",
-  is_verified: false,
+  is_verified: true,
   phone_no: null,
   pin_code: null,
   address: null,

@@ -1,70 +1,75 @@
-
 {
   "placeholderImages": [
     {
       "id": "hero-background",
       "description": "Woman hugging a happy dog outdoors",
-      "imageUrl": "https://picsum.photos/seed/hero/1920/1080",
+      "imageUrl": "https://images.unsplash.com/photo-1489440543286-a69330151c0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8d29tYW4lMjBkb2d8ZW58MHx8fHwxNzU4NjM5MTExfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "woman dog"
+    },
+    {
+      "id": "india-map",
+      "description": "A map of India",
+      "imageUrl": "https://images.unsplash.com/photo-1553141836-ef5a03f71028?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8aW5kaWElMjBtYXB8ZW58MHx8fHwxNzU4NzA2NzA1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "india map"
     },
     {
       "id": "pet-buddy",
       "description": "Golden Retriever puppy sitting in grass",
-      "imageUrl": "https://picsum.photos/seed/buddy/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1523480717984-24cba35ae1ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxnb2xkZW4lMjByZXRyaWV2ZXJ8ZW58MHx8fHwxNzU4NjkyODg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "golden retriever"
     },
     {
       "id": "pet-lucy",
       "description": "Playful Beagle with a toy",
-      "imageUrl": "https://picsum.photos/seed/lucy/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1710927864746-7435f185b3e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxiZWFnbGUlMjBwdXBweXxlbnwwfHx8fDE3NTg3Mjc2Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "beagle puppy"
     },
     {
       "id": "pet-max",
       "description": "German Shepherd standing in a field",
-      "imageUrl": "https://picsum.photos/seed/max/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxnZXJtYW4lMjBzaGVwaGVyZHxlbnwwfHx8fDE3NTg2OTY5MTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "german shepherd"
     },
     {
       "id": "pet-luna",
       "description": "Siamese cat with blue eyes looking at the camera",
-      "imageUrl": "https://picsum.photos/seed/luna/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1666181839388-2623c19d935e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzaWFtZXNlJTIwY2F0fGVufDB8fHx8MTc1ODY0MTU4NHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "siamese cat"
     },
     {
       "id": "pet-milo",
       "description": "Ginger tabby cat lounging in the sun",
-      "imageUrl": "https://picsum.photos/seed/milo/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1583687534963-565854a3d6d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnaW5nZXIlMjBjYXR8ZW58MHx8fHwxNzU4NjU3NjEzfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "ginger cat"
     },
     {
       "id": "pet-bella",
       "description": "Fluffy Maine Coon cat on a sofa",
-      "imageUrl": "https://picsum.photos/seed/bella/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1573865526739-10659fec78a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYWluZSUyMGNvb258ZW58MHx8fHwxNzU4NzM5OTA5fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "maine coon"
     },
     {
       "id": "pet-kiwi",
       "description": "Colorful parrot on a perch",
-      "imageUrl": "https://picsum.photos/seed/kiwi/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1648733366513-7cefc88f28ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwYXJyb3QlMjBiaXJkfGVufDB8fHx8MTc1ODczOTkwOXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "parrot bird"
     },
     {
       "id": "pet-daisy",
       "description": "Small terrier mix wagging its tail",
-      "imageUrl": "https://picsum.photos/seed/daisy/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1659946431867-796a192ff9ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx0ZXJyaWVyJTIwZG9nfGVufDB8fHx8MTc1ODY0NzA5NHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "terrier dog"
     },
     {
       "id": "pet-smokey",
       "description": "Grey domestic shorthair cat with green eyes",
-      "imageUrl": "https://picsum.photos/seed/smokey/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1508292549404-81fd946f8c2e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxncmV5JTIwY2F0fGVufDB8fHx8MTc1ODczOTkwOXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "grey cat"
     },
     {
       "id": "pet-rocky",
       "description": "Boxer dog with a friendly expression",
-      "imageUrl": "https://picsum.photos/seed/rocky/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1608396175621-3aadd2c1b598?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxib3hlciUyMGRvZ3xlbnwwfHx8fDE3NTg3MzY4MjR8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "boxer dog"
     }
   ]
