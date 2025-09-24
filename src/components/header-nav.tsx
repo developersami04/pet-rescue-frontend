@@ -20,6 +20,7 @@ import {
   Inbox,
   LogOut,
   MoreHorizontal,
+  Home
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +41,7 @@ import { sampleUser } from "@/lib/user-data";
 
 const navItems = {
   main: [
+      { href: "/feed", icon: Home, label: "Feed" },
       { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
     ],
   pets: [
