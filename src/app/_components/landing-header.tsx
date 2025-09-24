@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { PawPrint } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,7 @@ export function LandingHeader() {
         </Link>
         <nav className="flex items-center gap-4">
           <Button variant="ghost" asChild>
-            <Link href="/dashboard">Login</Link>
+            <Link href="/login">Login</Link>
           </Button>
           <Button asChild>
             <Link href="#">Create Account</Link>

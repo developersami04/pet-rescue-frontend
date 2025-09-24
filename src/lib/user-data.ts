@@ -10,6 +10,7 @@ export type User = {
   phone_no: string | null;
   pin_code: string | null;
   address: string | null;
+  password?: string;
 };
 
 export const sampleUser: User = {
@@ -22,5 +23,6 @@ export const sampleUser: User = {
   is_verified: false,
   phone_no: null,
   pin_code: null,
-  address: null
+  address: null,
+  password: "7219"
 };
