@@ -18,7 +18,7 @@ export function LandingHeader() {
             <Link href="/login">Login</Link>
           </Button>
           <Button asChild>
-            <Link href="#">Create Account</Link>
+            <Link href="/create-account">Create Account</Link>
           </Button>
         </nav>
       </div>
