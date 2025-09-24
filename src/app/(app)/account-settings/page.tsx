@@ -12,7 +12,7 @@ export default function AccountSettingsPage() {
         description="Manage your account settings and set e-mail preferences."
       />
       <div className="grid gap-8 md:grid-cols-3">
-        <div className="md:col-span-1">
+        <div className="md:col-span-1 md:sticky md:top-24 self-start">
           <ProfileCard />
         </div>
         <div className="md:col-span-2">
