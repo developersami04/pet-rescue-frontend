@@ -128,8 +128,8 @@ export function HeaderNav() {
   
   const handleLogout = () => {
     localStorage.removeItem('authToken');
+    window.dispatchEvent(new Event('storage')); // Manually trigger storage event
     router.push('/');
-    router.refresh();
   };
 
 

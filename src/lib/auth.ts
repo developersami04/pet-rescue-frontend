@@ -8,10 +8,22 @@ export function useAuth() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // localStorage is only available on the client
-    const token = localStorage.getItem('authToken');
-    setIsAuthenticated(!!token);
-    setIsLoading(false);
+    const checkAuthStatus = () => {
+      const token = localStorage.getItem('authToken');
+      setIsAuthenticated(!!token);
+      setIsLoading(false);
+    };
+
+    // Check on initial load
+    checkAuthStatus();
+
+    // Listen for storage changes
+    window.addEventListener('storage', checkAuthStatus);
+
+    // Cleanup listener on component unmount
+    return () => {
+      window.removeEventListener('storage', checkAuthStatus);
+    };
   }, []);
 
   return { isAuthenticated, isLoading };
