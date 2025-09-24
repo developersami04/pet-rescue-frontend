@@ -45,24 +45,28 @@ function NavLink({
   href,
   children,
   className,
+  closeMenu,
 }: {
   href: string;
   children: React.ReactNode;
   className?: string;
+  closeMenu?: () => void;
 }) {
   const pathname = usePathname();
   const isActive = pathname === href;
   return (
     <Link
       href={href}
+      onClick={closeMenu}
       className={cn(
-        "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors relative",
         isActive
           ? "bg-secondary text-secondary-foreground"
           : "text-muted-foreground hover:bg-secondary/50 hover:text-secondary-foreground",
         className
       )}
     >
+      {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 bg-primary rounded-r-full" />}
       {children}
     </Link>
   );
@@ -81,10 +85,14 @@ function DropdownNav({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant={isActive ? "secondary" : "ghost"}
-          className="text-sm font-medium"
+          variant="ghost"
+          className={cn(
+              "text-sm font-medium relative",
+               isActive ? "text-primary" : "text-foreground"
+            )}
         >
           {label}
+          {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-1 bg-primary rounded-full" />}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -103,6 +111,9 @@ function DropdownNav({
 
 export function HeaderNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const closeMobileMenu = () => setMobileMenuOpen(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -116,16 +127,21 @@ export function HeaderNav() {
           </Link>
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-2 md:flex">
-            {navItems.main.map((item) => (
+            {navItems.main.map((item) => {
+              const isActive = pathname === item.href;
+              return(
               <Button
                 key={item.href}
-                variant={usePathname() === item.href ? "secondary" : "ghost"}
+                variant="ghost"
                 asChild
-                className="text-sm font-medium"
+                className={cn("text-sm font-medium relative", isActive ? "text-primary" : "text-foreground")}
               >
-                <Link href={item.href}>{item.label}</Link>
+                <Link href={item.href}>
+                  {item.label}
+                  {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-1 bg-primary rounded-full" />}
+                  </Link>
               </Button>
-            ))}
+            )})}
             <DropdownNav label="Pets" items={navItems.pets} />
             <DropdownNav label="Resources" items={navItems.resources} />
           </nav>
@@ -151,13 +167,13 @@ export function HeaderNav() {
                 <span className="sr-only">Open Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-full max-w-xs pr-0">
+            <SheetContent side="left" className="w-full max-w-xs p-0">
               <div className="flex h-full flex-col">
                 <div className="flex items-center justify-between border-b p-4">
                   <Link
                     href="/"
                     className="flex items-center gap-2"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={closeMobileMenu}
                   >
                     <Logo className="h-7 w-7 text-primary" />
                     <span className="text-lg font-semibold tracking-wider font-headline">
@@ -167,7 +183,7 @@ export function HeaderNav() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={closeMobileMenu}
                   >
                     <X className="h-6 w-6" />
                   </Button>
@@ -180,13 +196,14 @@ export function HeaderNav() {
                       className="w-full rounded-lg bg-muted pl-10"
                     />
                   </div>
-                  <nav className="flex flex-col gap-2">
+                  <nav className="flex flex-col gap-1">
                     {[...navItems.main, ...navItems.pets, ...navItems.resources].map(
                       (item) => (
                         <NavLink
                           key={item.href}
                           href={item.href}
                           className="text-base"
+                          closeMenu={closeMobileMenu}
                         >
                           <item.icon className="h-5 w-5" />
                           {item.label}
