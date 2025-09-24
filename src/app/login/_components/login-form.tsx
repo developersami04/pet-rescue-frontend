@@ -54,6 +54,7 @@ export function LoginForm() {
         // In a real app, you'd set an auth token here
         // and update the global auth state.
         // For now, we just redirect.
+        // This is a temporary solution. You would need to set isAuthenticated to true.
         router.push('/dashboard');
       } else {
         toast({
@@ -82,7 +83,7 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="@atrika06" {...field} />
+                    <Input placeholder="atrika@06" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -17,6 +17,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isUserAuthenticated = isAuthenticated;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -32,9 +34,9 @@ export default function RootLayout({
           'min-h-screen bg-background font-body antialiased flex flex-col'
         )}
       >
-        {isAuthenticated ? <HeaderNav /> : <LandingHeader />}
+        {isUserAuthenticated ? <HeaderNav /> : <LandingHeader />}
         <main className="flex-1">{children}</main>
-        {isAuthenticated ? null : <LandingFooter />}
+        {isUserAuthenticated ? null : <LandingFooter />}
         <Toaster />
       </body>
     </html>
