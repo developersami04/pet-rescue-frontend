@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -168,7 +169,7 @@ export function HeaderNav() {
             </span>
           </Link>
           {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-2 md:flex">
+          <nav className="hidden items-center gap-2 nav-break:flex">
             {navItems.main.map((item) => {
               const isActive = pathname === item.href;
               return(
@@ -232,7 +233,7 @@ export function HeaderNav() {
                 <DropdownMenuSubTrigger>
                   <Sun className="mr-2 h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                   <Moon className="absolute mr-2 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                  <span className="capitalize">Theme: {theme}</span>
+                  <span>Theme</span>
                 </DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent>
@@ -262,7 +263,7 @@ export function HeaderNav() {
           {/* Mobile Navigation */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="ghost" size="icon" className="nav-break:hidden">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Open Menu</span>
               </Button>

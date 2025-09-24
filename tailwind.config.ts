@@ -16,6 +16,9 @@ export default {
       },
     },
     extend: {
+      screens: {
+        'nav-break': '1100px',
+      },
       fontFamily: {
         body: ['Inter', 'sans-serif'],
         headline: ['Poppins', 'sans-serif'],
