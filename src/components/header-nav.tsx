@@ -25,6 +25,8 @@ import {
   Sun,
   Moon,
   Laptop,
+  Info,
+  Phone,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -58,13 +60,17 @@ const navItems = {
     { href: "/map", icon: Map, label: "Map View" },
     { href: "/add-pet", icon: PlusCircle, label: "Add Pet" },
   ],
-  more: [
+  aiFeatures: [
     { href: "/matching", icon: Sparkles, label: "AI Pet Matcher" },
     { href: "/pet-care", icon: HeartHandshake, label: "Pet Care AI" },
   ],
   resources: [
     { href: "/resources", icon: BookOpen, label: "Resources" },
   ],
+  more: [
+      { href: "/about-us", icon: Info, label: "About Us" },
+      { href: "/contact-us", icon: Phone, label: "Contact Us" },
+  ]
 };
 
 function NavLink({
@@ -180,6 +186,7 @@ export function HeaderNav() {
             )})}
             <DropdownNav label="Pets" items={navItems.pets} />
             <DropdownNav label="Resources" items={navItems.resources} />
+            <DropdownNav label="AI Features" items={navItems.aiFeatures} />
             <DropdownNav label="More" items={navItems.more} />
           </nav>
         </div>
@@ -286,7 +293,7 @@ export function HeaderNav() {
                     />
                   </div>
                   <nav className="flex flex-col gap-1">
-                    {[...navItems.main, ...navItems.pets, ...navItems.resources, ...navItems.more].map(
+                    {[...navItems.main, ...navItems.pets, ...navItems.resources, ...navItems.aiFeatures, ...navItems.more].map(
                       (item) => (
                         <NavLink
                           key={item.href}
