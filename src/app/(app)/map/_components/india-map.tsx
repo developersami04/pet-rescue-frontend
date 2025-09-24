@@ -19,7 +19,6 @@ const indianStates = [
 
 export function IndiaMap() {
     const [selectedState, setSelectedState] = useState<string | null>("Maharashtra");
-    const mapImage = PlaceHolderImages.find(p => p.id === 'india-map');
 
     const petsInState = pets.filter(pet => {
         const organization = organizations.find(org => org.id === pet.organizationId);
@@ -27,7 +26,7 @@ export function IndiaMap() {
     });
 
     return (
-        <Card className="grid md:grid-cols-4 h-[70vh] overflow-hidden">
+        <Card className="grid md:grid-cols-3 h-[70vh] overflow-hidden">
             <ScrollArea className="md:col-span-1 h-full border-r">
                 <div className="p-2">
                     {indianStates.map(state => (
@@ -42,19 +41,6 @@ export function IndiaMap() {
                     ))}
                 </div>
             </ScrollArea>
-             <div className="md:col-span-1 h-full border-r flex items-center justify-center p-4">
-                {mapImage && (
-                    <div className="relative w-full h-full">
-                        <Image 
-                            src={mapImage.imageUrl}
-                            alt={mapImage.description}
-                            fill
-                            className="object-contain"
-                            data-ai-hint={mapImage.imageHint}
-                        />
-                    </div>
-                )}
-            </div>
             <div className="md:col-span-2 h-full">
                 <CardHeader>
                     <CardTitle>
@@ -64,7 +50,7 @@ export function IndiaMap() {
                 <ScrollArea className="h-[calc(70vh-80px)]">
                     <CardContent>
                         {selectedState && petsInState.length > 0 ? (
-                            <div className="grid sm:grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {petsInState.map(pet => {
                                     const petImage = PlaceHolderImages.find(p => p.id === pet.imageIds[0]);
                                     return (
