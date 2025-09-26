@@ -59,7 +59,7 @@ const navItems = {
   pets: [
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },
     { href: "/map", icon: Map, label: "Map View" },
-    { href: "/add-pet", icon: PlusCircle, label: "Add Pet" },
+    { href: "/submit-request", icon: PlusCircle, label: "Submit a Request" },
   ],
   aiFeatures: [
     { href: "/matching", icon: Sparkles, label: "AI Pet Matcher" },

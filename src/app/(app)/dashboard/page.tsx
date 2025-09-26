@@ -17,9 +17,9 @@ export default function DashboardPage() {
           className="pb-0"
         />
         <Button asChild className="w-full sm:w-auto">
-          <Link href="/add-pet">
+          <Link href="/submit-request">
             <PlusCircle className="mr-2 h-4 w-4" />
-            Add Pet
+            Submit a Request
           </Link>
         </Button>
       </div>
