@@ -1,13 +1,18 @@
-"use client";
+
+'use client';
 
 import { pets } from "@/lib/data";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdoptionForm } from "./_components/adoption-form";
+import { useMemo } from "react";
 
-export default function AdoptPage({ params }: { params: { id: string } }) {
-  const pet = pets.find((p) => p.id === params.id);
+export default function AdoptPage() {
+  const params = useParams();
+  const petId = Array.isArray(params.id) ? params.id[0] : params.id;
+
+  const pet = useMemo(() => pets.find((p) => p.id === petId), [petId]);
 
   if (!pet) {
     notFound();

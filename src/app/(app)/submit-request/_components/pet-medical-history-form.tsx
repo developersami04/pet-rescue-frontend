@@ -140,7 +140,7 @@ export function PetMedicalHistoryForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Stage</FormLabel>
-                  <FormControl><Input placeholder="Initial" {...field} /></FormControl>
+                  <FormControl><Input placeholder="2" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}
