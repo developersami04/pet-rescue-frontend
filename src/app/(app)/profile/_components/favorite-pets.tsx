@@ -8,10 +8,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getAllPets } from "@/lib/action_api";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 export function FavoritePets() {
     const [favoritePets, setFavoritePets] = useState<Pet[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { toast } = useToast();
+    const router = useRouter();
+
 
     useEffect(() => {
         async function fetchPets() {
@@ -24,14 +29,26 @@ export function FavoritePets() {
                 const allPets = await getAllPets(token);
                 // Mocking favorites for now, e.g., first 3 pets
                 setFavoritePets(allPets.slice(0, 3));
-            } catch (error) {
-                console.error("Failed to fetch favorite pets:", error);
+            } catch (error: any) {
+                if (error.message.includes('Session expired')) {
+                    toast({
+                        variant: 'destructive',
+                        title: 'Session Expired',
+                        description: 'Please log in again to continue.',
+                    });
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('refreshToken');
+                    window.dispatchEvent(new Event('storage'));
+                    router.push('/login');
+                } else {
+                    console.error("Failed to fetch favorite pets:", error);
+                }
             } finally {
                 setIsLoading(false);
             }
         }
         fetchPets();
-    }, []);
+    }, [router, toast]);
 
     return (
         <Card>

@@ -34,6 +34,7 @@ import { DayPicker } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
 
 const medicalHistorySchema = z.object({
   petId: z.string().min(1, 'Please select a pet.'),
@@ -55,6 +56,7 @@ const medicalHistorySchema = z.object({
 
 export function PetMedicalHistoryForm() {
   const { toast } = useToast();
+  const router = useRouter();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [userPets, setUserPets] = useState<Pet[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,18 +68,30 @@ export function PetMedicalHistoryForm() {
         try {
           const myPets = await getMyPets(token);
           setUserPets(myPets);
-        } catch (error) {
-          console.error("Failed to fetch user's pets:", error);
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Could not fetch your pets. Please try again later.",
-          });
+        } catch (error: any) {
+            if (error.message.includes('Session expired')) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Session Expired',
+                    description: 'Please log in again to continue.',
+                });
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken');
+                window.dispatchEvent(new Event('storage'));
+                router.push('/login');
+            } else {
+                console.error("Failed to fetch user's pets:", error);
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "Could not fetch your pets. Please try again later.",
+                });
+            }
         }
       }
     }
     fetchUserPets();
-  }, [toast]);
+  }, [toast, router]);
 
   const form = useForm<z.infer<typeof medicalHistorySchema>>({
     resolver: zodResolver(medicalHistorySchema),
@@ -122,11 +136,23 @@ export function PetMedicalHistoryForm() {
         form.reset();
         setImagePreview(null);
     } catch (error: any) {
-        toast({
-            variant: 'destructive',
-            title: 'Submission Failed',
-            description: error.message || 'An unexpected error occurred.',
-        });
+        if (error.message.includes('Session expired')) {
+            toast({
+                variant: 'destructive',
+                title: 'Session Expired',
+                description: 'Please log in again to continue.',
+            });
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('refreshToken');
+            window.dispatchEvent(new Event('storage'));
+            router.push('/login');
+        } else {
+            toast({
+                variant: 'destructive',
+                title: 'Submission Failed',
+                description: error.message || 'An unexpected error occurred.',
+            });
+        }
     } finally {
         setIsSubmitting(false);
     }

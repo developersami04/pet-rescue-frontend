@@ -31,6 +31,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { getMyPets, submitRequest } from '@/lib/action_api';
+import { useRouter } from 'next/navigation';
 
 const reportSchema = z.object({
   reportType: z.enum(['lost', 'found'], {
@@ -50,6 +51,7 @@ const reportSchema = z.object({
 
 export function PetReportForm() {
   const { toast } = useToast();
+  const router = useRouter();
   const [reportType, setReportType] = useState<'lost' | 'found' | undefined>();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [userPets, setUserPets] = useState<Pet[]>([]);
@@ -62,15 +64,27 @@ export function PetReportForm() {
         try {
           const myPets = await getMyPets(token);
           setUserPets(myPets);
-        } catch (error) {
-          console.error("Failed to fetch user's pets:", error);
+        } catch (error: any) {
+            if (error.message.includes('Session expired')) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Session Expired',
+                    description: 'Please log in again to continue.',
+                });
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken');
+                window.dispatchEvent(new Event('storage'));
+                router.push('/login');
+            } else {
+                console.error("Failed to fetch user's pets:", error);
+            }
         }
       }
     }
     if (reportType === 'lost') {
       fetchUserPets();
     }
-  }, [reportType]);
+  }, [reportType, router, toast]);
 
   const form = useForm<z.infer<typeof reportSchema>>({
     resolver: zodResolver(reportSchema),
@@ -119,11 +133,23 @@ export function PetReportForm() {
         setReportType(undefined);
         setImagePreview(null);
     } catch (error: any) {
-         toast({
-            variant: 'destructive',
-            title: 'Submission Failed',
-            description: error.message || 'An unexpected error occurred.',
-        });
+        if (error.message.includes('Session expired')) {
+            toast({
+                variant: 'destructive',
+                title: 'Session Expired',
+                description: 'Please log in again to continue.',
+            });
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('refreshToken');
+            window.dispatchEvent(new Event('storage'));
+            router.push('/login');
+        } else {
+            toast({
+                variant: 'destructive',
+                title: 'Submission Failed',
+                description: error.message || 'An unexpected error occurred.',
+            });
+        }
     } finally {
         setIsSubmitting(false);
     }

@@ -25,6 +25,76 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeout = API
     return response;
 }
 
+async function fetchWithAuth(url: string, options: RequestInit, token: string) {
+    let response = await fetchWithTimeout(url, {
+        ...options,
+        headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (response.status === 401) {
+        console.log("Access token expired, attempting to refresh...");
+        const newAccessToken = await refreshAccessToken();
+
+        if (newAccessToken) {
+            console.log("Token refreshed successfully, retrying the original request...");
+            // Retry the request with the new token
+            response = await fetchWithTimeout(url, {
+                ...options,
+                headers: {
+                    ...options.headers,
+                    'Authorization': `Bearer ${newAccessToken}`
+                }
+            });
+        } else {
+            console.log("Failed to refresh token. User will be logged out.");
+             // This custom error will be caught by callers to handle logout
+            throw new Error('Session expired. Please log in again.');
+        }
+    }
+
+    return response;
+}
+
+
+export async function refreshAccessToken(): Promise<string | null> {
+    if (typeof window === 'undefined') return null;
+
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken || !API_BASE_URL) {
+        return null;
+    }
+
+    try {
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.refreshToken}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh: refreshToken }),
+        });
+
+        if (!response.ok) {
+            console.error('Failed to refresh access token');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('refreshToken');
+            window.dispatchEvent(new Event('storage'));
+            return null;
+        }
+
+        const data = await response.json();
+        const newAccessToken = data.access;
+        localStorage.setItem('authToken', newAccessToken);
+        window.dispatchEvent(new Event('storage'));
+        
+        return newAccessToken;
+    } catch (error) {
+        console.error('Error during token refresh:', error);
+        return null;
+    }
+}
+
+
 export async function getPetTypes(): Promise<PetType[] | null> {
     if (!API_BASE_URL) {
         console.error('API_BASE_URL is not defined in the environment variables.');
@@ -151,20 +221,14 @@ export async function getUserDetails(token: string) {
     }
 
     try {
-        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.userDetails}`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.userDetails}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-        });
+            headers: { 'Content-Type': 'application/json' },
+        }, token);
 
         const result = await response.json();
 
         if (!response.ok) {
-            if (response.status === 401) {
-                throw new Error('Session expired. Please log in again.');
-            }
             throw new Error(result.message || result.detail || 'Failed to fetch user details.');
         }
 
@@ -187,21 +251,15 @@ export async function getAllPets(token: string) {
     }
 
     try {
-        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.allPets}`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.allPets}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json' },
             cache: 'no-store' 
-        });
+        }, token);
 
         const result = await response.json();
 
         if (!response.ok) {
-            if (response.status === 401) {
-                throw new Error('Session expired. Please log in again.');
-            }
             throw new Error(result.message || result.detail || 'Failed to fetch pets.');
         }
 
@@ -224,21 +282,15 @@ export async function getMyPets(token: string) {
     }
 
     try {
-        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.myPets}`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.myPets}`, {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json' },
             cache: 'no-store' 
-        });
+        }, token);
 
         const result = await response.json();
 
         if (!response.ok) {
-            if (response.status === 401) {
-                throw new Error('Session expired. Please log in again.');
-            }
             throw new Error(result.message || result.detail || 'Failed to fetch your pets.');
         }
 
@@ -276,14 +328,11 @@ export async function submitRequest(token: string, requestType: string, payload:
     }
 
     try {
-        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.requestSubmit}`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.requestSubmit}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
-        });
+        }, token);
         
         const result = await response.json();
 

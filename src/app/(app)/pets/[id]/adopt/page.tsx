@@ -1,18 +1,21 @@
 
 'use client';
 
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdoptionForm } from "./_components/adoption-form";
 import { useEffect, useState } from "react";
 import type { Pet } from "@/lib/data";
 import { getAllPets } from "@/lib/action_api";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AdoptPage() {
   const params = useParams();
   const petId = Array.isArray(params.id) ? params.id[0] : params.id;
   const [pet, setPet] = useState<Pet | null>(null);
+  const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
     async function fetchPet() {
@@ -32,11 +35,23 @@ export default function AdoptPage() {
                 notFound();
             }
         } catch (e: any) {
-            console.error(e.message || "Failed to fetch pet details.");
+            if (e.message.includes('Session expired')) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Session Expired',
+                    description: 'Please log in again to continue.',
+                });
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken');
+                window.dispatchEvent(new Event('storage'));
+                router.push('/login');
+            } else {
+                console.error(e.message || "Failed to fetch pet details.");
+            }
         }
     }
     fetchPet();
-  }, [petId]);
+  }, [petId, router, toast]);
 
 
   if (!pet) {

@@ -29,6 +29,7 @@ import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { getPetTypes, submitRequest } from '@/lib/action_api';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useRouter } from 'next/navigation';
 
 const addPetSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -63,6 +64,7 @@ type PetType = {
 
 export function AddPetForm() {
   const { toast } = useToast();
+  const router = useRouter();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [petTypes, setPetTypes] = useState<PetType[]>([]);
   
@@ -139,11 +141,23 @@ export function AddPetForm() {
         form.reset();
         setImagePreview(null);
     } catch (error: any) {
-         toast({
-            variant: 'destructive',
-            title: 'Failed to add pet',
-            description: error.message || 'An unexpected error occurred.',
-        });
+        if (error.message.includes('Session expired')) {
+            toast({
+                variant: 'destructive',
+                title: 'Session Expired',
+                description: 'Please log in again to continue.',
+            });
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('refreshToken');
+            window.dispatchEvent(new Event('storage'));
+            router.push('/login');
+        } else {
+            toast({
+                variant: 'destructive',
+                title: 'Failed to add pet',
+                description: error.message || 'An unexpected error occurred.',
+            });
+        }
     }
   }
 

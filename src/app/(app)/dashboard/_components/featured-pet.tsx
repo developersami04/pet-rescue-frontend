@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import { getAllPets } from "@/lib/action_api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 function FeaturedPetSkeleton() {
     return (
@@ -33,6 +35,8 @@ export function FeaturedPet() {
     const [featuredPet, setFeaturedPet] = useState<Pet | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
+    const { toast } = useToast();
 
     useEffect(() => {
         async function fetchFeaturedPet() {
@@ -48,13 +52,25 @@ export function FeaturedPet() {
                     setFeaturedPet(allPets[0]);
                 }
             } catch (e: any) {
-                setError(e.message || 'Could not fetch featured pet.');
+                if (e.message.includes('Session expired')) {
+                    toast({
+                        variant: 'destructive',
+                        title: 'Session Expired',
+                        description: 'Please log in again to continue.',
+                    });
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('refreshToken');
+                    window.dispatchEvent(new Event('storage'));
+                    router.push('/login');
+                } else {
+                    setError(e.message || 'Could not fetch featured pet.');
+                }
             } finally {
                 setIsLoading(false);
             }
         }
         fetchFeaturedPet();
-    }, []);
+    }, [router, toast]);
 
     if (isLoading) {
         return <FeaturedPetSkeleton />;

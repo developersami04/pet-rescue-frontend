@@ -1,13 +1,14 @@
 
 'use client';
 import type { Pet } from "@/lib/data";
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import { PetImageCarousel } from "./_components/pet-image-carousel";
 import { PetDetails } from "./_components/pet-details";
 import { useEffect, useState } from "react";
 import { getAllPets } from "@/lib/action_api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useToast } from "@/hooks/use-toast";
 
 
 function PetProfilePageSkeleton() {
@@ -43,6 +44,8 @@ export default function PetProfilePage() {
   const [pet, setPet] = useState<Pet | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const { toast } = useToast();
   
   useEffect(() => {
     async function fetchPet() {
@@ -63,13 +66,25 @@ export default function PetProfilePage() {
                 notFound();
             }
         } catch (e: any) {
-            setError(e.message || "Failed to fetch pet details.");
+            if (e.message.includes('Session expired')) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Session Expired',
+                    description: 'Please log in again to continue.',
+                });
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken');
+                window.dispatchEvent(new Event('storage'));
+                router.push('/login');
+            } else {
+                setError(e.message || "Failed to fetch pet details.");
+            }
         } finally {
             setIsLoading(false);
         }
     }
     fetchPet();
-  }, [petId]);
+  }, [petId, router, toast]);
 
 
   if (isLoading) {

@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 const indianStates = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", 
@@ -38,6 +40,9 @@ export function IndiaMap() {
     const [allPets, setAllPets] = useState<Pet[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const { toast } = useToast();
+    const router = useRouter();
+
 
     useEffect(() => {
         async function fetchPets() {
@@ -51,13 +56,25 @@ export function IndiaMap() {
                 const pets = await getAllPets(token);
                 setAllPets(pets);
             } catch (err: any) {
-                setError(err.message || "Failed to fetch pets.");
+                if (err.message.includes('Session expired')) {
+                    toast({
+                        variant: 'destructive',
+                        title: 'Session Expired',
+                        description: 'Please log in again to continue.',
+                    });
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('refreshToken');
+                    window.dispatchEvent(new Event('storage'));
+                    router.push('/login');
+                } else {
+                    setError(err.message || "Failed to fetch pets.");
+                }
             } finally {
                 setIsLoading(false);
             }
         }
         fetchPets();
-    }, []);
+    }, [router, toast]);
 
     const petsInState = allPets.filter(pet => pet.state === selectedState);
 

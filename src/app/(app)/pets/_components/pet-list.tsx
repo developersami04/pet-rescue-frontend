@@ -9,6 +9,7 @@ import { getAllPets } from '@/lib/action_api';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 function PetListSkeleton() {
   return (
@@ -38,6 +39,7 @@ export function PetList() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const [search, setSearch] = useState('');
   const [type, setType] = useState('All');
@@ -55,19 +57,31 @@ export function PetList() {
         const petsData = await getAllPets(token);
         setPets(petsData);
       } catch (e: any) {
-        setError(e.message || 'Failed to fetch pets.');
-        toast({
-          variant: 'destructive',
-          title: 'Failed to fetch pets',
-          description: e.message || 'An unexpected error occurred. Please try again.',
-        });
+        if (e.message.includes('Session expired')) {
+            toast({
+                variant: 'destructive',
+                title: 'Session Expired',
+                description: 'Please log in again to continue.',
+            });
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('refreshToken');
+            window.dispatchEvent(new Event('storage'));
+            router.push('/login');
+        } else {
+            setError(e.message || 'Failed to fetch pets.');
+            toast({
+              variant: 'destructive',
+              title: 'Failed to fetch pets',
+              description: e.message || 'An unexpected error occurred. Please try again.',
+            });
+        }
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchPets();
-  }, [toast]);
+  }, [toast, router]);
 
   const filteredPets = useMemo(() => {
     return pets.filter((pet) => {

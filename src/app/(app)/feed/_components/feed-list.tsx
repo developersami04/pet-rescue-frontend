@@ -6,6 +6,8 @@ import { PawPrint, Heart, UserPlus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { Pet } from "@/lib/data";
 import { getAllPets } from "@/lib/action_api";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 type FeedEvent = {
     id: string;
@@ -21,15 +23,37 @@ type FeedEvent = {
 
 export function FeedList() {
     const [pets, setPets] = useState<Pet[]>([]);
+    const { toast } = useToast();
+    const router = useRouter();
+
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         if (token) {
             getAllPets(token)
                 .then(setPets)
-                .catch(err => console.error("Failed to fetch pets for feed:", err));
+                .catch(err => {
+                    if (err.message.includes('Session expired')) {
+                        toast({
+                            variant: 'destructive',
+                            title: 'Session Expired',
+                            description: 'Please log in again to continue.',
+                        });
+                        localStorage.removeItem('authToken');
+                        localStorage.removeItem('refreshToken');
+                        window.dispatchEvent(new Event('storage'));
+                        router.push('/login');
+                    } else {
+                        console.error("Failed to fetch pets for feed:", err)
+                        toast({
+                            variant: 'destructive',
+                            title: 'Error',
+                            description: 'Could not fetch pets for the feed.',
+                        });
+                    }
+                });
         }
-    }, []);
+    }, [router, toast]);
 
     const feedEvents: FeedEvent[] = useMemo(() => {
         const events: FeedEvent[] = [];
