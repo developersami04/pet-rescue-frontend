@@ -22,8 +22,9 @@ export function useUserDetails() {
       return;
     }
 
+    // Do not set loading to true here to avoid skeleton on background refresh
+    // setIsLoading(true);
     try {
-      setIsLoading(true);
       const userDetails = await getUserDetails(token);
       setUser(userDetails);
       setError(null);
@@ -52,6 +53,7 @@ export function useUserDetails() {
   }, [toast, router]);
 
   useEffect(() => {
+    setIsLoading(true);
     fetchUserDetails();
   }, [fetchUserDetails]);
 

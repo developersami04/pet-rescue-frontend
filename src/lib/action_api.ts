@@ -26,12 +26,16 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeout = API
 }
 
 async function fetchWithAuth(url: string, options: RequestInit, token: string) {
+    const headers = { ...options.headers };
+    if (!(options.body instanceof FormData)) {
+        (headers as Record<string, string>)['Content-Type'] = 'application/json';
+    }
+    (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+
+
     let response = await fetchWithTimeout(url, {
         ...options,
-        headers: {
-            ...options.headers,
-            'Authorization': `Bearer ${token}`
-        }
+        headers,
     });
 
     if (response.status === 401) {
@@ -40,13 +44,10 @@ async function fetchWithAuth(url: string, options: RequestInit, token: string) {
 
         if (newAccessToken) {
             console.log("Token refreshed successfully, retrying the original request...");
-            // Retry the request with the new token
+            (headers as Record<string, string>)['Authorization'] = `Bearer ${newAccessToken}`;
             response = await fetchWithTimeout(url, {
                 ...options,
-                headers: {
-                    ...options.headers,
-                    'Authorization': `Bearer ${newAccessToken}`
-                }
+                headers,
             });
         } else {
             console.log("Failed to refresh token. User will be logged out.");
@@ -226,7 +227,6 @@ export async function getUserDetails(token: string) {
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.userDetails}`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
         }, token);
 
         const result = await response.json();
@@ -248,20 +248,21 @@ export async function getUserDetails(token: string) {
     }
 }
 
-export async function updateUserDetails(token: string, userData: Record<string, any>) {
+export async function updateUserDetails(token: string, userData: Record<string, any> | FormData) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
     
-    const isPasswordChange = userData.hasOwnProperty('current_password');
+    const isPasswordChange = userData instanceof FormData ? false : userData.hasOwnProperty('current_password');
     const endpoint = isPasswordChange ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
     const method = isPasswordChange ? 'POST' : 'PATCH';
+    
+    const body = userData instanceof FormData ? userData : JSON.stringify(userData);
 
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${endpoint}`, {
             method: method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(userData),
+            body: body,
         }, token);
         
         const result = await response.json();
@@ -299,7 +300,6 @@ export async function getAllPets(token: string) {
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.allPets}`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
             cache: 'no-store' 
         }, token);
 
@@ -330,7 +330,6 @@ export async function getMyPets(token: string) {
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.myPets}`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
             cache: 'no-store' 
         }, token);
 
@@ -383,7 +382,6 @@ export async function submitRequest(token: string, requestType: string, payload:
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.requestSubmit}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
         }, token);
         
