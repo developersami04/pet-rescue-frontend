@@ -49,6 +49,7 @@ const addPetSchema = z.object({
     ),
   is_vaccinated: z.boolean().default(false),
   is_diseased: z.boolean().default(false),
+  available_for_adopt: z.boolean().default(true),
   city: z.string().optional(),
   pincode: z.coerce.number().optional().nullable(),
   state: z.string().optional(),
@@ -77,6 +78,7 @@ export function AddPetForm() {
       description: '',
       is_vaccinated: false,
       is_diseased: false,
+      available_for_adopt: true,
       city: '',
       state: '',
       color: ''
@@ -125,7 +127,6 @@ export function AddPetForm() {
       ...values,
       pet_type: parseInt(values.type),
       image: null, 
-      available_for_adopt: true, 
       address: null,
     };
 
@@ -370,6 +371,23 @@ export function AddPetForm() {
                     </CardContent>
                 </Card>
                  <div className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="available_for_adopt"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                            <FormControl>
+                                <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel>Available for Adoption</FormLabel>
+                            </div>
+                            </FormItem>
+                        )}
+                        />
                      <FormField
                         control={form.control}
                         name="is_vaccinated"
