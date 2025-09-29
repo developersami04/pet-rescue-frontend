@@ -34,8 +34,8 @@ const addPetSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   type: z.string().min(1, 'Pet type is required.'),
   breed: z.string().min(2, 'Breed is required.'),
-  age: z.coerce.number().min(0, 'Age must be a positive number.').nullable(),
-  weight: z.coerce.number().min(0, 'Weight must be a positive number.').nullable(),
+  age: z.coerce.number().min(0, 'Age must be a positive number.').optional().nullable(),
+  weight: z.coerce.number().min(0, 'Weight must be a positive number.').optional().nullable(),
   size: z.enum(['Small', 'Medium', 'Large']),
   gender: z.enum(['Male', 'Female']),
   description: z.string().min(10, 'Description must be at least 10 characters.'),
@@ -64,7 +64,6 @@ export function AddPetForm() {
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [petTypes, setPetTypes] = useState<PetType[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchPetTypes() {
@@ -97,16 +96,18 @@ export function AddPetForm() {
       name: '',
       type: '',
       breed: '',
-      age: 0,
-      weight: 0,
       description: '',
       is_vaccinated: false,
       is_diseased: false,
+      city: '',
+      state: '',
+      color: '',
     },
   });
 
+  const { formState: { isSubmitting } } = form;
+
   async function onSubmit(values: z.infer<typeof addPetSchema>) {
-    setIsSubmitting(true);
     const token = localStorage.getItem('authToken');
     if (!token) {
         toast({
@@ -114,12 +115,9 @@ export function AddPetForm() {
             title: 'Authentication Error',
             description: 'You must be logged in to add a pet.',
         });
-        setIsSubmitting(false);
         return;
     }
     
-    // We don't send the image file directly, API expects `image: null` for now.
-    // The API structure for file uploads would need to be different (e.g. multipart/form-data).
     const payload = {
       name: values.name,
       pet_type: parseInt(values.type),
@@ -137,7 +135,7 @@ export function AddPetForm() {
       pincode: values.pincode,
       state: values.state,
       color: values.color,
-      address: null, // API schema says address can be null
+      address: null,
     };
 
     try {
@@ -154,8 +152,6 @@ export function AddPetForm() {
             title: 'Failed to add pet',
             description: error.message || 'An unexpected error occurred.',
         });
-    } finally {
-        setIsSubmitting(false);
     }
   }
 
@@ -192,7 +188,7 @@ export function AddPetForm() {
                     render={({ field }) => (
                     <FormItem>
                         <FormLabel>Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={petTypes.length === 0}>
+                        <Select onValueChange={field.onChange} value={field.value} disabled={petTypes.length === 0}>
                         <FormControl>
                             <SelectTrigger>
                             <SelectValue placeholder="Select pet type" />
@@ -230,7 +226,7 @@ export function AddPetForm() {
                     <FormItem>
                         <FormLabel>Age (in years)</FormLabel>
                         <FormControl>
-                        <Input type="number" placeholder="Enter age" {...field} />
+                        <Input type="number" placeholder="Enter age" {...field} value={field.value ?? ''} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -243,7 +239,7 @@ export function AddPetForm() {
                     <FormItem>
                         <FormLabel>Weight (in kg)</FormLabel>
                         <FormControl>
-                        <Input type="number" placeholder="Enter weight" {...field} />
+                        <Input type="number" placeholder="Enter weight" {...field} value={field.value ?? ''} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -255,7 +251,7 @@ export function AddPetForm() {
                     render={({ field }) => (
                     <FormItem>
                         <FormLabel>Size</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                             <SelectTrigger>
                             <SelectValue placeholder="Select size" />
@@ -277,7 +273,7 @@ export function AddPetForm() {
                     render={({ field }) => (
                     <FormItem>
                         <FormLabel>Gender</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select gender" />
@@ -338,7 +334,7 @@ export function AddPetForm() {
                     <FormItem>
                         <FormLabel>Pincode</FormLabel>
                         <FormControl>
-                        <Input type="number" placeholder="Enter pincode" {...field} />
+                        <Input type="number" placeholder="Enter pincode" {...field} value={field.value ?? ''}/>
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -448,3 +444,5 @@ export function AddPetForm() {
     </Form>
   );
 }
+
+    
