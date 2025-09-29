@@ -37,6 +37,9 @@ const passwordFormSchema = z.object({
 }).refine(data => data.new_password === data.confirm_password, {
     message: "New passwords don't match",
     path: ["confirm_password"],
+}).refine(data => data.current_password !== data.new_password, {
+    message: "New password cannot be the same as the current password.",
+    path: ["new_password"],
 });
 
 export function ChangePasswordDialog() {
