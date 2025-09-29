@@ -11,7 +11,7 @@ type MedicalHistoryListProps = {
 export function MedicalHistoryList({ pet }: MedicalHistoryListProps) {
   const history = pet.medical_histories;
 
-  if (!history || history.length === 0) {
+  if (!Array.isArray(history) || history.length === 0) {
     return (
        <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8 h-48 border rounded-lg">
         <Stethoscope className="h-10 w-10 mb-4" />
