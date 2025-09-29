@@ -253,9 +253,13 @@ export async function updateUserDetails(token: string, userData: Record<string, 
         throw new Error('API is not configured. Please contact support.');
     }
     
+    const isPasswordChange = userData.hasOwnProperty('current_password');
+    const endpoint = isPasswordChange ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
+    const method = isPasswordChange ? 'POST' : 'PATCH';
+
     try {
-        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.updateUserDetails}`, {
-            method: 'PATCH',
+        const response = await fetchWithAuth(`${API_BASE_URL}${endpoint}`, {
+            method: method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(userData),
         }, token);
@@ -355,16 +359,23 @@ export async function submitRequest(token: string, requestType: string, payload:
         throw new Error('API is not configured. Please contact support.');
     }
 
-    let requestBody: any = {
-        request_type: requestType,
-    };
+    let requestBody: any;
 
     if (requestType === 'pet') {
-        requestBody.pet = payload;
+        requestBody = {
+            request_type: requestType,
+            pet: payload
+        };
     } else if (requestType === 'pet-medical-history') {
-        requestBody.pet_medical_history = payload;
+        requestBody = {
+            request_type: requestType,
+            pet_medical_history: payload
+        };
     } else if (requestType === 'pet-report') {
-        requestBody.pet_report = payload;
+        requestBody = {
+            request_type: requestType,
+            pet_report: payload
+        };
     } else {
         throw new Error('Invalid request type specified.');
     }
