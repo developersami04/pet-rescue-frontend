@@ -1,13 +1,15 @@
 
 "use client";
-import { useState } from "react";
-import { pets, organizations } from "@/lib/data";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { useEffect, useState } from "react";
+import type { Pet } from "@/lib/data";
+import { getAllPets } from "@/lib/action_api";
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const indianStates = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", 
@@ -17,13 +19,47 @@ const indianStates = [
     "Uttar Pradesh", "Uttarakhand", "West Bengal"
 ];
 
+function PetCardSkeleton() {
+    return (
+        <Card className="overflow-hidden">
+            <Skeleton className="h-40 w-full" />
+            <CardHeader className="p-3">
+                <Skeleton className="h-4 w-3/4" />
+            </CardHeader>
+            <CardContent className="p-3 pt-0">
+                <Skeleton className="h-8 w-full" />
+            </CardContent>
+        </Card>
+    );
+}
+
 export function IndiaMap() {
     const [selectedState, setSelectedState] = useState<string | null>("Maharashtra");
+    const [allPets, setAllPets] = useState<Pet[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const petsInState = pets.filter(pet => {
-        const organization = organizations.find(org => org.id === pet.organizationId);
-        return organization?.location.state === selectedState;
-    });
+    useEffect(() => {
+        async function fetchPets() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                setError("Authentication required to view pets.");
+                setIsLoading(false);
+                return;
+            }
+            try {
+                const pets = await getAllPets(token);
+                setAllPets(pets);
+            } catch (err: any) {
+                setError(err.message || "Failed to fetch pets.");
+            } finally {
+                setIsLoading(false);
+            }
+        }
+        fetchPets();
+    }, []);
+
+    const petsInState = allPets.filter(pet => pet.state === selectedState);
 
     return (
         <Card className="grid md:grid-cols-3 h-[75vh] overflow-hidden">
@@ -50,22 +86,31 @@ export function IndiaMap() {
                 </CardHeader>
                 <ScrollArea className="flex-grow">
                     <CardContent>
-                        {selectedState && petsInState.length > 0 ? (
+                        {isLoading ? (
+                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {[...Array(6)].map((_, i) => <PetCardSkeleton key={i} />)}
+                            </div>
+                        ) : error ? (
+                            <div className="flex items-center justify-center h-full text-center p-8">
+                                <Alert variant="destructive">
+                                    <AlertTitle>Error</AlertTitle>
+                                    <AlertDescription>{error}</AlertDescription>
+                                </Alert>
+                            </div>
+                        ) : selectedState && petsInState.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {petsInState.map(pet => {
-                                    const petImage = PlaceHolderImages.find(p => p.id === pet.imageIds[0]);
+                                    const imageUrl = pet.image ?? `https://picsum.photos/seed/${pet.id}/400/300`;
                                     return (
                                         <Card key={pet.id} className="overflow-hidden">
                                             <div className="relative h-40 w-full">
-                                                {petImage && (
-                                                    <Image
-                                                        src={petImage.imageUrl}
-                                                        alt={pet.name}
-                                                        fill
-                                                        className="object-cover"
-                                                        data-ai-hint={petImage.imageHint}
-                                                    />
-                                                )}
+                                                <Image
+                                                    src={imageUrl}
+                                                    alt={pet.name}
+                                                    fill
+                                                    className="object-cover"
+                                                    data-ai-hint={pet.breed ?? pet.type_name}
+                                                />
                                             </div>
                                             <CardHeader className="p-3">
                                                 <CardTitle className="text-base">{pet.name}</CardTitle>

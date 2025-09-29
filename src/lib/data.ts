@@ -47,23 +47,7 @@ export type Resource = {
 export const pets: Pet[] = [];
 
 
-export const organizations: Organization[] = [
-  {
-    id: 'org1',
-    name: 'Happy Paws Rescue',
-    location: { lat: 19.0760, lng: 72.8777, state: "Maharashtra" },
-  },
-  {
-    id: 'org2',
-    name: 'Second Chance Shelter',
-    location: { lat: 28.6139, lng: 77.2090, state: "Delhi" },
-  },
-  {
-    id: 'org3',
-    name: 'Furry Friends Foundation',
-    location: { lat: 12.9716, lng: 77.5946, state: "Karnataka" },
-  },
-];
+export const organizations: Organization[] = [];
 
 export const resources: Resource[] = [
     {
@@ -87,4 +71,5 @@ export const resources: Resource[] = [
       content: 'Many common household items can be toxic to pets. These include certain plants (like lilies and tulips), human foods (like chocolate, grapes, onions, and xylitol), and cleaning products. Keep all chemicals and medications securely stored out of reach. Be mindful of electrical cords and small objects that could be choking hazards. Pet-proofing your home is an essential step in responsible pet ownership.',
     },
 ];
+
 
