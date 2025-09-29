@@ -2,6 +2,7 @@
 'use server';
 
 import { z } from "zod";
+import API_ENDPOINTS from "./endpoints";
 
 type PetType = {
   type: string;
@@ -16,7 +17,7 @@ export async function getPetTypes() {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/pet-data/pet-types/`, { cache: 'no-store' });
+        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.petTypes}`, { cache: 'no-store' });
         if (!response.ok) {
             console.error('Failed to fetch pet types:', response.statusText);
             return null;
@@ -37,7 +38,7 @@ const registerUserSchema = z.object({
   email: z.string().email('Please enter a valid email address.'),
   password: z.string().min(6, 'Password must be at least 6 characters.'),
   phone_no: z.string().optional(),
-  gender: z.enum(['Male', 'Female']).optional(),
+  gender: z.enum(['Male', 'Female']),
 });
 
 
@@ -60,7 +61,7 @@ export async function registerUser(userData: z.infer<typeof registerUserSchema>)
     };
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/user-auth/register`, {
+        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.register}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -95,7 +96,7 @@ export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/user-auth/login`, {
+        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.login}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -125,7 +126,7 @@ export async function getUserDetails(token: string) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/user-auth/user-details`, {
+        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.userDetails}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -160,7 +161,7 @@ export async function getAllPets(token: string) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/pet-data/pets/`, {
+        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.allPets}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
