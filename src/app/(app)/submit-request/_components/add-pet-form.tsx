@@ -128,11 +128,9 @@ export function AddPetForm() {
       available_for_adopt: true, 
       address: null,
     };
-    // remove fields not needed for the API
-    delete (payload as any).type;
 
     try {
-        const result = await submitRequest(token, 'add-pet', payload);
+        const result = await submitRequest(token, 'pet', payload);
         toast({
             title: 'Pet Added!',
             description: result.message || `${values.name} has been listed for adoption.`,
@@ -437,5 +435,3 @@ export function AddPetForm() {
     </Form>
   );
 }
-
-    

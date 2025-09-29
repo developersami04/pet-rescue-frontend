@@ -265,7 +265,7 @@ export async function submitRequest(token: string, requestType: string, payload:
         request_type: requestType,
     };
 
-    if (requestType === 'add-pet') {
+    if (requestType === 'pet') {
         requestBody.pet = payload;
     } else if (requestType === 'pet-medical-history') {
         requestBody.pet_medical_history = payload;
