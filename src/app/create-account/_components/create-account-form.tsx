@@ -29,8 +29,12 @@ const createAccountSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.'),
   email: z.string().email('Please enter a valid email address.'),
   password: z.string().min(6, 'Password must be at least 6 characters.'),
+  confirmPassword: z.string(),
   phone_no: z.string().min(10, 'Please enter a valid phone number.').optional(),
   gender: z.enum(['Male', 'Female']),
+}).refine(data => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
 });
 
 export function CreateAccountForm() {
@@ -46,6 +50,7 @@ export function CreateAccountForm() {
       username: '',
       email: '',
       password: '',
+      confirmPassword: '',
       phone_no: '',
     },
   });
@@ -174,6 +179,19 @@ export function CreateAccountForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="••••••••" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="••••••••" {...field} />
                   </FormControl>
