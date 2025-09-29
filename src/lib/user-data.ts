@@ -1,4 +1,5 @@
 
+
 export type User = {
   id: number;
   profile_image: string | null;
@@ -8,9 +9,9 @@ export type User = {
   last_name: string;
   is_verified: boolean;
   phone_no: string | null;
-  pin_code: string | null;
+  gender?: 'Male' | 'Female';
+  pin_code: number | null;
   address: string | null;
-  password?: string;
 };
 
 export const sampleUser: User = {
@@ -21,8 +22,8 @@ export const sampleUser: User = {
   first_name: "Atrika",
   last_name: "P",
   is_verified: true,
-  phone_no: null,
-  pin_code: null,
-  address: null,
-  password: "7219"
+  phone_no: "9876543210",
+  pin_code: 765432,
+  address: "123 Pet Street, Animal City",
+  gender: 'Female',
 };

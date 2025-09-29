@@ -118,3 +118,38 @@ export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
         throw new Error('An unknown error occurred during login.');
     }
 }
+
+export async function getUserDetails(token: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API_BASE_URL is not defined in the environment variables.');
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user-auth/user-details`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            // If the token is invalid or expired, the server might return a 401
+            if (response.status === 401) {
+                 // Here you could also trigger a token refresh logic
+                throw new Error('Session expired. Please log in again.');
+            }
+            throw new Error(result.message || result.detail || 'Failed to fetch user details.');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching user details.');
+    }
+}

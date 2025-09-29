@@ -1,18 +1,50 @@
+
+'use client';
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { sampleUser } from "@/lib/user-data";
 import { PawPrint, Heart, Home, Award } from "lucide-react";
+import { useUserDetails } from "@/hooks/use-user-details";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export function UserProfileCard() {
+    const { user, isLoading, error } = useUserDetails();
+
+    if (isLoading) {
+        return (
+             <Card>
+                <CardContent className="p-6 flex flex-col items-center text-center">
+                    <Skeleton className="h-24 w-24 rounded-full mb-4" />
+                    <Skeleton className="h-6 w-3/4 mb-2" />
+                    <Skeleton className="h-4 w-1/2" />
+                </CardContent>
+            </Card>
+        )
+    }
+
+    if (error) {
+        return (
+            <Alert variant="destructive">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+            </Alert>
+        )
+    }
+
+    if (!user) {
+        return null;
+    }
+
     return (
         <Card>
             <CardContent className="p-6 flex flex-col items-center text-center">
                 <Avatar className="h-24 w-24 mb-4">
-                    <AvatarImage src={sampleUser.profile_image ?? `https://picsum.photos/seed/${sampleUser.username}/200/200`} alt={sampleUser.username} />
-                    <AvatarFallback>{sampleUser.first_name.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={user.profile_image ?? `https://picsum.photos/seed/${user.username}/200/200`} alt={user.username} />
+                    <AvatarFallback>{user.first_name.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <h2 className="text-xl font-bold">{sampleUser.first_name} {sampleUser.last_name}</h2>
-                <p className="text-muted-foreground">@{sampleUser.username}</p>
+                <h2 className="text-xl font-bold">{user.first_name} {user.last_name}</h2>
+                <p className="text-muted-foreground">@{user.username}</p>
                 
                 <div className="mt-6 w-full grid grid-cols-2 gap-4 text-muted-foreground">
                     <div className="text-center flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted/50">

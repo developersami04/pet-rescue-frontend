@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState } from "react";
@@ -187,7 +186,6 @@ export function HeaderNav() {
               </Button>
             )})}
             <DropdownNav label="Pets" items={navItems.pets} />
-            <DropdownNav label="Resources" items={navItems.resources} />
             <DropdownNav label="AI Features" items={navItems.aiFeatures} />
             <DropdownNav label="More" items={navItems.more} />
           </nav>

@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -8,9 +7,7 @@ import * as z from 'zod';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { sampleUser } from "@/lib/user-data";
 import {
   Form,
   FormControl,
@@ -22,6 +19,10 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import { useUserDetails } from '@/hooks/use-user-details';
+import { useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const profileFormSchema = z.object({
     firstName: z.string().min(1, 'First name is required.'),
@@ -34,22 +35,72 @@ const profileFormSchema = z.object({
     newPassword: z.string().min(6, 'Password must be at least 6 characters.').optional().or(z.literal('')),
 });
 
+function ProfileFormSkeleton() {
+    return (
+        <Card>
+            <CardHeader>
+                <Skeleton className="h-7 w-1/4" />
+                <Skeleton className="h-4 w-1/2" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-1/4" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-1/4" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+                </div>
+                 <div className="space-y-2">
+                    <Skeleton className="h-4 w-1/4" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+                 <div className="space-y-2">
+                    <Skeleton className="h-4 w-1/4" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+            </CardContent>
+            <CardFooter>
+                 <Skeleton className="h-10 w-28" />
+            </CardFooter>
+        </Card>
+    )
+}
 
 export function ProfileForm() {
     const { toast } = useToast();
+    const { user, isLoading, error } = useUserDetails();
+
     const form = useForm<z.infer<typeof profileFormSchema>>({
         resolver: zodResolver(profileFormSchema),
         defaultValues: {
-            firstName: sampleUser.first_name,
-            lastName: sampleUser.last_name,
-            username: sampleUser.username,
-            email: sampleUser.email,
-            phone: sampleUser.phone_no ?? '',
-            address: sampleUser.address ?? '',
+            firstName: '',
+            lastName: '',
+            username: '',
+            email: '',
+            phone: '',
+            address: '',
             currentPassword: '',
             newPassword: '',
         },
     });
+
+    useEffect(() => {
+        if (user) {
+            form.reset({
+                firstName: user.first_name,
+                lastName: user.last_name,
+                username: user.username,
+                email: user.email,
+                phone: user.phone_no ?? '',
+                address: user.address ?? '',
+                currentPassword: '',
+                newPassword: '',
+            });
+        }
+    }, [user, form]);
 
     const { isSubmitting } = form.formState;
 
@@ -60,6 +111,20 @@ export function ProfileForm() {
             description: 'Your changes have been saved successfully.',
         });
     }
+
+    if (isLoading) {
+        return <ProfileFormSkeleton />
+    }
+
+     if (error) {
+        return (
+            <Alert variant="destructive">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+            </Alert>
+        )
+    }
+
 
     return (
         <Card>
