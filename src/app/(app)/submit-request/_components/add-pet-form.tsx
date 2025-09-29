@@ -64,6 +64,26 @@ export function AddPetForm() {
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [petTypes, setPetTypes] = useState<PetType[]>([]);
+  
+  const form = useForm<z.infer<typeof addPetSchema>>({
+    resolver: zodResolver(addPetSchema),
+    defaultValues: {
+      name: '',
+      type: '',
+      breed: '',
+      age: null,
+      weight: null,
+      pincode: null,
+      description: '',
+      is_vaccinated: false,
+      is_diseased: false,
+      city: '',
+      state: '',
+      color: ''
+    },
+  });
+  
+  const { isSubmitting } = form.formState;
 
   useEffect(() => {
     async function fetchPetTypes() {
@@ -90,23 +110,6 @@ export function AddPetForm() {
     fetchPetTypes();
   }, [toast]);
 
-  const form = useForm<z.infer<typeof addPetSchema>>({
-    resolver: zodResolver(addPetSchema),
-    defaultValues: {
-      name: '',
-      type: '',
-      breed: '',
-      description: '',
-      is_vaccinated: false,
-      is_diseased: false,
-      city: '',
-      state: '',
-      color: '',
-    },
-  });
-
-  const { formState: { isSubmitting } } = form;
-
   async function onSubmit(values: z.infer<typeof addPetSchema>) {
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -119,24 +122,14 @@ export function AddPetForm() {
     }
     
     const payload = {
-      name: values.name,
+      ...values,
       pet_type: parseInt(values.type),
-      breed: values.breed,
-      age: values.age,
-      weight: values.weight,
-      size: values.size,
-      gender: values.gender,
-      description: values.description,
       image: null, 
       available_for_adopt: true, 
-      is_vaccinated: values.is_vaccinated,
-      is_diseased: values.is_diseased,
-      city: values.city,
-      pincode: values.pincode,
-      state: values.state,
-      color: values.color,
       address: null,
     };
+    // remove fields not needed for the API
+    delete (payload as any).type;
 
     try {
         const result = await submitRequest(token, 'add-pet', payload);
@@ -188,7 +181,7 @@ export function AddPetForm() {
                     render={({ field }) => (
                     <FormItem>
                         <FormLabel>Type</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value} disabled={petTypes.length === 0}>
+                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={petTypes.length === 0}>
                         <FormControl>
                             <SelectTrigger>
                             <SelectValue placeholder="Select pet type" />
@@ -251,7 +244,7 @@ export function AddPetForm() {
                     render={({ field }) => (
                     <FormItem>
                         <FormLabel>Size</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                             <SelectTrigger>
                             <SelectValue placeholder="Select size" />
@@ -273,7 +266,7 @@ export function AddPetForm() {
                     render={({ field }) => (
                     <FormItem>
                         <FormLabel>Gender</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select gender" />
@@ -334,7 +327,7 @@ export function AddPetForm() {
                     <FormItem>
                         <FormLabel>Pincode</FormLabel>
                         <FormControl>
-                        <Input type="number" placeholder="Enter pincode" {...field} value={field.value ?? ''}/>
+                        <Input type="number" placeholder="Enter pincode" {...field} value={field.value ?? ''} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
