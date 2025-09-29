@@ -6,6 +6,19 @@ import { FeaturedPet } from "./_components/featured-pet";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+
+function DashboardStatsSkeleton() {
+    return (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Skeleton className="h-28" />
+            <Skeleton className="h-28" />
+            <Skeleton className="h-28" />
+            <Skeleton className="h-28" />
+        </div>
+    )
+}
 
 export default function DashboardPage() {
   return (
@@ -23,7 +36,9 @@ export default function DashboardPage() {
           </Link>
         </Button>
       </div>
-      <DashboardStats />
+      <Suspense fallback={<DashboardStatsSkeleton />}>
+        <DashboardStats />
+      </Suspense>
       <div className="mt-8">
         <h2 className="text-2xl font-bold tracking-tight font-headline mb-4">
           Featured Pet
