@@ -30,11 +30,11 @@ import { Pet } from '@/lib/data';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
-import { getAllPets } from '@/lib/action_api';
+import { getAllPets, submitRequest } from '@/lib/action_api';
 import { useUserDetails } from '@/hooks/use-user-details';
 
 const reportSchema = z.object({
-  reportType: z.enum(['Lost', 'Found'], {
+  reportType: z.enum(['lost', 'found'], {
     required_error: 'You need to select a report type.',
   }),
   petId: z.string().optional(),
@@ -51,10 +51,11 @@ const reportSchema = z.object({
 
 export function PetReportForm() {
   const { toast } = useToast();
-  const [reportType, setReportType] = useState<'Lost' | 'Found' | undefined>();
+  const [reportType, setReportType] = useState<'lost' | 'found' | undefined>();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [userPets, setUserPets] = useState<Pet[]>([]);
   const { user } = useUserDetails();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchUserPets() {
@@ -70,7 +71,7 @@ export function PetReportForm() {
         }
       }
     }
-    if (reportType === 'Lost') {
+    if (reportType === 'lost') {
       fetchUserPets();
     }
   }, [reportType, user]);
@@ -82,25 +83,54 @@ export function PetReportForm() {
     },
   });
 
-  const { isSubmitting } = form.formState;
-
-  function onSubmit(values: z.infer<typeof reportSchema>) {
-    if (values.reportType === 'Lost' && !values.petId) {
+  async function onSubmit(values: z.infer<typeof reportSchema>) {
+    if (values.reportType === 'lost' && !values.petId) {
         form.setError('petId', { message: 'Please select which pet is lost.'});
         return;
     }
-    if (values.reportType === 'Found' && !values.image) {
+    // API requires an image for found pets, but the form field is optional.
+    // Let's enforce it here if it's a 'found' report
+    if (values.reportType === 'found' && (!values.image || values.image.length === 0)) {
         form.setError('image', { message: 'Please upload an image of the pet you found.' });
         return;
     }
-    console.log('Pet report submitted:', values);
-    toast({
-      title: 'Report Submitted',
-      description: `Your ${values.reportType.toLowerCase()} pet report has been submitted.`,
-    });
-    form.reset();
-    setReportType(undefined);
-    setImagePreview(null);
+
+    setIsSubmitting(true);
+    const token = localStorage.getItem('authToken');
+     if (!token) {
+        toast({
+            variant: 'destructive',
+            title: 'Authentication Error',
+            description: 'You must be logged in to submit a report.',
+        });
+        setIsSubmitting(false);
+        return;
+    }
+
+    const payload = {
+        pet: parseInt(values.petId!),
+        pet_status: values.reportType,
+        message: values.message,
+    };
+
+    try {
+        const result = await submitRequest(token, 'pet-report', payload);
+        toast({
+            title: 'Report Submitted!',
+            description: result.message || `Your ${values.reportType} pet report has been submitted.`,
+        });
+        form.reset();
+        setReportType(undefined);
+        setImagePreview(null);
+    } catch (error: any) {
+         toast({
+            variant: 'destructive',
+            title: 'Submission Failed',
+            description: error.message || 'An unexpected error occurred.',
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,20 +155,20 @@ export function PetReportForm() {
                 <RadioGroup
                   onValueChange={(value) => {
                     field.onChange(value);
-                    setReportType(value as 'Lost' | 'Found');
+                    setReportType(value as 'lost' | 'found');
                   }}
                   defaultValue={field.value}
                   className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4"
                 >
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="Lost" />
+                      <RadioGroupItem value="lost" />
                     </FormControl>
                     <FormLabel className="font-normal">I lost my pet</FormLabel>
                   </FormItem>
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="Found" />
+                      <RadioGroupItem value="found" />
                     </FormControl>
                     <FormLabel className="font-normal">I found a pet</FormLabel>
                   </FormItem>
@@ -151,7 +181,7 @@ export function PetReportForm() {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-2 space-y-8">
-                {reportType === 'Lost' && (
+                {reportType === 'lost' && (
                     <FormField
                         control={form.control}
                         name="petId"
@@ -185,12 +215,12 @@ export function PetReportForm() {
                         <FormControl>
                             <Textarea
                             placeholder={
-                                reportType === 'Lost' 
+                                reportType === 'lost' 
                                 ? "Describe where and when you last saw your pet." 
                                 : "Describe the pet you found and where you found it."
                             }
                             className="resize-none"
-                            rows={reportType === 'Found' ? 10 : 6}
+                            rows={reportType === 'found' ? 10 : 6}
                             {...field}
                             />
                         </FormControl>
@@ -200,7 +230,7 @@ export function PetReportForm() {
                 />
             </div>
             
-            {reportType === 'Found' && (
+            {reportType === 'found' && (
                 <div className="space-y-4">
                     <FormField
                         control={form.control}
@@ -212,7 +242,7 @@ export function PetReportForm() {
                                     <Input 
                                         type="file" 
                                         accept="image/png, image/jpeg, image/webp"
-                                        className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+                                        className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                                         {...rest}
                                         onChange={(e) => {
                                             onChange(e.target.files);

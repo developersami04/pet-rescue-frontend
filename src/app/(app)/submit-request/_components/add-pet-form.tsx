@@ -27,25 +27,31 @@ import { Loader2, Upload } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
-import { getPetTypes } from '@/lib/action_api';
+import { getPetTypes, submitRequest } from '@/lib/action_api';
 
 const addPetSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   type: z.string().min(1, 'Pet type is required.'),
   breed: z.string().min(2, 'Breed is required.'),
-  age: z.coerce.number().min(0, 'Age must be a positive number.'),
-  weight: z.coerce.number().min(0, 'Weight must be a positive number.'),
+  age: z.coerce.number().min(0, 'Age must be a positive number.').nullable(),
+  weight: z.coerce.number().min(0, 'Weight must be a positive number.').nullable(),
   size: z.enum(['Small', 'Medium', 'Large']),
   gender: z.enum(['Male', 'Female']),
   description: z.string().min(10, 'Description must be at least 10 characters.'),
   image: z
     .any()
-    .refine((files) => files?.length === 1, 'Image is required.')
-    .refine((files) => files?.[0]?.size <= 5000000, `Max file size is 5MB.`)
+    .optional()
+    .refine((files) => !files || files.length === 0 || files?.[0]?.size <= 5000000, `Max file size is 5MB.`)
     .refine(
-      (files) => ['image/jpeg', 'image/png', 'image/webp'].includes(files?.[0]?.type),
+      (files) => !files || files.length === 0 || ['image/jpeg', 'image/png', 'image/webp'].includes(files?.[0]?.type),
       'Only .jpg, .png, and .webp formats are supported.'
     ),
+  is_vaccinated: z.boolean().default(false),
+  is_diseased: z.boolean().default(false),
+  city: z.string().optional(),
+  pincode: z.coerce.number().optional().nullable(),
+  state: z.string().optional(),
+  color: z.string().optional(),
 });
 
 type PetType = {
@@ -57,6 +63,7 @@ export function AddPetForm() {
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [petTypes, setPetTypes] = useState<PetType[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchPetTypes() {
@@ -92,19 +99,63 @@ export function AddPetForm() {
       age: 0,
       weight: 0,
       description: '',
+      is_vaccinated: false,
+      is_diseased: false,
     },
   });
 
-  const { isSubmitting } = form.formState;
+  async function onSubmit(values: z.infer<typeof addPetSchema>) {
+    setIsSubmitting(true);
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        toast({
+            variant: 'destructive',
+            title: 'Authentication Error',
+            description: 'You must be logged in to add a pet.',
+        });
+        setIsSubmitting(false);
+        return;
+    }
+    
+    // We don't send the image file directly, API expects `image: null` for now.
+    // The API structure for file uploads would need to be different (e.g. multipart/form-data).
+    const payload = {
+      name: values.name,
+      pet_type: parseInt(values.type),
+      breed: values.breed,
+      age: values.age,
+      weight: values.weight,
+      size: values.size,
+      gender: values.gender,
+      description: values.description,
+      image: null, 
+      available_for_adopt: true, 
+      is_vaccinated: values.is_vaccinated,
+      is_diseased: values.is_diseased,
+      city: values.city,
+      pincode: values.pincode,
+      state: values.state,
+      color: values.color,
+      address: null, // API schema says address can be null
+    };
 
-  function onSubmit(values: z.infer<typeof addPetSchema>) {
-    console.log('New pet data submitted:', values);
-    toast({
-      title: 'Pet Added!',
-      description: `${values.name} has been listed for adoption.`,
-    });
-    form.reset();
-    setImagePreview(null);
+    try {
+        const result = await submitRequest(token, 'add-pet', payload);
+        toast({
+            title: 'Pet Added!',
+            description: result.message || `${values.name} has been listed for adoption.`,
+        });
+        form.reset();
+        setImagePreview(null);
+    } catch (error: any) {
+         toast({
+            variant: 'destructive',
+            title: 'Failed to add pet',
+            description: error.message || 'An unexpected error occurred.',
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,6 +291,58 @@ export function AddPetForm() {
                     </FormItem>
                     )}
                 />
+                 <FormField
+                    control={form.control}
+                    name="color"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Color</FormLabel>
+                        <FormControl>
+                        <Input placeholder="Enter color" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="city"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>City</FormLabel>
+                        <FormControl>
+                        <Input placeholder="Enter city" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="state"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>State</FormLabel>
+                        <FormControl>
+                        <Input placeholder="Enter state" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="pincode"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Pincode</FormLabel>
+                        <FormControl>
+                        <Input type="number" placeholder="Enter pincode" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
             </div>
             <div className="lg:col-span-1 space-y-4">
                  <FormField
@@ -252,7 +355,7 @@ export function AddPetForm() {
                                 <Input 
                                     type="file" 
                                     accept="image/png, image/jpeg, image/webp"
-                                    className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+                                    className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                                     {...rest}
                                     onChange={(e) => {
                                         onChange(e.target.files);

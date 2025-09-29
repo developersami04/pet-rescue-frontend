@@ -34,7 +34,6 @@ export async function getPetTypes(): Promise<PetType[] | null> {
     try {
         const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.petTypes}`, { cache: 'no-store' });
         if (!response.ok) {
-            // No toast here, will be handled in the component
             console.error('Failed to fetch pet types:', response.statusText);
             return null;
         }
@@ -216,5 +215,54 @@ export async function getAllPets(token: string) {
            throw new Error(error.message);
         }
         throw new Error('An unknown error occurred while fetching pets.');
+    }
+}
+
+
+export async function submitRequest(token: string, requestType: string, payload: any) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    let requestBody: any = {
+        request_type: requestType,
+    };
+
+    if (requestType === 'add-pet') {
+        requestBody.pet = payload;
+    } else if (requestType === 'pet-medical-history') {
+        requestBody.pet_medical_history = payload;
+    } else if (requestType === 'pet-report') {
+        requestBody.pet_report = payload;
+    } else {
+        throw new Error('Invalid request type specified.');
+    }
+
+    try {
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.requestSubmit}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(requestBody),
+        });
+        
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || `Failed to submit ${requestType} request.`);
+        }
+
+        return result;
+    } catch (error) {
+         if ((error as any).name === 'AbortError') {
+            throw new Error(`Request for ${requestType} timed out.`);
+        }
+        console.error(`Error submitting ${requestType}:`, error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error(`An unknown error occurred while submitting the ${requestType} request.`);
     }
 }

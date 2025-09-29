@@ -29,8 +29,13 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Pet } from '@/lib/data';
-import { getAllPets } from '@/lib/action_api';
+import { getAllPets, submitRequest } from '@/lib/action_api';
 import { useUserDetails } from '@/hooks/use-user-details';
+import { DayPicker } from 'react-day-picker';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 
 const medicalHistorySchema = z.object({
   petId: z.string().min(1, 'Please select a pet.'),
@@ -39,6 +44,7 @@ const medicalHistorySchema = z.object({
   stage: z.string().min(1, 'Stage is required.'),
   years: z.coerce.number().min(0, 'Please enter a valid number of years.'),
   message: z.string().optional(),
+  last_vaccinated_date: z.date().optional(),
   image: z
     .any()
     .optional()
@@ -54,6 +60,7 @@ export function PetMedicalHistoryForm() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [userPets, setUserPets] = useState<Pet[]>([]);
   const { user } = useUserDetails();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchUserPets() {
@@ -88,16 +95,46 @@ export function PetMedicalHistoryForm() {
     },
   });
 
-  const { isSubmitting } = form.formState;
+  async function onSubmit(values: z.infer<typeof medicalHistorySchema>) {
+    setIsSubmitting(true);
+     const token = localStorage.getItem('authToken');
+    if (!token) {
+        toast({
+            variant: 'destructive',
+            title: 'Authentication Error',
+            description: 'You must be logged in to submit a medical history.',
+        });
+        setIsSubmitting(false);
+        return;
+    }
 
-  function onSubmit(values: z.infer<typeof medicalHistorySchema>) {
-    console.log('Medical history submitted:', values);
-    toast({
-      title: 'Medical History Added',
-      description: `The record has been added for your pet.`,
-    });
-    form.reset();
-    setImagePreview(null);
+    const payload = {
+        pet: parseInt(values.petId),
+        disease_name: values.diseaseName,
+        stage: parseInt(values.stage),
+        no_of_years: values.years,
+        vaccination_name: values.vaccineName,
+        last_vaccinated_date: values.last_vaccinated_date ? format(values.last_vaccinated_date, 'yyyy-MM-dd') : null,
+        message: values.message,
+    };
+
+    try {
+        const result = await submitRequest(token, 'pet-medical-history', payload);
+        toast({
+            title: 'Medical History Added!',
+            description: result.message || 'The medical record has been submitted.',
+        });
+        form.reset();
+        setImagePreview(null);
+    } catch (error: any) {
+        toast({
+            variant: 'destructive',
+            title: 'Submission Failed',
+            description: error.message || 'An unexpected error occurred.',
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,6 +217,47 @@ export function PetMedicalHistoryForm() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="last_vaccinated_date"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Last Vaccinated Date</FormLabel>
+                   <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <DayPicker
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <div className="lg:col-span-1 space-y-4">
             <FormField
@@ -192,7 +270,7 @@ export function PetMedicalHistoryForm() {
                     <Input 
                       type="file" 
                       accept="image/png, image/jpeg, image/webp"
-                      className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+                      className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                       {...rest}
                       onChange={(e) => {
                         onChange(e.target.files);
