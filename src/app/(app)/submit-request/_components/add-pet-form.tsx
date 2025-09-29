@@ -71,12 +71,12 @@ export function AddPetForm() {
                     description: 'Could not fetch pet types.',
                 });
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to fetch pet types', error);
              toast({
                 variant: 'destructive',
-                title: 'Error',
-                description: 'Could not fetch pet types.',
+                title: 'Error fetching pet types',
+                description: error.message || 'An unexpected error occurred.',
             });
         }
     }

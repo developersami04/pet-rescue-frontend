@@ -8,6 +8,7 @@ import { PetFilters } from './pet-filters';
 import { getAllPets } from '@/lib/action_api';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useToast } from '@/hooks/use-toast';
 
 function PetListSkeleton() {
   return (
@@ -36,6 +37,7 @@ export function PetList() {
   const [pets, setPets] = useState<Pet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const [search, setSearch] = useState('');
   const [type, setType] = useState('All');
@@ -54,13 +56,18 @@ export function PetList() {
         setPets(petsData);
       } catch (e: any) {
         setError(e.message || 'Failed to fetch pets.');
+        toast({
+          variant: 'destructive',
+          title: 'Failed to fetch pets',
+          description: e.message || 'An unexpected error occurred. Please try again.',
+        });
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchPets();
-  }, []);
+  }, [toast]);
 
   const filteredPets = useMemo(() => {
     return pets.filter((pet) => {
@@ -84,7 +91,7 @@ export function PetList() {
     return <PetListSkeleton />;
   }
 
-  if (error) {
+  if (error && pets.length === 0) {
     return (
       <Alert variant="destructive">
         <AlertTitle>Error</AlertTitle>
@@ -108,7 +115,7 @@ export function PetList() {
           <PetCard key={pet.id} pet={pet} />
         ))}
       </div>
-      {filteredPets.length === 0 && (
+      {filteredPets.length === 0 && !isLoading && (
         <div className="text-center py-16 col-span-full">
           <h3 className="text-xl font-semibold">No Pets Found</h3>
           <p className="text-muted-foreground mt-2">

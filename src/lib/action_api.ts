@@ -11,7 +11,7 @@ type PetType = {
 
 const API_BASE_URL = process.env.API_BASE_URL;
 
-export async function getPetTypes() {
+export async function getPetTypes(): Promise<PetType[] | null> {
     if (!API_BASE_URL) {
         console.error('API_BASE_URL is not defined in the environment variables.');
         return null;
@@ -20,6 +20,7 @@ export async function getPetTypes() {
     try {
         const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.petTypes}`, { cache: 'no-store' });
         if (!response.ok) {
+            // No toast here, will be handled in the component
             console.error('Failed to fetch pet types:', response.statusText);
             return null;
         }
@@ -27,6 +28,7 @@ export async function getPetTypes() {
         return data;
     } catch (error) {
         console.error('Error fetching pet types:', error);
+        // No toast here, will be handled in the component
         return null;
     }
 }
@@ -45,7 +47,7 @@ const registerUserSchema = z.object({
 
 export async function registerUser(userData: z.infer<typeof registerUserSchema>) {
     if (!API_BASE_URL) {
-        throw new Error('API_BASE_URL is not defined in the environment variables.');
+        throw new Error('API is not configured. Please contact support.');
     }
 
     const payload = {
@@ -93,7 +95,7 @@ const loginUserSchema = z.object({
 
 export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
     if (!API_BASE_URL) {
-        throw new Error('API_BASE_URL is not defined in the environment variables.');
+        throw new Error('API is not configured. Please contact support.');
     }
 
     try {
@@ -123,7 +125,7 @@ export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
 
 export async function getUserDetails(token: string) {
     if (!API_BASE_URL) {
-        throw new Error('API_BASE_URL is not defined in the environment variables.');
+        throw new Error('API is not configured. Please contact support.');
     }
 
     try {
@@ -138,9 +140,7 @@ export async function getUserDetails(token: string) {
         const result = await response.json();
 
         if (!response.ok) {
-            // If the token is invalid or expired, the server might return a 401
             if (response.status === 401) {
-                 // Here you could also trigger a token refresh logic
                 throw new Error('Session expired. Please log in again.');
             }
             throw new Error(result.message || result.detail || 'Failed to fetch user details.');
@@ -158,7 +158,7 @@ export async function getUserDetails(token: string) {
 
 export async function getAllPets(token: string) {
     if (!API_BASE_URL) {
-        throw new Error('API_BASE_URL is not defined in the environment variables.');
+        throw new Error('API is not configured. Please contact support.');
     }
 
     try {
