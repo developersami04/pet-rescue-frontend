@@ -51,7 +51,6 @@ import { Skeleton } from "./ui/skeleton";
 
 const navItems = {
   main: [
-      { href: "/feed", icon: Home, label: "Feed" },
       { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
     ],
   pets: [

@@ -51,7 +51,7 @@ export function LoginForm() {
       localStorage.setItem('authToken', result.access_token);
       localStorage.setItem('refreshToken', result.refresh_token);
       window.dispatchEvent(new Event('storage')); // Manually trigger storage event
-      router.push('/feed');
+      router.push('/dashboard');
     } catch (error: any) {
       toast({
         variant: 'destructive',
