@@ -24,13 +24,14 @@ import {
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Upload } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
+import { getPetTypes } from '@/lib/action_api';
 
 const addPetSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
-  type: z.enum(['Dog', 'Cat', 'Bird']),
+  type: z.string().min(1, 'Pet type is required.'),
   breed: z.string().min(2, 'Breed is required.'),
   age: z.coerce.number().min(0, 'Age must be a positive number.'),
   weight: z.coerce.number().min(0, 'Weight must be a positive number.'),
@@ -47,14 +48,46 @@ const addPetSchema = z.object({
     ),
 });
 
+type PetType = {
+  id: number;
+  type: string;
+};
+
 export function AddPetForm() {
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [petTypes, setPetTypes] = useState<PetType[]>([]);
+
+  useEffect(() => {
+    async function fetchPetTypes() {
+        try {
+            const types = await getPetTypes();
+            if (types) {
+                setPetTypes(types);
+            } else {
+                 toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: 'Could not fetch pet types.',
+                });
+            }
+        } catch (error) {
+            console.error('Failed to fetch pet types', error);
+             toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Could not fetch pet types.',
+            });
+        }
+    }
+    fetchPetTypes();
+  }, [toast]);
 
   const form = useForm<z.infer<typeof addPetSchema>>({
     resolver: zodResolver(addPetSchema),
     defaultValues: {
       name: '',
+      type: '',
       breed: '',
       age: 0,
       weight: 0,
@@ -107,16 +140,18 @@ export function AddPetForm() {
                     render={({ field }) => (
                     <FormItem>
                         <FormLabel>Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={petTypes.length === 0}>
                         <FormControl>
                             <SelectTrigger>
                             <SelectValue placeholder="Select pet type" />
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            <SelectItem value="Dog">Dog</SelectItem>
-                            <SelectItem value="Cat">Cat</SelectItem>
-                            <SelectItem value="Bird">Bird</SelectItem>
+                            {petTypes.map(petType => (
+                                <SelectItem key={petType.id} value={String(petType.id)}>
+                                    {petType.type}
+                                </SelectItem>
+                            ))}
                         </SelectContent>
                         </Select>
                         <FormMessage />

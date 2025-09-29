@@ -5,6 +5,7 @@ import { z } from "zod";
 import API_ENDPOINTS from "./endpoints";
 
 type PetType = {
+  id: number;
   type: string;
 };
 
