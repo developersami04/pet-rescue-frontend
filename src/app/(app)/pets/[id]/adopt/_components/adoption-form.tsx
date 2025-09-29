@@ -84,7 +84,7 @@ export function AdoptionForm({ petName }: AdoptionFormProps) {
               <FormItem>
                 <FormLabel>Full Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="John Doe" {...field} />
+                  <Input placeholder="Enter your full name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -99,7 +99,7 @@ export function AdoptionForm({ petName }: AdoptionFormProps) {
                 <FormControl>
                   <Input
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder="Enter your email"
                     {...field}
                   />
                 </FormControl>
@@ -114,7 +114,7 @@ export function AdoptionForm({ petName }: AdoptionFormProps) {
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>
                 <FormControl>
-                  <Input type="tel" placeholder="123-456-7890" {...field} />
+                  <Input type="tel" placeholder="Enter your phone number" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -127,7 +127,7 @@ export function AdoptionForm({ petName }: AdoptionFormProps) {
               <FormItem>
                 <FormLabel>Street Address</FormLabel>
                 <FormControl>
-                  <Input placeholder="123 Main St" {...field} />
+                  <Input placeholder="Enter your street address" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -140,7 +140,7 @@ export function AdoptionForm({ petName }: AdoptionFormProps) {
               <FormItem>
                 <FormLabel>City</FormLabel>
                 <FormControl>
-                  <Input placeholder="Anytown" {...field} />
+                  <Input placeholder="Enter your city" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -154,7 +154,7 @@ export function AdoptionForm({ petName }: AdoptionFormProps) {
                 <FormItem>
                   <FormLabel>State</FormLabel>
                   <FormControl>
-                    <Input placeholder="CA" {...field} />
+                    <Input placeholder="Enter your state" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -167,7 +167,7 @@ export function AdoptionForm({ petName }: AdoptionFormProps) {
                 <FormItem>
                   <FormLabel>Zip Code</FormLabel>
                   <FormControl>
-                    <Input placeholder="12345" {...field} />
+                    <Input placeholder="Enter zip code" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -36,7 +36,7 @@ const medicalHistorySchema = z.object({
   petId: z.string().min(1, 'Please select a pet.'),
   diseaseName: z.string().min(2, 'Disease name is required.'),
   vaccineName: z.string().min(2, 'Vaccine name is required.'),
-  stage: z.string().min(2, 'Stage is required.'),
+  stage: z.string().min(1, 'Stage is required.'),
   years: z.coerce.number().min(0, 'Please enter a valid number of years.'),
   message: z.string().optional(),
   image: z
@@ -142,7 +142,7 @@ export function PetMedicalHistoryForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Disease Name</FormLabel>
-                  <FormControl><Input placeholder="Canine Distemper" {...field} /></FormControl>
+                  <FormControl><Input placeholder="Enter disease name" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -153,7 +153,7 @@ export function PetMedicalHistoryForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Vaccine Name</FormLabel>
-                  <FormControl><Input placeholder="DHPP" {...field} /></FormControl>
+                  <FormControl><Input placeholder="Enter vaccine name" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -164,7 +164,7 @@ export function PetMedicalHistoryForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Stage</FormLabel>
-                  <FormControl><Input placeholder="2" {...field} /></FormControl>
+                  <FormControl><Input placeholder="Enter stage" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -175,7 +175,7 @@ export function PetMedicalHistoryForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Years Since Vaccination</FormLabel>
-                  <FormControl><Input type="number" placeholder="1" {...field} /></FormControl>
+                  <FormControl><Input type="number" placeholder="Enter years" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -192,6 +192,7 @@ export function PetMedicalHistoryForm() {
                     <Input 
                       type="file" 
                       accept="image/png, image/jpeg, image/webp"
+                      className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
                       {...rest}
                       onChange={(e) => {
                         onChange(e.target.files);

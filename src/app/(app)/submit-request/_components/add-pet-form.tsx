@@ -95,7 +95,7 @@ export function AddPetForm() {
                     <FormItem>
                         <FormLabel>Pet Name</FormLabel>
                         <FormControl>
-                        <Input placeholder="Buddy" {...field} />
+                        <Input placeholder="Enter pet name" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -130,7 +130,7 @@ export function AddPetForm() {
                     <FormItem>
                         <FormLabel>Breed</FormLabel>
                         <FormControl>
-                        <Input placeholder="Golden Retriever" {...field} />
+                        <Input placeholder="Enter breed" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -143,7 +143,7 @@ export function AddPetForm() {
                     <FormItem>
                         <FormLabel>Age (in years)</FormLabel>
                         <FormControl>
-                        <Input type="number" placeholder="2" {...field} />
+                        <Input type="number" placeholder="Enter age" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -156,7 +156,7 @@ export function AddPetForm() {
                     <FormItem>
                         <FormLabel>Weight (in kg)</FormLabel>
                         <FormControl>
-                        <Input type="number" placeholder="15" {...field} />
+                        <Input type="number" placeholder="Enter weight" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -217,6 +217,7 @@ export function AddPetForm() {
                                 <Input 
                                     type="file" 
                                     accept="image/png, image/jpeg, image/webp"
+                                    className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
                                     {...rest}
                                     onChange={(e) => {
                                         onChange(e.target.files);

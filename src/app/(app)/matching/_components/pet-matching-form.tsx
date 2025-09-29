@@ -57,7 +57,7 @@ export function PetMatchingForm({ formAction }: PetMatchingFormProps) {
                   <FormLabel>Your Lifestyle</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="e.g., I live in an apartment and work from home. I enjoy long walks on weekends."
+                      placeholder="Describe your daily routine, living situation, and activity level."
                       className="resize-none"
                       {...field}
                     />
@@ -78,7 +78,7 @@ export function PetMatchingForm({ formAction }: PetMatchingFormProps) {
                   <FormLabel>Pet Preferences</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="e.g., I'm looking for a small to medium-sized dog that is good with children and doesn't shed much."
+                      placeholder="Describe your ideal pet's characteristics (e.g., size, energy level, temperament)."
                       className="resize-none"
                       {...field}
                     />

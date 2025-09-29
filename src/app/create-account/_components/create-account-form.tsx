@@ -91,7 +91,7 @@ export function CreateAccountForm() {
                         <FormItem>
                         <FormLabel>First Name</FormLabel>
                         <FormControl>
-                            <Input placeholder="Atrika" {...field} />
+                            <Input placeholder="Enter your first name" {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -104,7 +104,7 @@ export function CreateAccountForm() {
                         <FormItem>
                         <FormLabel>Last Name</FormLabel>
                         <FormControl>
-                            <Input placeholder="P" {...field} />
+                            <Input placeholder="Enter your last name" {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -118,7 +118,7 @@ export function CreateAccountForm() {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="atrika06" {...field} />
+                    <Input placeholder="Enter a username" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -131,7 +131,7 @@ export function CreateAccountForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="you@example.com" {...field} />
+                    <Input type="email" placeholder="Enter your email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -145,7 +145,7 @@ export function CreateAccountForm() {
                         <FormItem>
                         <FormLabel>Phone Number</FormLabel>
                         <FormControl>
-                            <Input placeholder="9876543210" {...field} />
+                            <Input placeholder="Enter your phone number" {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -180,7 +180,7 @@ export function CreateAccountForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder="Enter a password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -193,7 +193,7 @@ export function CreateAccountForm() {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder="Confirm your password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -23,16 +23,16 @@ export default function ContactUsPage() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Name</Label>
-                  <Input id="name" placeholder="Your Name" />
+                  <Input id="name" placeholder="Enter your name" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="you@example.com" />
+                  <Input id="email" type="email" placeholder="Enter your email" />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="subject">Subject</Label>
-                <Input id="subject" placeholder="Question about adoption" />
+                <Input id="subject" placeholder="Enter subject" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="message">Message</Label>

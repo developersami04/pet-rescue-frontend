@@ -128,7 +128,7 @@ export function PetCareForm() {
                     <FormItem>
                       <FormLabel>Pet Age (years)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="e.g., 3" {...field} />
+                        <Input type="number" placeholder="Enter age" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -141,7 +141,7 @@ export function PetCareForm() {
                     <FormItem>
                       <FormLabel>Pet Breed</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Labrador, Siamese" {...field} />
+                        <Input placeholder="Enter breed" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -155,7 +155,7 @@ export function PetCareForm() {
                       <FormLabel>Your Lifestyle</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="e.g., Active, busy schedule, work from home..."
+                          placeholder="Describe your lifestyle (e.g., active, busy)"
                           {...field}
                         />
                       </FormControl>
@@ -240,7 +240,7 @@ export function PetCareForm() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Utensils className="w-5 h-5 text-accent"/>Feeding Schedule</CardTitle>
               </CardHeader>
-              <CardContent className="prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: state.feedingSchedule.replace(/\n/g, '<br />') }} />
+              <CardContent className="prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: state.feedingSchedule.replace(/\\n/g, '<br />') }} />
             </Card>
           )}
           {state?.exerciseSchedule && (
@@ -248,7 +248,7 @@ export function PetCareForm() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Activity className="w-5 h-5 text-accent"/>Exercise Schedule</CardTitle>
               </CardHeader>
-              <CardContent className="prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: state.exerciseSchedule.replace(/\n/g, '<br />') }} />
+              <CardContent className="prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: state.exerciseSchedule.replace(/\\n/g, '<br />') }} />
             </Card>
           )}
           {state?.groomingSchedule && (
@@ -256,7 +256,7 @@ export function PetCareForm() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Bath className="w-5 h-5 text-accent"/>Grooming Schedule</CardTitle>
               </CardHeader>
-              <CardContent className="prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: state.groomingSchedule.replace(/\n/g, '<br />') }} />
+              <CardContent className="prose prose-sm max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: state.groomingSchedule.replace(/\\n/g, '<br />') }} />
             </Card>
           )}
           {state?.healthTips && (

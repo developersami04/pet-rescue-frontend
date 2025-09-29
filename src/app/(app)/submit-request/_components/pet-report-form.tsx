@@ -186,8 +186,8 @@ export function PetReportForm() {
                             <Textarea
                             placeholder={
                                 reportType === 'Lost' 
-                                ? "Describe where and when you last saw your pet, and any other relevant details." 
-                                : "Describe the pet you found, where you found it, and how to contact you."
+                                ? "Describe where and when you last saw your pet." 
+                                : "Describe the pet you found and where you found it."
                             }
                             className="resize-none"
                             rows={reportType === 'Found' ? 10 : 6}
@@ -212,6 +212,7 @@ export function PetReportForm() {
                                     <Input 
                                         type="file" 
                                         accept="image/png, image/jpeg, image/webp"
+                                        className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
                                         {...rest}
                                         onChange={(e) => {
                                             onChange(e.target.files);
