@@ -51,7 +51,7 @@ async function fetchWithAuth(url: string, options: RequestInit, token: string) {
         } else {
             console.log("Failed to refresh token. User will be logged out.");
              // This custom error will be caught by callers to handle logout
-            throw new Error('Session expired. Please log in again.');
+            throw new Error('Session expired');
         }
     }
 
@@ -90,6 +90,9 @@ export async function refreshAccessToken(): Promise<string | null> {
         return newAccessToken;
     } catch (error) {
         console.error('Error during token refresh:', error);
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('refreshToken');
+        window.dispatchEvent(new Event('storage'));
         return null;
     }
 }
@@ -245,48 +248,28 @@ export async function getUserDetails(token: string) {
     }
 }
 
-const profileFormSchema = z.object({
-    firstName: z.string().min(1, 'First name is required.'),
-    lastName: z.string().min(1, 'Last name is required.'),
-    username: z.string().min(3, 'Username must be at least 3 characters.'),
-    email: z.string().email('Please enter a valid email address.'),
-    phone: z.string().optional(),
-    address: z.string().optional(),
-    currentPassword: z.string().optional(),
-    newPassword: z.string().min(6, 'Password must be at least 6 characters.').optional().or(z.literal('')),
-});
-
-
-export async function updateUserDetails(token: string, userData: z.infer<typeof profileFormSchema>) {
+export async function updateUserDetails(token: string, userData: Record<string, any>) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
     
-    const payload: Record<string, any> = {
-        first_name: userData.firstName,
-        last_name: userData.lastName,
-        username: userData.username,
-        email: userData.email,
-        phone_no: userData.phone,
-        address: userData.address,
-    };
-
-    if (userData.newPassword && userData.currentPassword) {
-        payload.current_password = userData.currentPassword;
-        payload.new_password = userData.newPassword;
-    }
-
-
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.updateUserDetails}`, {
-            method: 'POST',
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(userData),
         }, token);
         
         const result = await response.json();
 
         if (!response.ok) {
+            // Flatten errors if they are in a nested object
+            if (typeof result === 'object' && result !== null) {
+                const errorMessages = Object.values(result).flat().join(' ');
+                if (errorMessages) {
+                    throw new Error(errorMessages);
+                }
+            }
             throw new Error(result.message || result.detail || 'Failed to update user details.');
         }
 

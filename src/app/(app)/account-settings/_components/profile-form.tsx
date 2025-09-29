@@ -7,7 +7,6 @@ import * as z from 'zod';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import {
   Form,
   FormControl,
@@ -25,17 +24,34 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { updateUserDetails } from '@/lib/action_api';
 import { useRouter } from 'next/navigation';
+import { User } from '@/lib/data';
+import { ChangePasswordDialog } from './change-password-dialog';
 
 const profileFormSchema = z.object({
-    firstName: z.string().min(1, 'First name is required.'),
-    lastName: z.string().min(1, 'Last name is required.'),
+    first_name: z.string().min(1, 'First name is required.'),
+    last_name: z.string().min(1, 'Last name is required.'),
     username: z.string().min(3, 'Username must be at least 3 characters.'),
     email: z.string().email('Please enter a valid email address.'),
-    phone: z.string().optional(),
+    phone_no: z.string().optional(),
     address: z.string().optional(),
-    currentPassword: z.string().optional(),
-    newPassword: z.string().min(6, 'Password must be at least 6 characters.').optional().or(z.literal('')),
 });
+
+type ProfileFormValues = z.infer<typeof profileFormSchema>;
+
+function getChangedValues(
+  initialValues: User,
+  currentValues: ProfileFormValues
+): Partial<ProfileFormValues> {
+  const changedValues: Partial<ProfileFormValues> = {};
+  for (const key in currentValues) {
+    const typedKey = key as keyof ProfileFormValues;
+    if (initialValues[typedKey as keyof User] !== currentValues[typedKey]) {
+      changedValues[typedKey] = currentValues[typedKey];
+    }
+  }
+  return changedValues;
+}
+
 
 function ProfileFormSkeleton() {
     return (
@@ -64,8 +80,9 @@ function ProfileFormSkeleton() {
                     <Skeleton className="h-10 w-full" />
                 </div>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex justify-between">
                  <Skeleton className="h-10 w-28" />
+                 <Skeleton className="h-10 w-36" />
             </CardFooter>
         </Card>
     )
@@ -74,42 +91,38 @@ function ProfileFormSkeleton() {
 export function ProfileForm() {
     const { toast } = useToast();
     const router = useRouter();
-    const { user, isLoading, error } = useUserDetails();
+    const { user, isLoading, error, refreshUserDetails } = useUserDetails();
 
-    const form = useForm<z.infer<typeof profileFormSchema>>({
+    const form = useForm<ProfileFormValues>({
         resolver: zodResolver(profileFormSchema),
         defaultValues: {
-            firstName: '',
-            lastName: '',
+            first_name: '',
+            last_name: '',
             username: '',
             email: '',
-            phone: '',
+            phone_no: '',
             address: '',
-            currentPassword: '',
-            newPassword: '',
         },
     });
 
     useEffect(() => {
         if (user) {
             form.reset({
-                firstName: user.first_name,
-                lastName: user.last_name,
+                first_name: user.first_name,
+                last_name: user.last_name,
                 username: user.username,
                 email: user.email,
-                phone: user.phone_no ?? '',
+                phone_no: user.phone_no ?? '',
                 address: user.address ?? '',
-                currentPassword: '',
-                newPassword: '',
             });
         }
     }, [user, form]);
 
     const { isSubmitting } = form.formState;
 
-    async function onSubmit(values: z.infer<typeof profileFormSchema>) {
+    async function onSubmit(values: ProfileFormValues) {
         const token = localStorage.getItem('authToken');
-        if (!token) {
+        if (!token || !user) {
             toast({
                 variant: 'destructive',
                 title: 'Authentication Error',
@@ -118,18 +131,24 @@ export function ProfileForm() {
             return;
         }
 
+        const changedValues = getChangedValues(user, values);
+
+        if (Object.keys(changedValues).length === 0) {
+            toast({
+                title: 'No Changes Detected',
+                description: 'You have not made any changes to your profile.',
+            });
+            return;
+        }
+
+
         try {
-            const result = await updateUserDetails(token, values);
+            const result = await updateUserDetails(token, changedValues);
             toast({
                 title: 'Profile Updated',
                 description: result.message || 'Your changes have been saved successfully.',
             });
-             // Optionally, clear password fields after successful submission
-            form.reset({
-                ...values,
-                currentPassword: '',
-                newPassword: '',
-            });
+            refreshUserDetails(); // Refresh user details to get the latest data
         } catch (error: any) {
             if (error.message.includes('Session expired')) {
                 toast({
@@ -177,7 +196,7 @@ export function ProfileForm() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
-                                name="firstName"
+                                name="first_name"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>First Name</FormLabel>
@@ -190,7 +209,7 @@ export function ProfileForm() {
                             />
                              <FormField
                                 control={form.control}
-                                name="lastName"
+                                name="last_name"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Last Name</FormLabel>
@@ -230,7 +249,7 @@ export function ProfileForm() {
                         />
                          <FormField
                             control={form.control}
-                            name="phone"
+                            name="phone_no"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Phone Number</FormLabel>
@@ -254,40 +273,13 @@ export function ProfileForm() {
                                 </FormItem>
                             )}
                         />
-                        <Separator />
-                        <CardTitle className="text-lg pt-4">Change Password</CardTitle>
-                        <FormField
-                            control={form.control}
-                            name="currentPassword"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Current Password</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                         <FormField
-                            control={form.control}
-                            name="newPassword"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>New Password</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                     </CardContent>
-                    <CardFooter>
+                    <CardFooter className="flex justify-between">
                         <Button type="submit" disabled={isSubmitting}>
                             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Save Changes
                         </Button>
+                         <ChangePasswordDialog />
                     </CardFooter>
                 </form>
             </Form>
