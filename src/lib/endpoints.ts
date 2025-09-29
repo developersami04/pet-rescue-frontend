@@ -6,9 +6,10 @@ const API_ENDPOINTS = {
   login: '/api/user-auth/login',
   userDetails: '/api/user-auth/user-details',
   allPets: '/api/pet-data/pets/',
+  myPets: '/api/pet-data/my-pets/',
   requestSubmit: '/api/pet-data/request-submit',
 };
 
-export const API_REQUEST_TIMEOUT = 10000; // 10 seconds
+export const API_REQUEST_TIMEOUT = 10000; 
 
 export default API_ENDPOINTS;

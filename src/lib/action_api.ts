@@ -218,6 +218,43 @@ export async function getAllPets(token: string) {
     }
 }
 
+export async function getMyPets(token: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.myPets}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            cache: 'no-store' 
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                throw new Error('Session expired. Please log in again.');
+            }
+            throw new Error(result.message || result.detail || 'Failed to fetch your pets.');
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request to fetch your pets timed out.');
+        }
+        console.error('Error fetching your pets:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching your pets.');
+    }
+}
+
 
 export async function submitRequest(token: string, requestType: string, payload: any) {
     if (!API_BASE_URL) {

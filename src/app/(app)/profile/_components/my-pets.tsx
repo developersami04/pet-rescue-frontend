@@ -5,20 +5,16 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Pet } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import Link from "next/link";
 import { Pen, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getAllPets } from "@/lib/action_api";
-import { useUserDetails } from "@/hooks/use-user-details";
+import { getMyPets } from "@/lib/action_api";
 
 export function MyPets() {
-    const { user } = useUserDetails();
     const [myPets, setMyPets] = useState<Pet[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         async function fetchMyPets() {
-            if (!user) return;
             const token = localStorage.getItem('authToken');
             if (!token) {
                 setIsLoading(false);
@@ -26,8 +22,7 @@ export function MyPets() {
             }
 
             try {
-                const allPets = await getAllPets(token);
-                const userPets = allPets.filter((pet: Pet) => pet.created_by === user.id);
+                const userPets = await getMyPets(token);
                 setMyPets(userPets);
             } catch (error) {
                 console.error("Failed to fetch user's pets:", error);
@@ -36,7 +31,7 @@ export function MyPets() {
             }
         }
         fetchMyPets();
-    }, [user]);
+    }, []);
 
     return (
         <Card>

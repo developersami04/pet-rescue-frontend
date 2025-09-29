@@ -30,8 +30,7 @@ import { Pet } from '@/lib/data';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
-import { getAllPets, submitRequest } from '@/lib/action_api';
-import { useUserDetails } from '@/hooks/use-user-details';
+import { getMyPets, submitRequest } from '@/lib/action_api';
 
 const reportSchema = z.object({
   reportType: z.enum(['lost', 'found'], {
@@ -54,17 +53,14 @@ export function PetReportForm() {
   const [reportType, setReportType] = useState<'lost' | 'found' | undefined>();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [userPets, setUserPets] = useState<Pet[]>([]);
-  const { user } = useUserDetails();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchUserPets() {
       const token = localStorage.getItem('authToken');
-      if (token && user) {
+      if (token) {
         try {
-          const allPets = await getAllPets(token);
-          // Filter pets created by the current user
-          const myPets = allPets.filter((pet: Pet) => pet.created_by === user.id);
+          const myPets = await getMyPets(token);
           setUserPets(myPets);
         } catch (error) {
           console.error("Failed to fetch user's pets:", error);
@@ -74,7 +70,7 @@ export function PetReportForm() {
     if (reportType === 'lost') {
       fetchUserPets();
     }
-  }, [reportType, user]);
+  }, [reportType]);
 
   const form = useForm<z.infer<typeof reportSchema>>({
     resolver: zodResolver(reportSchema),

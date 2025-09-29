@@ -24,16 +24,14 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Upload } from 'lucide-react';
+import { Loader2, Upload, CalendarIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Pet } from '@/lib/data';
-import { getAllPets, submitRequest } from '@/lib/action_api';
-import { useUserDetails } from '@/hooks/use-user-details';
+import { getMyPets, submitRequest } from '@/lib/action_api';
 import { DayPicker } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -59,17 +57,14 @@ export function PetMedicalHistoryForm() {
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [userPets, setUserPets] = useState<Pet[]>([]);
-  const { user } = useUserDetails();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchUserPets() {
       const token = localStorage.getItem('authToken');
-      if (token && user) {
+      if (token) {
         try {
-          const allPets = await getAllPets(token);
-          // Filter pets created by the current user
-          const myPets = allPets.filter((pet: Pet) => pet.created_by === user.id);
+          const myPets = await getMyPets(token);
           setUserPets(myPets);
         } catch (error) {
           console.error("Failed to fetch user's pets:", error);
@@ -82,7 +77,7 @@ export function PetMedicalHistoryForm() {
       }
     }
     fetchUserPets();
-  }, [user, toast]);
+  }, [toast]);
 
   const form = useForm<z.infer<typeof medicalHistorySchema>>({
     resolver: zodResolver(medicalHistorySchema),
