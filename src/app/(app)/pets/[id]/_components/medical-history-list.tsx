@@ -1,14 +1,16 @@
 
-import type { MedicalHistory } from '@/lib/data';
+import type { Pet } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Stethoscope, ShieldCheck } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
 type MedicalHistoryListProps = {
-  history: MedicalHistory[] | null;
+  pet: Pet;
 };
 
-export function MedicalHistoryList({ history }: MedicalHistoryListProps) {
+export function MedicalHistoryList({ pet }: MedicalHistoryListProps) {
+  const history = pet.medical_histories;
+
   if (!history || history.length === 0) {
     return (
        <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8 h-48 border rounded-lg">

@@ -137,7 +137,7 @@ export default function PetProfilePage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="medical-history" className="mt-6">
-          <MedicalHistoryList history={pet.medical_histories} />
+          <MedicalHistoryList pet={pet} />
         </TabsContent>
         <TabsContent value="adoption-requests" className="mt-6">
             <AdoptionRequestsList requests={pet.adoption_requests} />
