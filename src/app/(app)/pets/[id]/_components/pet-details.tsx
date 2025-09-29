@@ -74,12 +74,12 @@ export function PetDetails({ pet }: PetDetailsProps) {
           <p className="text-muted-foreground">Color:</p>
           <p>{pet.color || 'N/A'}</p>
           <p className="text-muted-foreground">Status:</p>
-          <p>
+          <div>
             {isLost ? <Badge variant="destructive">Lost</Badge> : 
              isAdopted ? <Badge>Adopted</Badge> : 
              <Badge variant="secondary">Available</Badge>
             }
-            </p>
+            </div>
            <p className="text-muted-foreground">Location:</p>
           <p>{pet.city || 'N/A'}, {pet.state || 'N/A'}</p>
           <p className="text-muted-foreground">Vaccinated:</p>
