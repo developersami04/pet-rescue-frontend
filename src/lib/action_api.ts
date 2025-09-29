@@ -2,7 +2,7 @@
 'use server';
 
 import { z } from "zod";
-import API_ENDPOINTS from "./endpoints";
+import API_ENDPOINTS, { API_REQUEST_TIMEOUT } from "./endpoints";
 
 type PetType = {
   id: number;
@@ -11,6 +11,20 @@ type PetType = {
 
 const API_BASE_URL = process.env.API_BASE_URL;
 
+async function fetchWithTimeout(url: string, options: RequestInit, timeout = API_REQUEST_TIMEOUT) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+
+    const response = await fetch(url, {
+        ...options,
+        signal: controller.signal  
+    });
+
+    clearTimeout(id);
+
+    return response;
+}
+
 export async function getPetTypes(): Promise<PetType[] | null> {
     if (!API_BASE_URL) {
         console.error('API_BASE_URL is not defined in the environment variables.');
@@ -18,7 +32,7 @@ export async function getPetTypes(): Promise<PetType[] | null> {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.petTypes}`, { cache: 'no-store' });
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.petTypes}`, { cache: 'no-store' });
         if (!response.ok) {
             // No toast here, will be handled in the component
             console.error('Failed to fetch pet types:', response.statusText);
@@ -27,8 +41,11 @@ export async function getPetTypes(): Promise<PetType[] | null> {
         const data: PetType[] = await response.json();
         return data;
     } catch (error) {
-        console.error('Error fetching pet types:', error);
-        // No toast here, will be handled in the component
+        if ((error as any).name === 'AbortError') {
+             console.error('Error fetching pet types: Request timed out');
+        } else {
+            console.error('Error fetching pet types:', error);
+        }
         return null;
     }
 }
@@ -64,7 +81,7 @@ export async function registerUser(userData: z.infer<typeof registerUserSchema>)
     };
 
     try {
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.register}`, {
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.register}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -80,6 +97,9 @@ export async function registerUser(userData: z.infer<typeof registerUserSchema>)
 
         return result;
     } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Registration timed out. Please try again.');
+        }
         console.error('Error registering user:', error);
         if (error instanceof Error) {
            throw new Error(error.message);
@@ -99,7 +119,7 @@ export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.login}`, {
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.login}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -115,6 +135,9 @@ export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
 
         return result;
     } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Login request timed out. Please try again.');
+        }
         console.error('Error logging in:', error);
         if (error instanceof Error) {
            throw new Error(error.message);
@@ -129,7 +152,7 @@ export async function getUserDetails(token: string) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.userDetails}`, {
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.userDetails}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -148,6 +171,9 @@ export async function getUserDetails(token: string) {
 
         return result;
     } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request for user details timed out.');
+        }
         console.error('Error fetching user details:', error);
         if (error instanceof Error) {
            throw new Error(error.message);
@@ -162,7 +188,7 @@ export async function getAllPets(token: string) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.allPets}`, {
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.allPets}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -182,6 +208,9 @@ export async function getAllPets(token: string) {
 
         return result;
     } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request to fetch pets timed out.');
+        }
         console.error('Error fetching pets:', error);
         if (error instanceof Error) {
            throw new Error(error.message);

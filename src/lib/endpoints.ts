@@ -7,4 +7,6 @@ const API_ENDPOINTS = {
   allPets: '/api/pet-data/pets/',
 };
 
+export const API_REQUEST_TIMEOUT = 10000; // 10 seconds
+
 export default API_ENDPOINTS;
