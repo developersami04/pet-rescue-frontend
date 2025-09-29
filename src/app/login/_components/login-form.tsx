@@ -16,11 +16,11 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { sampleUser } from '@/lib/user-data';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { loginUser } from '@/lib/action_api';
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required.'),
@@ -40,31 +40,26 @@ export function LoginForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      if (
-        values.username === sampleUser.username &&
-        values.password === sampleUser.password
-      ) {
-        toast({
-          title: 'Login Successful!',
-          description: 'Welcome back!',
-        });
-        // In a real app, you'd get a token from the server
-        localStorage.setItem('authToken', 'dummy_auth_token_for_demo');
-        window.dispatchEvent(new Event('storage')); // Manually trigger storage event
-        router.push('/feed');
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Login Failed',
-          description: 'Invalid username or password.',
-        });
-        setIsSubmitting(false);
-      }
-    }, 1000);
+    try {
+      const result = await loginUser(values);
+      toast({
+        title: 'Login Successful!',
+        description: result.message || 'Welcome back!',
+      });
+      localStorage.setItem('authToken', result.access_token);
+      localStorage.setItem('refreshToken', result.refresh_token);
+      window.dispatchEvent(new Event('storage')); // Manually trigger storage event
+      router.push('/feed');
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description: error.message || 'Invalid username or password.',
+      });
+      setIsSubmitting(false);
+    }
   }
 
   return (

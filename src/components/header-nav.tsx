@@ -153,6 +153,7 @@ export function HeaderNav() {
   
   const handleLogout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
     window.dispatchEvent(new Event('storage')); // Manually trigger storage event
     router.push('/');
   };

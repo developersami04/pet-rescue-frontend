@@ -71,7 +71,7 @@ export async function registerUser(userData: z.infer<typeof registerUserSchema>)
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || 'Failed to register user.');
+            throw new Error(result.message || result.detail || 'Failed to register user.');
         }
 
         return result;
@@ -81,5 +81,40 @@ export async function registerUser(userData: z.infer<typeof registerUserSchema>)
            throw new Error(error.message);
         }
         throw new Error('An unknown error occurred during registration.');
+    }
+}
+
+const loginUserSchema = z.object({
+  username: z.string().min(1, 'Username is required.'),
+  password: z.string().min(1, 'Password is required.'),
+});
+
+export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
+    if (!API_BASE_URL) {
+        throw new Error('API_BASE_URL is not defined in the environment variables.');
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user-auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(credentials),
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || 'Failed to log in.');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error logging in:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred during login.');
     }
 }
