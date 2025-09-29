@@ -1,8 +1,10 @@
 
+
 'use server';
 
 import { z } from "zod";
 import API_ENDPOINTS, { API_REQUEST_TIMEOUT } from "./endpoints";
+import { Pet } from "./data";
 
 type PetType = {
   id: number;
@@ -319,6 +321,36 @@ export async function getAllPets(token: string) {
            throw new Error(error.message);
         }
         throw new Error('An unknown error occurred while fetching pets.');
+    }
+}
+
+export async function getPetById(token: string, petId: string): Promise<Pet> {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.petProfile}${petId}`, {
+            method: 'GET',
+            cache: 'no-store' 
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || 'Failed to fetch pet details.');
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request to fetch pet details timed out.');
+        }
+        console.error('Error fetching pet details:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching pet details.');
     }
 }
 

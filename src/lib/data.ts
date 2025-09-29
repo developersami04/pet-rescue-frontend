@@ -1,11 +1,49 @@
 
 
+export type MedicalHistory = {
+    id: number;
+    pet: number;
+    pet_name: string;
+    disease_name: string;
+    stage: number;
+    no_of_years: number;
+    vaccination_name: string;
+    last_vaccinated_date: string | null;
+    message: string | null;
+    image: string | null;
+    is_approved: boolean;
+    user: number;
+};
+
+export type AdoptionRequest = {
+    id: number;
+    pet: number;
+    pet_name: string;
+    requester_name: string;
+    request_status: string;
+    is_approved: boolean;
+    user: number;
+};
+
+export type PetReport = {
+    id: number;
+    pet: number;
+    pet_name: string;
+    pet_status: 'lost' | 'found';
+    message: string;
+    reporter_name: string;
+    report_status: string;
+    image: string | null;
+    is_resolved: boolean;
+    user: number;
+};
+
 export type Pet = {
   id: number;
   image: string | null;
   name: string;
   description: string | null;
-  pet_type: number;
+  pet_type?: number;
   type_name: string;
   available_for_adopt: boolean;
   gender: 'Male' | 'Female';
@@ -19,11 +57,14 @@ export type Pet = {
   city: string | null;
   pincode: number | null;
   state: string | null;
-  is_verified: boolean;
+  is_verified?: boolean;
   created_by: number | null;
   created_date: string;
   modified_by: string | null;
   modified_date: string;
+  medical_histories: MedicalHistory[] | null;
+  adoption_requests: AdoptionRequest[] | null;
+  pet_report: PetReport[] | null;
 };
 
 
@@ -86,6 +127,3 @@ export const resources: Resource[] = [
       content: 'Many common household items can be toxic to pets. These include certain plants (like lilies and tulips), human foods (like chocolate, grapes, onions, and xylitol), and cleaning products. Keep all chemicals and medications securely stored out of reach. Be mindful of electrical cords and small objects that could be choking hazards. Pet-proofing your home is an essential step in responsible pet ownership.',
     },
 ];
-
-
-

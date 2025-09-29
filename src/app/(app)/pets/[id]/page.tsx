@@ -5,10 +5,15 @@ import { notFound, useParams, useRouter } from "next/navigation";
 import { PetImageCarousel } from "./_components/pet-image-carousel";
 import { PetDetails } from "./_components/pet-details";
 import { useEffect, useState } from "react";
-import { getAllPets } from "@/lib/action_api";
+import { getPetById } from "@/lib/action_api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MedicalHistoryList } from "./_components/medical-history-list";
+import { AdoptionRequestsList } from "./_components/adoption-requests-list";
+import { PetReportList } from "./_components/pet-report-list";
+import { Badge } from "@/components/ui/badge";
 
 
 function PetProfilePageSkeleton() {
@@ -58,13 +63,8 @@ export default function PetProfilePage() {
         }
 
         try {
-            const allPets = await getAllPets(token);
-            const foundPet = allPets.find((p: Pet) => p.id.toString() === petId);
-            if (foundPet) {
-                setPet(foundPet);
-            } else {
-                notFound();
-            }
+            const petData = await getPetById(token, petId);
+            setPet(petData);
         } catch (e: any) {
             if (e.message.includes('Session expired')) {
                 toast({
@@ -78,6 +78,10 @@ export default function PetProfilePage() {
                 router.push('/login');
             } else {
                 setError(e.message || "Failed to fetch pet details.");
+                // Check for 404 Not Found specifically if possible from the error
+                if (e.message.toLowerCase().includes('not found')) {
+                  notFound();
+                }
             }
         } finally {
             setIsLoading(false);
@@ -116,6 +120,32 @@ export default function PetProfilePage() {
         <PetImageCarousel pet={pet} />
         <PetDetails pet={pet} />
       </div>
+      <Tabs defaultValue="medical-history" className="mt-12">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="medical-history">Medical History</TabsTrigger>
+          <TabsTrigger value="adoption-requests">
+            Adoption Requests 
+            {pet.adoption_requests && pet.adoption_requests.length > 0 && 
+              <Badge className="ml-2">{pet.adoption_requests.length}</Badge>
+            }
+          </TabsTrigger>
+          <TabsTrigger value="reports">
+            Reports
+            {pet.pet_report && pet.pet_report.length > 0 &&
+              <Badge variant="destructive" className="ml-2">{pet.pet_report.length}</Badge>
+            }
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="medical-history" className="mt-6">
+          <MedicalHistoryList history={pet.medical_histories} />
+        </TabsContent>
+        <TabsContent value="adoption-requests" className="mt-6">
+            <AdoptionRequestsList requests={pet.adoption_requests} />
+        </TabsContent>
+        <TabsContent value="reports" className="mt-6">
+            <PetReportList reports={pet.pet_report} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

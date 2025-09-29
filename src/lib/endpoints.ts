@@ -1,4 +1,5 @@
 
+
 const API_ENDPOINTS = {
   petTypes: '/api/pet-data/pet-types/',
   register: '/api/user-auth/register',
@@ -10,6 +11,7 @@ const API_ENDPOINTS = {
   allPets: '/api/pet-data/pets/',
   myPets: '/api/pet-data/my-pets',
   requestSubmit: '/api/pet-data/request-submit',
+  petProfile: '/api/pet-data/pet-profile/', // e.g., /api/pet-data/pet-profile/31
 };
 
 export const API_REQUEST_TIMEOUT = 10000; 
