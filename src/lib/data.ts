@@ -43,6 +43,21 @@ export type Resource = {
   content: string;
 };
 
+export type User = {
+  id: number;
+  profile_image: string | null;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  is_verified: boolean;
+  phone_no: string | null;
+  gender?: 'Male' | 'Female';
+  pin_code: number | null;
+  address: string | null;
+};
+
+
 // This is now fetched from the API, but we keep it for reference or fallback.
 export const pets: Pet[] = [];
 
@@ -71,5 +86,6 @@ export const resources: Resource[] = [
       content: 'Many common household items can be toxic to pets. These include certain plants (like lilies and tulips), human foods (like chocolate, grapes, onions, and xylitol), and cleaning products. Keep all chemicals and medications securely stored out of reach. Be mindful of electrical cords and small objects that could be choking hazards. Pet-proofing your home is an essential step in responsible pet ownership.',
     },
 ];
+
 
 

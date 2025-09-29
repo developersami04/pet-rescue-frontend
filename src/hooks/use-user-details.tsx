@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { User } from '@/lib/user-data';
+import type { User } from '@/lib/data';
 import { getUserDetails } from '@/lib/action_api';
 
 export function useUserDetails() {
