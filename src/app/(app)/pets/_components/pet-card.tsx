@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -8,27 +9,30 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import type { Pet } from '@/lib/data';
+import { PawPrint } from 'lucide-react';
 
 type PetCardProps = {
   pet: Pet;
 };
 
 export function PetCard({ pet }: PetCardProps) {
-  const petImage = PlaceHolderImages.find((p) => p.id === pet.imageIds[0]);
+  const imageUrl = pet.image ?? `https://picsum.photos/seed/${pet.id}/400/300`;
 
   return (
     <Card className="flex flex-col overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg">
       <div className="relative h-56 w-full">
-        {petImage && (
-          <Image
-            src={petImage.imageUrl}
-            alt={pet.name}
-            fill
-            className="object-cover"
-            data-ai-hint={petImage.imageHint}
-          />
+        <Image
+          src={imageUrl}
+          alt={pet.name}
+          fill
+          className="object-cover"
+          data-ai-hint={pet.breed ?? pet.type_name}
+        />
+         {!pet.image && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+            <PawPrint className="h-12 w-12 text-white/50" />
+          </div>
         )}
       </div>
       <CardHeader>
@@ -36,7 +40,7 @@ export function PetCard({ pet }: PetCardProps) {
       </CardHeader>
       <CardContent className="flex-grow">
         <p className="text-sm text-muted-foreground">
-          {pet.breed} &bull; {pet.age} {pet.age > 1 ? 'years' : 'year'} old
+          {pet.breed || 'Unknown Breed'} &bull; {pet.age ?? 'Unknown'} {pet.age === 1 ? 'year' : 'years'} old
         </p>
       </CardContent>
       <CardFooter>

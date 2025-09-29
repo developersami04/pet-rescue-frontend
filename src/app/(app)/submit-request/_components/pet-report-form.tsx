@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -24,11 +25,13 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Upload } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useState } from 'react';
-import { pets } from '@/lib/data'; // Using demo data
+import { useEffect, useState } from 'react';
+import { Pet } from '@/lib/data';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
+import { getAllPets } from '@/lib/action_api';
+import { useUserDetails } from '@/hooks/use-user-details';
 
 const reportSchema = z.object({
   reportType: z.enum(['Lost', 'Found'], {
@@ -50,9 +53,27 @@ export function PetReportForm() {
   const { toast } = useToast();
   const [reportType, setReportType] = useState<'Lost' | 'Found' | undefined>();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [userPets, setUserPets] = useState<Pet[]>([]);
+  const { user } = useUserDetails();
 
-  // Demo user's pets - in a real app, this would be fetched
-  const userPets = pets.slice(1, 4);
+  useEffect(() => {
+    async function fetchUserPets() {
+      const token = localStorage.getItem('authToken');
+      if (token && user) {
+        try {
+          const allPets = await getAllPets(token);
+          // Filter pets created by the current user
+          const myPets = allPets.filter((pet: Pet) => pet.created_by === user.id);
+          setUserPets(myPets);
+        } catch (error) {
+          console.error("Failed to fetch user's pets:", error);
+        }
+      }
+    }
+    if (reportType === 'Lost') {
+      fetchUserPets();
+    }
+  }, [reportType, user]);
 
   const form = useForm<z.infer<typeof reportSchema>>({
     resolver: zodResolver(reportSchema),
@@ -137,15 +158,15 @@ export function PetReportForm() {
                         render={({ field }) => (
                         <FormItem>
                             <FormLabel>Which pet is lost?</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={userPets.length === 0}>
                             <FormControl>
                                 <SelectTrigger>
-                                <SelectValue placeholder="Select one of your pets" />
+                                <SelectValue placeholder={userPets.length > 0 ? "Select one of your pets" : "You have no pets to report"} />
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
                                 {userPets.map(pet => (
-                                <SelectItem key={pet.id} value={pet.id}>{pet.name}</SelectItem>
+                                <SelectItem key={pet.id} value={pet.id.toString()}>{pet.name}</SelectItem>
                                 ))}
                             </SelectContent>
                             </Select>
@@ -221,7 +242,7 @@ export function PetReportForm() {
         </div>
 
 
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting || !reportType}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Submit Report
         </Button>

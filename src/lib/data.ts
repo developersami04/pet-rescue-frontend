@@ -1,17 +1,31 @@
-import petData from './pets.json';
+
 
 export type Pet = {
-  id: string;
+  id: number;
+  image: string | null;
   name: string;
-  type: 'Dog' | 'Cat' | 'Bird';
-  breed: string;
-  age: number;
-  size: 'Small' | 'Medium' | 'Large';
+  description: string | null;
+  pet_type: number;
+  type_name: string;
+  available_for_adopt: boolean;
   gender: 'Male' | 'Female';
-  description: string;
-  imageIds: string[];
-  organizationId: string;
+  age: number | null;
+  weight: number | null;
+  breed: string | null;
+  color: string | null;
+  is_vaccinated: boolean;
+  is_diseased: boolean;
+  address: string | null;
+  city: string | null;
+  pincode: number | null;
+  state: string | null;
+  is_verified: boolean;
+  created_by: number | null;
+  created_date: string;
+  modified_by: string | null;
+  modified_date: string;
 };
+
 
 export type Organization = {
   id: string;
@@ -29,7 +43,9 @@ export type Resource = {
   content: string;
 };
 
-export const pets: Pet[] = petData.pets;
+// This is now fetched from the API, but we keep it for reference or fallback.
+export const pets: Pet[] = [];
+
 
 export const organizations: Organization[] = [
   {
@@ -71,3 +87,4 @@ export const resources: Resource[] = [
       content: 'Many common household items can be toxic to pets. These include certain plants (like lilies and tulips), human foods (like chocolate, grapes, onions, and xylitol), and cleaning products. Keep all chemicals and medications securely stored out of reach. Be mindful of electrical cords and small objects that could be choking hazards. Pet-proofing your home is an essential step in responsible pet ownership.',
     },
 ];
+

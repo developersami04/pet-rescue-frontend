@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Link from 'next/link';
@@ -40,18 +41,19 @@ export function PetDetails({ pet }: PetDetailsProps) {
           </Button>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <Badge variant="secondary">{pet.type}</Badge>
-          <Badge variant="secondary">{pet.breed}</Badge>
-          <Badge variant="secondary">
-            {pet.age} {pet.age > 1 ? 'years' : 'year'}
-          </Badge>
-          <Badge variant="secondary">{pet.size}</Badge>
+          <Badge variant="secondary">{pet.type_name}</Badge>
+          <Badge variant="secondary">{pet.breed || 'Unknown Breed'}</Badge>
+           {pet.age && (
+            <Badge variant="secondary">
+                {pet.age} {pet.age === 1 ? 'year' : 'years'}
+            </Badge>
+          )}
           <Badge variant="secondary">{pet.gender}</Badge>
         </div>
       </div>
       <Card>
         <CardContent className="p-6">
-          <p className="text-muted-foreground">{pet.description}</p>
+          <p className="text-muted-foreground">{pet.description || "No description available."}</p>
         </CardContent>
       </Card>
       <div className="grid gap-2">
@@ -61,12 +63,14 @@ export function PetDetails({ pet }: PetDetailsProps) {
           <p className="text-muted-foreground">ID:</p>
           <p>{pet.id}</p>
           <p className="text-muted-foreground">Status:</p>
-          <p>Available for Adoption</p>
-          <p className="text-muted-foreground">Location:</p>
-          <p>Shelter Name</p>
+          <p>{pet.available_for_adopt ? 'Available' : 'Not Available'}</p>
+           <p className="text-muted-foreground">Location:</p>
+          <p>{pet.city || 'N/A'}, {pet.state || 'N/A'}</p>
+          <p className="text-muted-foreground">Vaccinated:</p>
+          <p>{pet.is_vaccinated ? 'Yes' : 'No'}</p>
         </div>
       </div>
-      <Button size="lg" asChild className="w-full">
+      <Button size="lg" asChild className="w-full" disabled={!pet.available_for_adopt}>
         <Link href={`/pets/${pet.id}/adopt`}>Adopt {pet.name}</Link>
       </Button>
     </div>

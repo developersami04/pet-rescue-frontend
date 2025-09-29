@@ -153,3 +153,37 @@ export async function getUserDetails(token: string) {
         throw new Error('An unknown error occurred while fetching user details.');
     }
 }
+
+export async function getAllPets(token: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API_BASE_URL is not defined in the environment variables.');
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/pet-data/pets/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            cache: 'no-store' 
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                throw new Error('Session expired. Please log in again.');
+            }
+            throw new Error(result.message || result.detail || 'Failed to fetch pets.');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error fetching pets:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching pets.');
+    }
+}

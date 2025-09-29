@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Input } from '@/components/ui/input';
@@ -16,10 +17,7 @@ type PetFiltersProps = {
   setSearch: (value: string) => void;
   type: string;
   setType: (value: string) => void;
-  size: string;
-  setSize: (value: string) => void;
   petTypes: string[];
-  petSizes: string[];
   onClearFilters: () => void;
 };
 
@@ -28,16 +26,13 @@ export function PetFilters({
   setSearch,
   type,
   setType,
-  size,
-  setSize,
   petTypes,
-  petSizes,
   onClearFilters,
 }: PetFiltersProps) {
   return (
     <div className="mb-8 p-4 bg-card border rounded-lg shadow-sm">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="relative">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="relative lg:col-span-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search by name or breed..."
@@ -54,18 +49,6 @@ export function PetFilters({
             {petTypes.map((t) => (
               <SelectItem key={t} value={t}>
                 {t}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={size} onValueChange={setSize}>
-          <SelectTrigger>
-            <SelectValue placeholder="Filter by size" />
-          </SelectTrigger>
-          <SelectContent>
-            {petSizes.map((s) => (
-              <SelectItem key={s} value={s}>
-                {s}
               </SelectItem>
             ))}
           </SelectContent>

@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -24,10 +25,12 @@ import {
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Upload } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
-import { pets } from '@/lib/data'; // Using demo data
+import { Pet } from '@/lib/data';
+import { getAllPets } from '@/lib/action_api';
+import { useUserDetails } from '@/hooks/use-user-details';
 
 const medicalHistorySchema = z.object({
   petId: z.string().min(1, 'Please select a pet.'),
@@ -49,9 +52,30 @@ const medicalHistorySchema = z.object({
 export function PetMedicalHistoryForm() {
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [userPets, setUserPets] = useState<Pet[]>([]);
+  const { user } = useUserDetails();
 
-  // Demo user's pets - in a real app, this would be fetched
-  const userPets = pets.slice(1, 4);
+  useEffect(() => {
+    async function fetchUserPets() {
+      const token = localStorage.getItem('authToken');
+      if (token && user) {
+        try {
+          const allPets = await getAllPets(token);
+          // Filter pets created by the current user
+          const myPets = allPets.filter((pet: Pet) => pet.created_by === user.id);
+          setUserPets(myPets);
+        } catch (error) {
+          console.error("Failed to fetch user's pets:", error);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Could not fetch your pets. Please try again later.",
+          });
+        }
+      }
+    }
+    fetchUserPets();
+  }, [user, toast]);
 
   const form = useForm<z.infer<typeof medicalHistorySchema>>({
     resolver: zodResolver(medicalHistorySchema),
@@ -96,15 +120,15 @@ export function PetMedicalHistoryForm() {
               render={({ field }) => (
                 <FormItem className="md:col-span-2">
                   <FormLabel>Select Pet</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={userPets.length === 0}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select one of your pets" />
+                        <SelectValue placeholder={userPets.length > 0 ? "Select one of your pets" : "You have no pets to select"} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {userPets.map(pet => (
-                        <SelectItem key={pet.id} value={pet.id}>{pet.name}</SelectItem>
+                        <SelectItem key={pet.id} value={pet.id.toString()}>{pet.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>

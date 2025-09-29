@@ -1,5 +1,6 @@
 
 
+
 import { PageHeader } from "@/components/page-header";
 import { DashboardStats } from "./_components/dashboard-stats";
 import { FeaturedPet } from "./_components/featured-pet";
@@ -18,6 +19,24 @@ function DashboardStatsSkeleton() {
             <Skeleton className="h-28" />
         </div>
     )
+}
+
+function FeaturedPetSkeleton() {
+    return (
+        <Card className="overflow-hidden">
+            <div className="grid md:grid-cols-2">
+                <Skeleton className="h-64 md:h-full" />
+                <div className="p-6">
+                    <Skeleton className="h-8 w-3/4 mb-2" />
+                    <Skeleton className="h-4 w-1/2 mb-4" />
+                    <Skeleton className="h-4 w-full mb-2" />
+                    <Skeleton className="h-4 w-full mb-2" />
+                    <Skeleton className="h-4 w-5/6 mb-4" />
+                    <Skeleton className="h-10 w-32" />
+                </div>
+            </div>
+        </Card>
+    );
 }
 
 export default function DashboardPage() {

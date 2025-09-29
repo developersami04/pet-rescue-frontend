@@ -1,10 +1,11 @@
+
 'use client';
 
 import { FeedItem } from "./feed-item";
-import { pets, organizations } from "@/lib/data";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { PawPrint, Heart, UserPlus } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { Pet } from "@/lib/data";
+import { getAllPets } from "@/lib/action_api";
 
 type FeedEvent = {
     id: string;
@@ -19,40 +20,52 @@ type FeedEvent = {
 }
 
 export function FeedList() {
+    const [pets, setPets] = useState<Pet[]>([]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            getAllPets(token)
+                .then(setPets)
+                .catch(err => console.error("Failed to fetch pets for feed:", err));
+        }
+    }, []);
 
     const feedEvents: FeedEvent[] = useMemo(() => {
         const events: FeedEvent[] = [];
-
-        // New Pets
-        pets.slice(0, 3).forEach((pet, index) => {
-            const petImage = PlaceHolderImages.find(p => p.id === pet.imageIds[0]);
-            events.push({
-                id: `new-${pet.id}`,
-                type: 'new-pet',
-                timestamp: new Date(Date.now() - index * 3 * 3600 * 1000), // hours ago
-                title: `${pet.name} is looking for a home!`,
-                description: `A ${pet.breed} is now available for adoption. Could you be the one?`,
-                imageUrl: petImage?.imageUrl,
-                imageHint: petImage?.imageHint,
-                icon: PawPrint,
-                petId: pet.id,
+        
+        if (pets.length > 0) {
+            // New Pets
+            pets.slice(0, 3).forEach((pet, index) => {
+                events.push({
+                    id: `new-${pet.id}`,
+                    type: 'new-pet',
+                    timestamp: new Date(Date.now() - index * 3 * 3600 * 1000), // hours ago
+                    title: `${pet.name} is looking for a home!`,
+                    description: `A ${pet.breed} is now available for adoption. Could you be the one?`,
+                    imageUrl: pet.image ?? `https://picsum.photos/seed/${pet.id}/400/300`,
+                    imageHint: pet.breed ?? pet.type_name,
+                    icon: PawPrint,
+                    petId: pet.id.toString(),
+                });
             });
-        });
 
-        // Recent Adoptions (mock)
-        const adoptedPet = pets[4];
-        const adoptedPetImage = PlaceHolderImages.find(p => p.id === adoptedPet.imageIds[0]);
-        events.push({
-            id: 'adopted-1',
-            type: 'adoption',
-            timestamp: new Date(Date.now() - 8 * 3600 * 1000),
-            title: `${adoptedPet.name} has been adopted!`,
-            description: 'Milo found his forever home. Congratulations to the new family!',
-            imageUrl: adoptedPetImage?.imageUrl,
-            imageHint: adoptedPetImage?.imageHint,
-            icon: Heart,
-            petId: adoptedPet.id
-        });
+            // Recent Adoptions (mock from available pets)
+            if (pets.length > 4) {
+                const adoptedPet = pets[4];
+                events.push({
+                    id: 'adopted-1',
+                    type: 'adoption',
+                    timestamp: new Date(Date.now() - 8 * 3600 * 1000),
+                    title: `${adoptedPet.name} has been adopted!`,
+                    description: `${adoptedPet.name} found a forever home. Congratulations to the new family!`,
+                    imageUrl: adoptedPet.image ?? `https://picsum.photos/seed/${adoptedPet.id}/400/300`,
+                    imageHint: adoptedPet.breed ?? adoptedPet.type_name,
+                    icon: Heart,
+                    petId: adoptedPet.id.toString()
+                });
+            }
+        }
         
         // New User (mock)
         events.push({
@@ -69,7 +82,7 @@ export function FeedList() {
         // Sort events by timestamp
         return events.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 
-    }, []);
+    }, [pets]);
 
     return (
         <div className="max-w-2xl mx-auto">

@@ -1,35 +1,97 @@
+
 'use client';
 
-import { useState, useMemo } from 'react';
-import { pets } from '@/lib/data';
+import { useState, useMemo, useEffect } from 'react';
+import type { Pet } from '@/lib/data';
 import { PetCard } from './pet-card';
 import { PetFilters } from './pet-filters';
+import { getAllPets } from '@/lib/action_api';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+
+function PetListSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {[...Array(8)].map((_, i) => (
+        <CardSkeleton key={i} />
+      ))}
+    </div>
+  );
+}
+
+function CardSkeleton() {
+    return (
+        <div className="flex flex-col space-y-3">
+            <Skeleton className="h-56 w-full rounded-lg" />
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+            </div>
+        </div>
+    )
+}
+
 
 export function PetList() {
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [search, setSearch] = useState('');
   const [type, setType] = useState('All');
-  const [size, setSize] = useState('All');
+
+  useEffect(() => {
+    async function fetchPets() {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setError('You must be logged in to view pets.');
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const petsData = await getAllPets(token);
+        setPets(petsData);
+      } catch (e: any) {
+        setError(e.message || 'Failed to fetch pets.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchPets();
+  }, []);
 
   const filteredPets = useMemo(() => {
     return pets.filter((pet) => {
       const searchLower = search.toLowerCase();
       const matchesSearch =
         pet.name.toLowerCase().includes(searchLower) ||
-        pet.breed.toLowerCase().includes(searchLower);
-      const matchesType = type === 'All' || pet.type === type;
-      const matchesSize = size === 'All' || pet.size === size;
-      return matchesSearch && matchesType && matchesSize;
+        (pet.breed && pet.breed.toLowerCase().includes(searchLower));
+      const matchesType = type === 'All' || pet.type_name === type;
+      return matchesSearch && matchesType;
     });
-  }, [search, type, size]);
+  }, [search, type, pets]);
 
-  const petTypes = ['All', ...Array.from(new Set(pets.map((p) => p.type)))];
-  const petSizes = ['All', ...Array.from(new Set(pets.map((p) => p.size)))];
-
+  const petTypes = ['All', ...Array.from(new Set(pets.map((p) => p.type_name)))];
+  
   const handleClearFilters = () => {
     setSearch('');
     setType('All');
-    setSize('All');
   };
+
+  if (isLoading) {
+    return <PetListSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <>
@@ -38,10 +100,7 @@ export function PetList() {
         setSearch={setSearch}
         type={type}
         setType={setType}
-        size={size}
-        setSize={setSize}
         petTypes={petTypes}
-        petSizes={petSizes}
         onClearFilters={handleClearFilters}
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
