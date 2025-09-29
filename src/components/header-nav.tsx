@@ -8,8 +8,6 @@ import {
   LayoutGrid,
   PawPrint,
   Map,
-  Sparkles,
-  HeartHandshake,
   BookOpen,
   Search,
   Menu,
@@ -60,10 +58,6 @@ const navItems = {
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },
     { href: "/map", icon: Map, label: "Map View" },
     { href: "/submit-request", icon: PlusCircle, label: "Submit a Request" },
-  ],
-  aiFeatures: [
-    { href: "/matching", icon: Sparkles, label: "AI Pet Matcher" },
-    { href: "/pet-care", icon: HeartHandshake, label: "Pet Care AI" },
   ],
   resources: [
     { href: "/resources", icon: BookOpen, label: "Resources" },
@@ -188,7 +182,6 @@ export function HeaderNav() {
               </Button>
             )})}
             <DropdownNav label="Pets" items={navItems.pets} />
-            <DropdownNav label="AI Features" items={navItems.aiFeatures} />
             <DropdownNav label="More" items={navItems.more} />
           </nav>
         </div>
@@ -207,7 +200,7 @@ export function HeaderNav() {
                  <Skeleton className="h-9 w-9 rounded-full" />
                ) : (
                 <Avatar className="h-9 w-9 cursor-pointer">
-                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${user?.username}/100/100`} />
+                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${'user?.username'}/100/100`} />
                     <AvatarFallback>{user?.first_name.charAt(0)}</AvatarFallback>
                 </Avatar>
                )}
@@ -299,7 +292,7 @@ export function HeaderNav() {
                     />
                   </div>
                   <nav className="flex flex-col gap-1">
-                    {[...navItems.main, ...navItems.pets, ...navItems.resources, ...navItems.aiFeatures, ...navItems.more].map(
+                    {[...navItems.main, ...navItems.pets, ...navItems.resources, ...navItems.more].map(
                       (item) => (
                         <NavLink
                           key={item.href}
@@ -321,7 +314,7 @@ export function HeaderNav() {
                                 <Skeleton className="h-9 w-9 rounded-full" />
                              ) : (
                                 <Avatar className="h-9 w-9">
-                                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${user?.username}/100/100`} />
+                                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${'user?.username'}/100/100`} />
                                     <AvatarFallback>{user?.first_name.charAt(0)}</AvatarFallback>
                                 </Avatar>
                              )}

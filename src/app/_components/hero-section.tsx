@@ -40,7 +40,7 @@ export function HeroSection() {
             <Link href="/pets">Browse Pets</Link>
           </Button>
           <Button size="lg" variant="secondary" asChild>
-            <Link href="/matching">AI Pet Matcher</Link>
+            <Link href="/about-us">Learn More</Link>
           </Button>
         </div>
       </div>
