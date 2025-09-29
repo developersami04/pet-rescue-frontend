@@ -6,7 +6,7 @@ const API_ENDPOINTS = {
   login: '/api/user-auth/login',
   userDetails: '/api/user-auth/user-details',
   allPets: '/api/pet-data/pets/',
-  myPets: '/api/pet-data/my-pets/',
+  myPets: '/api/pet-data/my-pets',
   requestSubmit: '/api/pet-data/request-submit',
 };
 

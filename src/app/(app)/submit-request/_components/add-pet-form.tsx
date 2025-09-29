@@ -28,6 +28,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { getPetTypes, submitRequest } from '@/lib/action_api';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const addPetSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -381,6 +382,42 @@ export function AddPetForm() {
                         )}
                     </CardContent>
                 </Card>
+                 <div className="space-y-4">
+                     <FormField
+                        control={form.control}
+                        name="is_vaccinated"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                            <FormControl>
+                                <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel>Is the pet vaccinated?</FormLabel>
+                            </div>
+                            </FormItem>
+                        )}
+                        />
+                         <FormField
+                        control={form.control}
+                        name="is_diseased"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                            <FormControl>
+                                <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel>Does the pet have any diseases?</FormLabel>
+                            </div>
+                            </FormItem>
+                        )}
+                        />
+                </div>
             </div>
         </div>
 
