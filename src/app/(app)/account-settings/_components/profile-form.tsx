@@ -23,6 +23,8 @@ import { useUserDetails } from '@/hooks/use-user-details';
 import { useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { updateUserDetails } from '@/lib/action_api';
+import { useRouter } from 'next/navigation';
 
 const profileFormSchema = z.object({
     firstName: z.string().min(1, 'First name is required.'),
@@ -71,6 +73,7 @@ function ProfileFormSkeleton() {
 
 export function ProfileForm() {
     const { toast } = useToast();
+    const router = useRouter();
     const { user, isLoading, error } = useUserDetails();
 
     const form = useForm<z.infer<typeof profileFormSchema>>({
@@ -104,12 +107,48 @@ export function ProfileForm() {
 
     const { isSubmitting } = form.formState;
 
-    function onSubmit(values: z.infer<typeof profileFormSchema>) {
-        console.log('Profile updated:', values);
-        toast({
-            title: 'Profile Updated',
-            description: 'Your changes have been saved successfully.',
-        });
+    async function onSubmit(values: z.infer<typeof profileFormSchema>) {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            toast({
+                variant: 'destructive',
+                title: 'Authentication Error',
+                description: 'You must be logged in to update your profile.',
+            });
+            return;
+        }
+
+        try {
+            const result = await updateUserDetails(token, values);
+            toast({
+                title: 'Profile Updated',
+                description: result.message || 'Your changes have been saved successfully.',
+            });
+             // Optionally, clear password fields after successful submission
+            form.reset({
+                ...values,
+                currentPassword: '',
+                newPassword: '',
+            });
+        } catch (error: any) {
+            if (error.message.includes('Session expired')) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Session Expired',
+                    description: 'Please log in again to continue.',
+                });
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken');
+                window.dispatchEvent(new Event('storage'));
+                router.push('/login');
+            } else {
+                toast({
+                    variant: 'destructive',
+                    title: 'Update Failed',
+                    description: error.message || 'An unexpected error occurred.',
+                });
+            }
+        }
     }
 
     if (isLoading) {

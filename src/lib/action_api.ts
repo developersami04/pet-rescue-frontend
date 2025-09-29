@@ -245,6 +245,65 @@ export async function getUserDetails(token: string) {
     }
 }
 
+const profileFormSchema = z.object({
+    firstName: z.string().min(1, 'First name is required.'),
+    lastName: z.string().min(1, 'Last name is required.'),
+    username: z.string().min(3, 'Username must be at least 3 characters.'),
+    email: z.string().email('Please enter a valid email address.'),
+    phone: z.string().optional(),
+    address: z.string().optional(),
+    currentPassword: z.string().optional(),
+    newPassword: z.string().min(6, 'Password must be at least 6 characters.').optional().or(z.literal('')),
+});
+
+
+export async function updateUserDetails(token: string, userData: z.infer<typeof profileFormSchema>) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    
+    const payload: Record<string, any> = {
+        first_name: userData.firstName,
+        last_name: userData.lastName,
+        username: userData.username,
+        email: userData.email,
+        phone_no: userData.phone,
+        address: userData.address,
+    };
+
+    if (userData.newPassword && userData.currentPassword) {
+        payload.current_password = userData.currentPassword;
+        payload.new_password = userData.newPassword;
+    }
+
+
+    try {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.updateUserDetails}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        }, token);
+        
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || 'Failed to update user details.');
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('User details update request timed out.');
+        }
+        console.error('Error updating user details:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while updating user details.');
+    }
+}
+
+
 export async function getAllPets(token: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
