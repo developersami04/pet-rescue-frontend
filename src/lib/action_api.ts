@@ -1,6 +1,8 @@
 
 'use server';
 
+import { z } from "zod";
+
 type PetType = {
   type: string;
 };
@@ -24,5 +26,60 @@ export async function getPetTypes() {
     } catch (error) {
         console.error('Error fetching pet types:', error);
         return null;
+    }
+}
+
+
+const registerUserSchema = z.object({
+  firstName: z.string().min(1, 'First name is required.'),
+  lastName: z.string().min(1, 'Last name is required.'),
+  username: z.string().min(3, 'Username must be at least 3 characters.'),
+  email: z.string().email('Please enter a valid email address.'),
+  password: z.string().min(6, 'Password must be at least 6 characters.'),
+  phone_no: z.string().optional(),
+  gender: z.enum(['Male', 'Female']).optional(),
+});
+
+
+export async function registerUser(userData: z.infer<typeof registerUserSchema>) {
+    if (!API_BASE_URL) {
+        throw new Error('API_BASE_URL is not defined in the environment variables.');
+    }
+
+    const payload = {
+        username: userData.username,
+        email: userData.email,
+        password: userData.password,
+        first_name: userData.firstName,
+        last_name: userData.lastName,
+        profile_image: null,
+        phone_no: userData.phone_no,
+        gender: userData.gender,
+        pin_code: null,
+        address: "",
+    };
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user-auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to register user.');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error registering user:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred during registration.');
     }
 }

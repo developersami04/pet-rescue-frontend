@@ -20,6 +20,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { registerUser } from '@/lib/action_api';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const createAccountSchema = z.object({
   firstName: z.string().min(1, 'First name is required.'),
@@ -27,6 +29,8 @@ const createAccountSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.'),
   email: z.string().email('Please enter a valid email address.'),
   password: z.string().min(6, 'Password must be at least 6 characters.'),
+  phone_no: z.string().min(10, 'Please enter a valid phone number.').optional(),
+  gender: z.enum(['Male', 'Female']),
 });
 
 export function CreateAccountForm() {
@@ -42,24 +46,31 @@ export function CreateAccountForm() {
       username: '',
       email: '',
       password: '',
+      phone_no: '',
     },
   });
 
-  function onSubmit(values: z.infer<typeof createAccountSchema>) {
+  async function onSubmit(values: z.infer<typeof createAccountSchema>) {
     setIsSubmitting(true);
-    // Simulate API call to create a new user
-    console.log('New user data:', values);
-    setTimeout(() => {
-        toast({
-          title: 'Account Created!',
-          description: 'You can now log in with your new credentials.',
-        });
-        router.push('/login');
-    }, 1000);
+    try {
+      const result = await registerUser(values);
+      toast({
+        title: 'Account Created!',
+        description: result.message || 'You can now log in with your new credentials.',
+      });
+      router.push('/login');
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Registration Failed',
+        description: error.message || 'An unknown error occurred.',
+      });
+      setIsSubmitting(false);
+    }
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-lg mx-auto">
       <CardHeader className="text-center">
         <CardTitle>Create an Account</CardTitle>
         <CardDescription>Join Pet-Pal to find your new best friend.</CardDescription>
@@ -121,6 +132,42 @@ export function CreateAccountForm() {
                 </FormItem>
               )}
             />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                 <FormField
+                    control={form.control}
+                    name="phone_no"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Phone Number</FormLabel>
+                        <FormControl>
+                            <Input placeholder="9876543210" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                <FormField
+                    control={form.control}
+                    name="gender"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Gender</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select gender" />
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            <SelectItem value="Male">Male</SelectItem>
+                            <SelectItem value="Female">Female</SelectItem>
+                        </SelectContent>
+                        </Select>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+            </div>
             <FormField
               control={form.control}
               name="password"
