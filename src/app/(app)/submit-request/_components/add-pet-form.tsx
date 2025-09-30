@@ -47,16 +47,7 @@ const addPetSchema = z.object({
   description: z.string().optional(),
   pet_image: z
     .any()
-    .optional()
-    .refine(
-      (files) => !files || files.length === 0 || files[0].size <= 5000000,
-      `Max file size is 5MB.`
-    )
-    .refine(
-      (files) =>
-        !files || files.length === 0 || ['image/jpeg', 'image/png', 'image/webp'].includes(files[0].type),
-      'Only .jpg, .png, and .webp formats are supported.'
-    ),
+    .optional(),
   is_vaccinated: z.boolean().default(false),
   is_diseased: z.boolean().default(false),
   available_for_adopt: z.boolean().default(true),
@@ -159,19 +150,26 @@ export function AddPetForm() {
     }
     
     const formData = new FormData();
+    const allKeys = Object.keys(addPetSchema.shape);
+    
+    allKeys.forEach(key => {
+        const value = values[key as keyof typeof values];
 
-    Object.entries(values).forEach(([key, value]) => {
-      if (value instanceof FileList && value.length > 0) {
-        formData.append(key, value[0]);
-      } else if (value instanceof Date) {
-        formData.append(key, format(value, 'yyyy-MM-dd'));
-      } else if (typeof value === 'boolean') {
-        formData.append(key, String(value));
-      } else if (value !== null && value !== undefined && value !== '' && !(value instanceof FileList)) {
-        formData.append(key, String(value));
-      } else if (key === 'description' && value === '') {
-        formData.append(key, '');
-      }
+        if (key === 'pet_image' || key === 'report_image') {
+            if (value instanceof FileList && value.length > 0) {
+                formData.append(key, value[0]);
+            } else {
+                formData.append(key, ''); // Send empty for null file
+            }
+        } else if (value instanceof Date) {
+            formData.append(key, format(value, 'yyyy-MM-dd'));
+        } else if (typeof value === 'boolean') {
+            formData.append(key, String(value));
+        } else if (value === null || value === undefined) {
+             formData.append(key, ''); // Send empty for null/undefined
+        } else {
+            formData.append(key, String(value));
+        }
     });
 
     try {
