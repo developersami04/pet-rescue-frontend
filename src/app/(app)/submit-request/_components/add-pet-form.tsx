@@ -39,7 +39,7 @@ import { Calendar } from '@/components/ui/calendar';
 
 const addPetSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
-  pet_type: z.string().min(1, 'Pet type is required.'),
+  pet_type: z.coerce.number().min(1, 'Pet type is required.'),
   breed: z.string().optional(),
   age: z.coerce.number().min(0, 'Age must be a positive number.').optional().nullable(),
   weight: z.coerce.number().min(0, 'Weight must be a positive number.').optional().nullable(),
@@ -97,7 +97,6 @@ export function AddPetForm() {
     resolver: zodResolver(addPetSchema),
     defaultValues: {
       name: '',
-      pet_type: '',
       breed: '',
       age: null,
       weight: null,
@@ -160,16 +159,24 @@ export function AddPetForm() {
     }
     
     const formData = new FormData();
-    Object.entries(values).forEach(([key, value]) => {
-        if (value instanceof FileList && value.length > 0) {
-            formData.append(key, value[0]);
-        } else if (value instanceof Date) {
-            formData.append(key, format(value, 'yyyy-MM-dd'));
-        } else if (typeof value === 'boolean') {
-            formData.append(key, String(value));
-        } else if (value !== null && value !== undefined && value !== '') {
-            formData.append(key, String(value));
+
+    // Helper to append values, handling nulls for optional fields
+    const appendIfPresent = (key: string, value: any) => {
+        if (value !== null && value !== undefined && value !== '') {
+            if (value instanceof FileList && value.length > 0) {
+              formData.append(key, value[0]);
+            } else if (value instanceof Date) {
+              formData.append(key, format(value, 'yyyy-MM-dd'));
+            } else if (typeof value === 'boolean') {
+              formData.append(key, String(value));
+            } else if (!(value instanceof FileList)) {
+              formData.append(key, String(value));
+            }
         }
+    };
+
+    Object.entries(values).forEach(([key, value]) => {
+      appendIfPresent(key, value);
     });
 
     try {
@@ -232,7 +239,7 @@ export function AddPetForm() {
                     <FormItem><FormLabel>Pet Name</FormLabel><FormControl><Input placeholder="Enter pet name" {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="pet_type" render={({ field }) => (
-                    <FormItem><FormLabel>Type</FormLabel><Select onValueChange={field.onChange} value={field.value} disabled={petTypes.length === 0}><FormControl><SelectTrigger><SelectValue placeholder="Select pet type" /></SelectTrigger></FormControl><SelectContent>{petTypes.map(petType => (<SelectItem key={petType.id} value={String(petType.id)}>{petType.name}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Type</FormLabel><Select onValueChange={field.onChange} value={String(field.value ?? '')} disabled={petTypes.length === 0}><FormControl><SelectTrigger><SelectValue placeholder="Select pet type" /></SelectTrigger></FormControl><SelectContent>{petTypes.map(petType => (<SelectItem key={petType.id} value={String(petType.id)}>{petType.name}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="breed" render={({ field }) => (
                     <FormItem><FormLabel>Breed</FormLabel><FormControl><Input placeholder="Enter breed" {...field} /></FormControl><FormMessage /></FormItem>
@@ -359,5 +366,3 @@ export function AddPetForm() {
     </Form>
   );
 }
-
-    
