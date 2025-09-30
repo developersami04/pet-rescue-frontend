@@ -43,7 +43,7 @@ const addPetSchema = z.object({
   breed: z.string().optional(),
   age: z.coerce.number().min(0, 'Age must be a positive number.').optional().nullable(),
   weight: z.coerce.number().min(0, 'Weight must be a positive number.').optional().nullable(),
-  gender: z.enum(['Male', 'Female', 'Unknown']),
+  gender: z.enum(['Male', 'Female', 'Unknown'], { required_error: 'Gender is required.' }),
   description: z.string().optional(),
   pet_image: z
     .any()
@@ -56,7 +56,7 @@ const addPetSchema = z.object({
   city: z.string().optional(),
   pincode: z.coerce.number().optional().nullable(),
   state: z.string().optional(),
-  color: z.string().optional(),
+  color: z.string().min(1, 'Color is required.'),
 
   // Medical History
   disease_name: z.string().optional(),
@@ -68,8 +68,8 @@ const addPetSchema = z.object({
 
   // Pet Report
   report_image: z.any().optional(),
-  pet_status: z.enum(['lost', 'found']).optional(),
-  message: z.string().optional(),
+  pet_status: z.enum(['lost', 'found'], { required_error: 'Report type is required.' }),
+  message: z.string().min(10, 'Report message must be at least 10 characters.').max(500, 'Report message cannot exceed 500 characters.'),
 });
 
 type PetType = {
@@ -337,7 +337,7 @@ export function AddPetForm() {
         <Separator className="my-8" />
         
         {/* Report Section */}
-        <h3 className="text-lg font-medium">Report Status (Optional)</h3>
+        <h3 className="text-lg font-medium">Report Status</h3>
          <FormField control={form.control} name="pet_status" render={({ field }) => (
             <FormItem className="space-y-3"><FormLabel>Report Type</FormLabel><FormControl><RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-row space-x-4"><FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="lost" /></FormControl><FormLabel className="font-normal">Lost</FormLabel></FormItem><FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="found" /></FormControl><FormLabel className="font-normal">Found</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem>
         )} />
@@ -346,7 +346,7 @@ export function AddPetForm() {
                 <FormField control={form.control} name="message" render={({ field }) => (<FormItem><FormLabel>Report Message</FormLabel><FormControl><Textarea placeholder="Describe where the pet was lost or found..." className="resize-none" rows={10} {...field} /></FormControl><FormMessage /></FormItem>)} />
             </div>
             <div className="space-y-4">
-                <FormField control={form.control} name="report_image" render={({ field: { onChange, value, ...rest } }) => (<FormItem><FormLabel>Report Image</FormLabel><FormControl><Input type="file" accept="image/png, image/jpeg, image/webp" onChange={(e) => { onChange(e.target.files); handleReportImageChange(e); }} {...rest} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="report_image" render={({ field: { onChange, value, ...rest } }) => (<FormItem><FormLabel>Report Image (Optional)</FormLabel><FormControl><Input type="file" accept="image/png, image/jpeg, image/webp" onChange={(e) => { onChange(e.target.files); handleReportImageChange(e); }} {...rest} /></FormControl><FormMessage /></FormItem>)} />
                 <Card className="aspect-square"><CardContent className="p-2 h-full">{reportImagePreview ? (<div className="relative h-full w-full"><Image src={reportImagePreview} alt="Report image preview" fill className="object-cover rounded-md" /></div>) : (<div className="flex flex-col items-center justify-center h-full text-muted-foreground bg-muted/50 rounded-md"><Upload className="h-12 w-12" /><p className="mt-2 text-sm text-center">Report Image Preview</p></div>)}</CardContent></Card>
             </div>
         </div>
@@ -359,5 +359,3 @@ export function AddPetForm() {
     </Form>
   );
 }
-
-    
