@@ -46,6 +46,7 @@ export function PetFilters({
             <SelectValue placeholder="Filter by type" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="All">All</SelectItem>
             {petTypes.map((t) => (
               <SelectItem key={t} value={t}>
                 {t}

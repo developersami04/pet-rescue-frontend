@@ -7,7 +7,7 @@ import { Pet } from "./data";
 
 type PetType = {
   id: number;
-  type: string;
+  name: string;
 };
 
 const API_BASE_URL = process.env.API_BASE_URL;
@@ -172,7 +172,6 @@ export async function registerUser(userData: z.infer<typeof registerUserSchema>)
         const result = await response.json();
 
         if (!response.ok) {
-            // Handle new error format: { message: ["..."] }
             if (result.message && Array.isArray(result.message) && result.message.length > 0) {
                  throw new Error(result.message.join(' '));
             }
@@ -303,13 +302,18 @@ export async function updateUserDetails(token: string, userData: Record<string, 
 }
 
 
-export async function getAllPets(token: string) {
+export async function getAllPets(token: string, type?: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
 
+    const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.allPets}`);
+    if (type && type !== 'All') {
+        url.searchParams.append('type', type);
+    }
+
     try {
-        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.allPets}`, {
+        const response = await fetchWithAuth(url.toString(), {
             method: 'GET',
             cache: 'no-store' 
         }, token);
@@ -320,7 +324,7 @@ export async function getAllPets(token: string) {
             throw new Error(result.message || result.detail || 'Failed to fetch pets.');
         }
 
-        return result;
+        return result.data || [];
     } catch (error) {
         if ((error as any).name === 'AbortError') {
             throw new Error('Request to fetch pets timed out.');

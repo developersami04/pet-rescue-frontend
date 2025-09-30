@@ -59,7 +59,7 @@ const addPetSchema = z.object({
 
 type PetType = {
   id: number;
-  type: string;
+  name: string;
 };
 
 export function AddPetForm() {
@@ -203,7 +203,7 @@ export function AddPetForm() {
                         <SelectContent>
                             {petTypes.map(petType => (
                                 <SelectItem key={petType.id} value={String(petType.id)}>
-                                    {petType.type}
+                                    {petType.name}
                                 </SelectItem>
                             ))}
                         </SelectContent>
