@@ -2,6 +2,7 @@
 
 
 
+
 import { PageHeader } from "@/components/page-header";
 import { DashboardStats } from "./_components/dashboard-stats";
 import { FeaturedPet } from "./_components/featured-pet";
@@ -12,6 +13,11 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MyPetsSection } from "./_components/my-pets-section";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LostPetsSection } from "./_components/lost-pets-section";
+import { FoundPetsSection } from "./_components/found-pets-section";
+import { MyAdoptionRequestsSection } from "./_components/my-adoption-requests-section";
+import { Card, CardContent } from "@/components/ui/card";
 
 function DashboardStatsSkeleton() {
     return (
@@ -22,24 +28,6 @@ function DashboardStatsSkeleton() {
             <Skeleton className="h-28" />
         </div>
     )
-}
-
-function FeaturedPetSkeleton() {
-    return (
-        <Card className="overflow-hidden">
-            <div className="grid md:grid-cols-2">
-                <Skeleton className="h-64 md:h-full" />
-                <div className="p-6">
-                    <Skeleton className="h-8 w-3/4 mb-2" />
-                    <Skeleton className="h-4 w-1/2 mb-4" />
-                    <Skeleton className="h-4 w-full mb-2" />
-                    <Skeleton className="h-4 w-full mb-2" />
-                    <Skeleton className="h-4 w-5/6 mb-4" />
-                    <Skeleton className="h-10 w-32" />
-                </div>
-            </div>
-        </Card>
-    );
 }
 
 export default function DashboardPage() {
@@ -64,12 +52,27 @@ export default function DashboardPage() {
       
       <Separator className="my-8" />
       
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold tracking-tight font-headline mb-4">
-          My Pets
-        </h2>
-        <MyPetsSection />
-      </div>
+        <Tabs defaultValue="my-pets" className="mt-8">
+            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-6">
+                <TabsTrigger value="my-pets">My Pets</TabsTrigger>
+                <TabsTrigger value="lost-pets">Lost Pets</TabsTrigger>
+                <TabsTrigger value="found-pets">Found Pets</TabsTrigger>
+                <TabsTrigger value="my-requests">My Adopt Requests</TabsTrigger>
+            </TabsList>
+            <TabsContent value="my-pets">
+                <MyPetsSection />
+            </TabsContent>
+            <TabsContent value="lost-pets">
+                <LostPetsSection />
+            </TabsContent>
+            <TabsContent value="found-pets">
+                <FoundPetsSection />
+            </TabsContent>
+            <TabsContent value="my-requests">
+                <MyAdoptionRequestsSection />
+            </TabsContent>
+        </Tabs>
+
 
       <div className="mt-8">
         <h2 className="text-2xl font-bold tracking-tight font-headline mb-4">
