@@ -1,5 +1,4 @@
 
-
 'use server';
 
 import { z } from "zod";
@@ -364,7 +363,7 @@ export async function getPetById(token: string, petId: string): Promise<Pet> {
     }
 }
 
-export async function getMyPets(token: string) {
+export async function getMyPets(token: string): Promise<Pet[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
@@ -381,7 +380,7 @@ export async function getMyPets(token: string) {
             throw new Error(result.message || result.detail || 'Failed to fetch your pets.');
         }
 
-        return result;
+        return result.data || [];
     } catch (error) {
         if ((error as any).name === 'AbortError') {
             throw new Error('Request to fetch your pets timed out.');
