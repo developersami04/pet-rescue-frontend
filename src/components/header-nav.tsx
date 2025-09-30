@@ -25,6 +25,7 @@ import {
   Laptop,
   Info,
   Phone,
+  Shapes,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,7 @@ const navItems = {
     ],
   pets: [
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },
+    { href: "/pet-categories", icon: Shapes, label: "Pet Categories" },
     { href: "/map", icon: Map, label: "Map View" },
     { href: "/submit-request", icon: PlusCircle, label: "Submit a Request" },
   ],
@@ -339,3 +341,5 @@ export function HeaderNav() {
     </header>
   );
 }
+
+    
