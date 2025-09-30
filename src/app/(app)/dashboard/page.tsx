@@ -1,6 +1,7 @@
 
 
 
+
 import { PageHeader } from "@/components/page-header";
 import { DashboardStats } from "./_components/dashboard-stats";
 import { FeaturedPet } from "./_components/featured-pet";
@@ -9,6 +10,8 @@ import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { MyPetsSection } from "./_components/my-pets-section";
+import { Separator } from "@/components/ui/separator";
 
 function DashboardStatsSkeleton() {
     return (
@@ -58,6 +61,16 @@ export default function DashboardPage() {
       <Suspense fallback={<DashboardStatsSkeleton />}>
         <DashboardStats />
       </Suspense>
+      
+      <Separator className="my-8" />
+      
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold tracking-tight font-headline mb-4">
+          My Pets
+        </h2>
+        <MyPetsSection />
+      </div>
+
       <div className="mt-8">
         <h2 className="text-2xl font-bold tracking-tight font-headline mb-4">
           Featured Pet
