@@ -128,12 +128,16 @@ export async function getPetTypes(): Promise<PetType[] | null> {
 
 const registerUserSchema = z.object({
   firstName: z.string().min(1, 'First name is required.'),
-  lastName: z.string().min(1, 'Last name is required.'),
+  lastName: z.string().optional(),
   username: z.string().min(3, 'Username must be at least 3 characters.'),
   email: z.string().email('Please enter a valid email address.'),
   password: z.string().min(6, 'Password must be at least 6 characters.'),
-  phone_no: z.string().optional(),
-  gender: z.enum(['Male', 'Female']),
+  phone_no: z.string().min(10, 'Please enter a valid phone number.'),
+  gender: z.enum(['Male', 'Female', 'Other', 'Prefer Not To Say']),
+  address: z.string().min(1, 'Address is required.'),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  pin_code: z.coerce.number().optional().nullable(),
 });
 
 
@@ -147,12 +151,14 @@ export async function registerUser(userData: z.infer<typeof registerUserSchema>)
         email: userData.email,
         password: userData.password,
         first_name: userData.firstName,
-        last_name: userData.lastName,
+        last_name: userData.lastName || "",
         profile_image: null,
         phone_no: userData.phone_no,
         gender: userData.gender,
-        pin_code: null,
-        address: "",
+        pin_code: userData.pin_code,
+        address: userData.address,
+        city: userData.city || "",
+        state: userData.state || ""
     };
 
     try {

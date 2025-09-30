@@ -22,16 +22,21 @@ import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { registerUser } from '@/lib/action_api';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 
 const createAccountSchema = z.object({
   firstName: z.string().min(1, 'First name is required.'),
-  lastName: z.string().min(1, 'Last name is required.'),
+  lastName: z.string().optional(),
   username: z.string().min(3, 'Username must be at least 3 characters.'),
   email: z.string().email('Please enter a valid email address.'),
   password: z.string().min(6, 'Password must be at least 6 characters.'),
   confirmPassword: z.string(),
-  phone_no: z.string().min(10, 'Please enter a valid phone number.').optional(),
-  gender: z.enum(['Male', 'Female']),
+  phone_no: z.string().min(10, 'Please enter a valid phone number.'),
+  gender: z.enum(['Male', 'Female', 'Other', 'Prefer Not To Say']),
+  address: z.string().min(1, 'Address is required.'),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  pin_code: z.coerce.number().optional().nullable(),
 }).refine(data => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
@@ -52,6 +57,10 @@ export function CreateAccountForm() {
       password: '',
       confirmPassword: '',
       phone_no: '',
+      address: '',
+      city: '',
+      state: '',
+      pin_code: null,
     },
   });
 
@@ -166,10 +175,66 @@ export function CreateAccountForm() {
                         <SelectContent>
                             <SelectItem value="Male">Male</SelectItem>
                             <SelectItem value="Female">Female</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                            <SelectItem value="Prefer Not To Say">Prefer Not To Say</SelectItem>
                         </SelectContent>
                         </Select>
                         <FormMessage />
                     </FormItem>
+                    )}
+                />
+            </div>
+             <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Address</FormLabel>
+                        <FormControl>
+                            <Textarea placeholder="Enter your address" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                 <FormField
+                    control={form.control}
+                    name="city"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>City</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Enter your city" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                <FormField
+                    control={form.control}
+                    name="state"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>State</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Enter your state" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="pin_code"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Pin Code</FormLabel>
+                        <FormControl>
+                            <Input type="number" placeholder="Enter pin code" {...field} value={field.value ?? ''} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
                     )}
                 />
             </div>
