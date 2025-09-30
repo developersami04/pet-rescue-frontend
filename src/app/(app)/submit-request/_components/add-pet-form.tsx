@@ -160,23 +160,18 @@ export function AddPetForm() {
     
     const formData = new FormData();
 
-    // Helper to append values, handling nulls for optional fields
-    const appendIfPresent = (key: string, value: any) => {
-        if (value !== null && value !== undefined && value !== '') {
-            if (value instanceof FileList && value.length > 0) {
-              formData.append(key, value[0]);
-            } else if (value instanceof Date) {
-              formData.append(key, format(value, 'yyyy-MM-dd'));
-            } else if (typeof value === 'boolean') {
-              formData.append(key, String(value));
-            } else if (!(value instanceof FileList)) {
-              formData.append(key, String(value));
-            }
-        }
-    };
-
     Object.entries(values).forEach(([key, value]) => {
-      appendIfPresent(key, value);
+      if (value instanceof FileList && value.length > 0) {
+        formData.append(key, value[0]);
+      } else if (value instanceof Date) {
+        formData.append(key, format(value, 'yyyy-MM-dd'));
+      } else if (typeof value === 'boolean') {
+        formData.append(key, String(value));
+      } else if (value !== null && value !== undefined && value !== '' && !(value instanceof FileList)) {
+        formData.append(key, String(value));
+      } else if (key === 'description' && value === '') {
+        formData.append(key, '');
+      }
     });
 
     try {
@@ -366,3 +361,5 @@ export function AddPetForm() {
     </Form>
   );
 }
+
+    
