@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdoptionForm } from "./_components/adoption-form";
 import { useEffect, useState } from "react";
 import type { Pet } from "@/lib/data";
-import { getAllPets } from "@/lib/action_api";
+import { getPetById } from "@/lib/action_api";
 import { useToast } from "@/hooks/use-toast";
 
 export default function AdoptPage() {
@@ -27,8 +27,7 @@ export default function AdoptPage() {
         }
 
         try {
-            const allPets = await getAllPets(token);
-            const foundPet = allPets.find((p: Pet) => p.id.toString() === petId);
+            const foundPet = await getPetById(token, petId);
             if (foundPet) {
                 setPet(foundPet);
             } else {

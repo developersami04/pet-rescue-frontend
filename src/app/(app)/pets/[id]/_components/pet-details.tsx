@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import Link from 'next/link';
@@ -19,10 +18,7 @@ type PetDetailsProps = {
 export function PetDetails({ pet }: PetDetailsProps) {
   const [isLiked, setIsLiked] = useState(false);
   
-  // The new API response does not include 'available_for_adopt' directly in the root.
-  // We need to determine this from the context. A pet with an active "lost" report
-  // or an approved adoption request is likely not available.
-  const isLost = pet.pet_report?.some(r => r.pet_status === 'lost' && !r.is_resolved) ?? false;
+  const isLost = pet.pet_report?.pet_status === 'lost' && !pet.pet_report?.is_resolved;
   const isAdopted = pet.adoption_requests?.some(r => r.is_approved) ?? false;
   const isAvailableForAdoption = !isLost && !isAdopted;
 

@@ -17,7 +17,7 @@ type PetCardProps = {
 };
 
 export function PetCard({ pet }: PetCardProps) {
-  const imageUrl = pet.image ?? `https://picsum.photos/seed/${pet.id}/400/300`;
+  const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/400/300`;
 
   return (
     <Card className="flex flex-col overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg">
@@ -29,7 +29,7 @@ export function PetCard({ pet }: PetCardProps) {
           className="object-cover"
           data-ai-hint={pet.breed ?? pet.type_name}
         />
-         {!pet.image && (
+         {!pet.pet_image && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/30">
             <PawPrint className="h-12 w-12 text-white/50" />
           </div>

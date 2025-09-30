@@ -114,6 +114,8 @@ export default function PetProfilePage() {
     return notFound();
   }
 
+  const reports = pet.pet_report ? [pet.pet_report] : [];
+
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
@@ -131,19 +133,19 @@ export default function PetProfilePage() {
           </TabsTrigger>
           <TabsTrigger value="reports">
             Reports
-            {pet.pet_report && pet.pet_report.length > 0 &&
-              <Badge variant="destructive" className="ml-2">{pet.pet_report.length}</Badge>
+            {reports.length > 0 &&
+              <Badge variant="destructive" className="ml-2">{reports.length}</Badge>
             }
           </TabsTrigger>
         </TabsList>
         <TabsContent value="medical-history" className="mt-6">
-          <MedicalHistoryList pet={pet} />
+          <MedicalHistoryList medicalHistory={pet.medical_history} />
         </TabsContent>
         <TabsContent value="adoption-requests" className="mt-6">
             <AdoptionRequestsList requests={pet.adoption_requests} />
         </TabsContent>
         <TabsContent value="reports" className="mt-6">
-            <PetReportList reports={pet.pet_report} />
+            <PetReportList reports={reports} />
         </TabsContent>
       </Tabs>
     </div>

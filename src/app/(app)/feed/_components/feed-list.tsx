@@ -67,7 +67,7 @@ export function FeedList() {
                     timestamp: new Date(Date.now() - index * 3 * 3600 * 1000), // hours ago
                     title: `${pet.name} is looking for a home!`,
                     description: `A ${pet.breed} is now available for adoption. Could you be the one?`,
-                    imageUrl: pet.image ?? `https://picsum.photos/seed/${pet.id}/400/300`,
+                    imageUrl: pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/400/300`,
                     imageHint: pet.breed ?? pet.type_name,
                     icon: PawPrint,
                     petId: pet.id.toString(),
@@ -83,7 +83,7 @@ export function FeedList() {
                     timestamp: new Date(Date.now() - 8 * 3600 * 1000),
                     title: `${adoptedPet.name} has been adopted!`,
                     description: `${adoptedPet.name} found a forever home. Congratulations to the new family!`,
-                    imageUrl: adoptedPet.image ?? `https://picsum.photos/seed/${adoptedPet.id}/400/300`,
+                    imageUrl: adoptedPet.pet_image ?? `https://picsum.photos/seed/${adoptedPet.id}/400/300`,
                     imageHint: adoptedPet.breed ?? adoptedPet.type_name,
                     icon: Heart,
                     petId: adoptedPet.id.toString()

@@ -355,7 +355,7 @@ export async function getPetById(token: string, petId: string): Promise<Pet> {
             throw new Error(result.message || result.detail || 'Failed to fetch pet details.');
         }
 
-        return result;
+        return result.data;
     } catch (error) {
         if ((error as any).name === 'AbortError') {
             throw new Error('Request to fetch pet details timed out.');

@@ -4,15 +4,14 @@ export type MedicalHistory = {
     id: number;
     pet: number;
     pet_name: string;
-    disease_name: string;
-    stage: number;
-    no_of_years: number;
-    vaccination_name: string;
+    disease_name: string | null;
+    stage: number | null;
+    no_of_years: number | null;
+    vaccination_name: string | null;
     last_vaccinated_date: string | null;
-    message: string | null;
-    image: string | null;
-    is_approved: boolean;
-    user: number;
+    note: string | null;
+    created_by: number;
+    modified_by: number | null;
 };
 
 export type AdoptionRequest = {
@@ -28,25 +27,22 @@ export type AdoptionRequest = {
 export type PetReport = {
     id: number;
     pet: number;
+    report_image: string | null;
     pet_name: string;
     pet_status: 'lost' | 'found';
     message: string;
     reporter_name: string;
     report_status: string;
-    image: string | null;
     is_resolved: boolean;
-    user: number;
 };
 
 export type Pet = {
   id: number;
-  image: string | null;
+  pet_image: string | null;
   name: string;
   description: string | null;
-  pet_type?: number;
   type_name: string;
-  available_for_adopt: boolean;
-  gender: 'Male' | 'Female';
+  gender: 'Male' | 'Female' | 'Unknown';
   age: number | null;
   weight: number | null;
   breed: string | null;
@@ -57,14 +53,16 @@ export type Pet = {
   city: string | null;
   pincode: number | null;
   state: string | null;
-  is_verified?: boolean;
-  created_by: number | null;
-  created_date: string;
-  modified_by: string | null;
-  modified_date: string;
-  medical_histories: MedicalHistory[] | null;
+  created_by: number;
+  created_at: string;
+  modified_by: number | null;
+  modified_at: string;
+  medical_history: MedicalHistory | null;
   adoption_requests: AdoptionRequest[] | null;
-  pet_report: PetReport[] | null;
+  pet_report: PetReport | null;
+  // Deprecated fields from previous API versions, kept for potential reference in components that haven't been updated.
+  image?: string | null;
+  available_for_adopt?: boolean;
 };
 
 

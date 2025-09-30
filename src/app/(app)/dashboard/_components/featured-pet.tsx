@@ -95,7 +95,7 @@ export function FeaturedPet() {
         );
     }
     
-    const imageUrl = featuredPet.image ?? `https://picsum.photos/seed/${featuredPet.id}/600/400`;
+    const imageUrl = featuredPet.pet_image ?? `https://picsum.photos/seed/${featuredPet.id}/600/400`;
 
     return (
         <Card className="overflow-hidden">

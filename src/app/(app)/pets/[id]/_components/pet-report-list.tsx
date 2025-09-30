@@ -6,7 +6,7 @@ import { AlertTriangle, Flag } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
 type PetReportListProps = {
-  reports: PetReport[] | null;
+  reports: PetReport[];
 };
 
 export function PetReportList({ reports }: PetReportListProps) {
@@ -38,7 +38,7 @@ export function PetReportList({ reports }: PetReportListProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="bg-muted/50 p-3 rounded-md">{report.message}</p>
+            {report.message && <p className="bg-muted/50 p-3 rounded-md">{report.message}</p>}
           </CardContent>
         </Card>
       ))}
