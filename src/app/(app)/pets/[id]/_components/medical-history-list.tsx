@@ -19,7 +19,7 @@ export function MedicalHistoryList({ medicalHistory }: MedicalHistoryListProps) 
     );
   }
   
-  const hasRecords = medicalHistory.vaccination_name || medicalHistory.disease_name || medicalHistory.last_vaccinated_date;
+  const hasRecords = medicalHistory.vaccination_name || medicalHistory.disease_name || medicalHistory.last_vaccinated_date || medicalHistory.note;
   
   if (!hasRecords) {
     return (
@@ -36,9 +36,9 @@ export function MedicalHistoryList({ medicalHistory }: MedicalHistoryListProps) 
           <CardHeader>
             <CardTitle className="text-xl flex items-center gap-2">
               <ShieldCheck className="h-5 w-5 text-primary" />
-              {medicalHistory.vaccination_name || 'Medical Record'}
+              {medicalHistory.vaccination_name || medicalHistory.disease_name || 'Medical Record'}
             </CardTitle>
-            {medicalHistory.disease_name && (
+            {medicalHistory.disease_name && medicalHistory.vaccination_name && (
                 <CardDescription>{medicalHistory.disease_name}</CardDescription>
             )}
           </CardHeader>
