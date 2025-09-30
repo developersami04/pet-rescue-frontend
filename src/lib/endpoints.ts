@@ -6,7 +6,7 @@ const API_ENDPOINTS = {
   login: '/api/user-auth/login',
   refreshToken: '/api/user-auth/token-refresh',
   userDetails: '/api/user-auth/user-details',
-  updateUserDetails: '/api/user-auth/update-details',
+  updateUserDetails: '/api/user-auth/update-account',
   changePassword: '/api/user-auth/change-password',
   allPets: '/api/pet-data/pets/',
   myPets: '/api/pet-data/my-pets',
