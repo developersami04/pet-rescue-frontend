@@ -72,7 +72,7 @@ const addPetSchema = z.object({
   stage: z.string().optional(),
   no_of_years: z.coerce.number().optional().nullable(),
   vaccination_name: z.string().optional(),
-  last_vaccinated_date: z.date().optional(),
+  last_vaccinated_date: z.date().optional().nullable(),
   note: z.string().optional(),
 
   // Pet Report
@@ -114,6 +114,7 @@ export function AddPetForm() {
       disease_name: '',
       stage: '',
       no_of_years: null,
+      last_vaccinated_date: null,
       vaccination_name: '',
       note: '',
       message: '',
@@ -160,18 +161,14 @@ export function AddPetForm() {
     
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== '') {
-            if (key === 'pet_image' && value instanceof FileList && value.length > 0) {
-                formData.append(key, value[0]);
-            } else if (key === 'report_image' && value instanceof FileList && value.length > 0) {
-                 formData.append(key, value[0]);
-            } else if (key === 'last_vaccinated_date' && value instanceof Date) {
-                 formData.append(key, format(value, 'yyyy-MM-dd'));
-            } else if (typeof value === 'boolean') {
-                 formData.append(key, String(value));
-            } else if (key !== 'pet_image' && key !== 'report_image') {
-                formData.append(key, String(value));
-            }
+        if (value instanceof FileList && value.length > 0) {
+            formData.append(key, value[0]);
+        } else if (value instanceof Date) {
+            formData.append(key, format(value, 'yyyy-MM-dd'));
+        } else if (typeof value === 'boolean') {
+            formData.append(key, String(value));
+        } else if (value !== null && value !== undefined && value !== '') {
+            formData.append(key, String(value));
         }
     });
 
@@ -235,7 +232,7 @@ export function AddPetForm() {
                     <FormItem><FormLabel>Pet Name</FormLabel><FormControl><Input placeholder="Enter pet name" {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="pet_type" render={({ field }) => (
-                    <FormItem><FormLabel>Type</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value} disabled={petTypes.length === 0}><FormControl><SelectTrigger><SelectValue placeholder="Select pet type" /></SelectTrigger></FormControl><SelectContent>{petTypes.map(petType => (<SelectItem key={petType.id} value={String(petType.id)}>{petType.name}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Type</FormLabel><Select onValueChange={field.onChange} value={field.value} disabled={petTypes.length === 0}><FormControl><SelectTrigger><SelectValue placeholder="Select pet type" /></SelectTrigger></FormControl><SelectContent>{petTypes.map(petType => (<SelectItem key={petType.id} value={String(petType.id)}>{petType.name}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="breed" render={({ field }) => (
                     <FormItem><FormLabel>Breed</FormLabel><FormControl><Input placeholder="Enter breed" {...field} /></FormControl><FormMessage /></FormItem>
@@ -247,7 +244,7 @@ export function AddPetForm() {
                     <FormItem><FormLabel>Weight (in kg)</FormLabel><FormControl><Input type="number" placeholder="Enter weight" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="gender" render={({ field }) => (
-                    <FormItem><FormLabel>Gender</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select gender" /></SelectTrigger></FormControl><SelectContent><SelectItem value="Male">Male</SelectItem><SelectItem value="Female">Female</SelectItem><SelectItem value="Unknown">Unknown</SelectItem></SelectContent></Select><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Gender</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select gender" /></SelectTrigger></FormControl><SelectContent><SelectItem value="Male">Male</SelectItem><SelectItem value="Female">Female</SelectItem><SelectItem value="Unknown">Unknown</SelectItem></SelectContent></Select><FormMessage /></FormItem>
                 )} />
                  <FormField control={form.control} name="color" render={({ field }) => (
                     <FormItem><FormLabel>Color</FormLabel><FormControl><Input placeholder="Enter color" {...field} /></FormControl><FormMessage /></FormItem>
@@ -321,7 +318,7 @@ export function AddPetForm() {
                     <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                         mode="single"
-                        selected={field.value}
+                        selected={field.value ?? undefined}
                         onSelect={field.onChange}
                         disabled={(date) =>
                             date > new Date() || date < new Date('1900-01-01')
