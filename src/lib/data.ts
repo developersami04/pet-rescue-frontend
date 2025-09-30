@@ -93,9 +93,12 @@ export type User = {
   last_name: string;
   is_verified: boolean;
   phone_no: string | null;
-  gender?: 'Male' | 'Female';
+  gender: 'Male' | 'Female' | 'Other' | 'Prefer Not To Say';
   pin_code: number | null;
   address: string | null;
+  city: string | null;
+  state: string | null;
+  is_staff: boolean;
 };
 
 

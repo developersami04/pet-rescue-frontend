@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { useUserDetails } from '@/hooks/use-user-details';
 import { useEffect } from 'react';
@@ -26,14 +26,20 @@ import { updateUserDetails } from '@/lib/action_api';
 import { useRouter } from 'next/navigation';
 import { User } from '@/lib/data';
 import { ChangePasswordDialog } from './change-password-dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 
 const profileFormSchema = z.object({
     first_name: z.string().min(1, 'First name is required.'),
-    last_name: z.string().min(1, 'Last name is required.'),
+    last_name: z.string().optional(),
     username: z.string().min(3, 'Username must be at least 3 characters.'),
     email: z.string().email('Please enter a valid email address.'),
-    phone_no: z.string().optional(),
+    phone_no: z.string().min(10, 'Please enter a valid phone number.').optional().nullable(),
+    gender: z.enum(['Male', 'Female', 'Other', 'Prefer Not To Say']).optional(),
     address: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    pin_code: z.coerce.number().optional().nullable(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -43,12 +49,21 @@ function getChangedValues(
   currentValues: ProfileFormValues
 ): Partial<ProfileFormValues> {
   const changedValues: Partial<ProfileFormValues> = {};
-  for (const key in currentValues) {
-    const typedKey = key as keyof ProfileFormValues;
-    if (initialValues[typedKey as keyof User] !== currentValues[typedKey]) {
-      changedValues[typedKey] = currentValues[typedKey];
+  const initial = initialValues as any;
+  const current = currentValues as any;
+
+  for (const key in current) {
+    if (initial[key] !== current[key] && current[key] !== null && current[key] !== '') {
+       if (key === 'pin_code' && current[key] !== null) {
+        if (Number(initial[key]) !== Number(current[key])) {
+          changedValues[key as keyof ProfileFormValues] = Number(current[key]) as any;
+        }
+      } else if (initial[key] !== current[key]) {
+        changedValues[key as keyof ProfileFormValues] = current[key];
+      }
     }
   }
+  
   return changedValues;
 }
 
@@ -102,6 +117,9 @@ export function ProfileForm() {
             email: '',
             phone_no: '',
             address: '',
+            city: '',
+            state: '',
+            pin_code: null
         },
     });
 
@@ -113,7 +131,11 @@ export function ProfileForm() {
                 username: user.username,
                 email: user.email,
                 phone_no: user.phone_no ?? '',
+                gender: user.gender,
                 address: user.address ?? '',
+                city: user.city ?? '',
+                state: user.state ?? '',
+                pin_code: user.pin_code,
             });
         }
     }, [user, form]);
@@ -140,7 +162,6 @@ export function ProfileForm() {
             });
             return;
         }
-
 
         try {
             const result = await updateUserDetails(token, changedValues);
@@ -183,7 +204,6 @@ export function ProfileForm() {
         )
     }
 
-
     return (
         <Card>
             <CardHeader>
@@ -214,7 +234,7 @@ export function ProfileForm() {
                                     <FormItem>
                                         <FormLabel>Last Name</FormLabel>
                                         <FormControl>
-                                            <Input {...field} />
+                                            <Input {...field} value={field.value ?? ''} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -234,32 +254,70 @@ export function ProfileForm() {
                                 </FormItem>
                             )}
                         />
-                        <FormField
+                         <FormField
                             control={form.control}
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input type="email" {...field} />
-                                    </FormControl>
+                                    <div className="flex items-center gap-2">
+                                        <FormControl>
+                                            <Input type="email" {...field} />
+                                        </FormControl>
+                                        {user && !user.is_verified && (
+                                            <Button type="button" variant="secondary" size="sm">Verify</Button>
+                                        )}
+                                    </div>
+                                    {user && !user.is_verified && (
+                                        <div className="pt-1">
+                                            <Badge variant="destructive">
+                                                <AlertCircle className="mr-1 h-3 w-3" />
+                                                Not Verified
+                                            </Badge>
+                                        </div>
+                                    )}
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                         <FormField
-                            control={form.control}
-                            name="phone_no"
-                            render={({ field }) => (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                             <FormField
+                                control={form.control}
+                                name="phone_no"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Phone Number</FormLabel>
+                                        <FormControl>
+                                            <Input type="tel" {...field} value={field.value ?? ''} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="gender"
+                                render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Phone Number</FormLabel>
+                                    <FormLabel>Gender</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
-                                        <Input type="tel" {...field} />
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select gender" />
+                                        </SelectTrigger>
                                     </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="Male">Male</SelectItem>
+                                        <SelectItem value="Female">Female</SelectItem>
+                                        <SelectItem value="Other">Other</SelectItem>
+                                        <SelectItem value="Prefer Not To Say">Prefer Not To Say</SelectItem>
+                                    </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
-                            )}
-                        />
+                                )}
+                            />
+                        </div>
                         <FormField
                             control={form.control}
                             name="address"
@@ -267,12 +325,53 @@ export function ProfileForm() {
                                 <FormItem>
                                     <FormLabel>Address</FormLabel>
                                     <FormControl>
-                                        <Textarea {...field} />
+                                        <Textarea {...field} value={field.value ?? ''} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
+                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="city"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>City</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} value={field.value ?? ''} />
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="state"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>State</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} value={field.value ?? ''} />
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="pin_code"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Pin Code</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" {...field} value={field.value ?? ''} />
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                     </CardContent>
                     <CardFooter className="flex justify-between">
                         <Button type="submit" disabled={isSubmitting}>
