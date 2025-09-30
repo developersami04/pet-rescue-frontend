@@ -35,6 +35,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Calendar } from '@/components/ui/calendar';
 
 const addPetSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -288,7 +289,47 @@ export function AddPetForm() {
             <FormField control={form.control} name="vaccination_name" render={({ field }) => (<FormItem><FormLabel>Vaccine Name</FormLabel><FormControl><Input placeholder="e.g., Anti-Rabies Vaccine" {...field} /></FormControl><FormMessage /></FormItem>)} />
             <FormField control={form.control} name="stage" render={({ field }) => (<FormItem><FormLabel>Stage</FormLabel><FormControl><Input placeholder="Enter stage" {...field} /></FormControl><FormMessage /></FormItem>)} />
             <FormField control={form.control} name="no_of_years" render={({ field }) => (<FormItem><FormLabel>Years Since Vaccination</FormLabel><FormControl><Input type="number" placeholder="Enter years" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={form.control} name="last_vaccinated_date" render={({ field }) => (<FormItem className="flex flex-col"><FormLabel>Last Vaccinated Date</FormLabel><Popover><PopoverTrigger asChild><FormControl><Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal",!field.value && "text-muted-foreground")}>{field.value ? (format(field.value, "PPP")) : (<span>Pick a date</span>)}<CalendarIcon className="ml-auto h-4 w-4 opacity-50" /></Button></FormControl></PopoverTrigger><PopoverContent className="w-auto p-0" align="start"><DayPicker mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date > new Date() || date < new Date("1900-01-01")} initialFocus /></PopoverContent></Popover><FormMessage /></FormItem>)} />
+            <FormField
+                control={form.control}
+                name="last_vaccinated_date"
+                render={({ field }) => (
+                <FormItem className="flex flex-col">
+                    <FormLabel>Last Vaccinated Date</FormLabel>
+                    <Popover>
+                    <PopoverTrigger asChild>
+                        <FormControl>
+                        <Button
+                            variant={'outline'}
+                            className={cn(
+                            'w-full pl-3 text-left font-normal',
+                            !field.value && 'text-muted-foreground'
+                            )}
+                        >
+                            {field.value ? (
+                            format(field.value, 'PPP')
+                            ) : (
+                            <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                        </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                            date > new Date() || date < new Date('1900-01-01')
+                        }
+                        initialFocus
+                        />
+                    </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                </FormItem>
+                )}
+            />
         </div>
         <FormField control={form.control} name="note" render={({ field }) => (<FormItem><FormLabel>Note</FormLabel><FormControl><Textarea placeholder="Add any additional medical notes..." className="resize-none" rows={4} {...field} /></FormControl><FormMessage /></FormItem>)} />
 
@@ -317,3 +358,5 @@ export function AddPetForm() {
     </Form>
   );
 }
+
+    
