@@ -173,7 +173,11 @@ export async function registerUser(userData: z.infer<typeof registerUserSchema>)
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || 'Failed to register user.');
+            // Handle new error format: { message: ["..."] }
+            if (result.message && Array.isArray(result.message) && result.message.length > 0) {
+                 throw new Error(result.message.join(' '));
+            }
+            throw new Error(result.detail || 'Failed to register user.');
         }
 
         return result;
