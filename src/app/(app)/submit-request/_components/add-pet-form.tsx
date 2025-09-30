@@ -47,10 +47,14 @@ const addPetSchema = z.object({
   description: z.string().optional(),
   pet_image: z
     .any()
-    .refine((files) => files?.length == 1, 'Image is required.')
-    .refine((files) => files?.[0]?.size <= 5000000, `Max file size is 5MB.`)
+    .optional()
     .refine(
-      (files) => ['image/jpeg', 'image/png', 'image/webp'].includes(files?.[0]?.type),
+      (files) => !files || files.length === 0 || files[0].size <= 5000000,
+      `Max file size is 5MB.`
+    )
+    .refine(
+      (files) =>
+        !files || files.length === 0 || ['image/jpeg', 'image/png', 'image/webp'].includes(files[0].type),
       'Only .jpg, .png, and .webp formats are supported.'
     ),
   is_vaccinated: z.boolean().default(false),
@@ -101,7 +105,7 @@ export function AddPetForm() {
       description: '',
       is_vaccinated: false,
       is_diseased: false,
-      available_for_adopt: true,
+      available_for_adopt: false,
       is_founded: false,
       address: '',
       city: '',
@@ -157,7 +161,7 @@ export function AddPetForm() {
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
         if (value !== null && value !== undefined && value !== '') {
-            if (key === 'pet_image' && value instanceof FileList) {
+            if (key === 'pet_image' && value instanceof FileList && value.length > 0) {
                 formData.append(key, value[0]);
             } else if (key === 'report_image' && value instanceof FileList && value.length > 0) {
                  formData.append(key, value[0]);
