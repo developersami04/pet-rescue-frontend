@@ -4,6 +4,7 @@
 import { z } from "zod";
 import API_ENDPOINTS, { API_REQUEST_TIMEOUT } from "./endpoints";
 import { Pet } from "./data";
+import { format } from "date-fns";
 
 type PetType = {
   id: number;
@@ -398,53 +399,39 @@ export async function getMyPets(token: string): Promise<Pet[]> {
 }
 
 
-export async function submitRequest(token: string, requestType: string, payload: any) {
+export async function submitRequest(token: string, formData: FormData) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
-    }
-
-    let requestBody: any;
-
-    if (requestType === 'pet') {
-        requestBody = {
-            request_type: requestType,
-            pet: payload
-        };
-    } else if (requestType === 'pet-medical-history') {
-        requestBody = {
-            request_type: requestType,
-            pet_medical_history: payload
-        };
-    } else if (requestType === 'pet-report') {
-        requestBody = {
-            request_type: requestType,
-            pet_report: payload
-        };
-    } else {
-        throw new Error('Invalid request type specified.');
     }
 
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.requestSubmit}`, {
             method: 'POST',
-            body: JSON.stringify(requestBody),
+            body: formData,
         }, token);
         
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || `Failed to submit ${requestType} request.`);
+            // Handle nested error messages
+            const errorMessages = Object.entries(result).map(([key, value]) => {
+                if (Array.isArray(value)) {
+                    return `${key}: ${value.join(', ')}`;
+                }
+                return `${key}: ${value}`;
+            }).join('; ');
+            throw new Error(errorMessages || `Failed to submit request.`);
         }
 
         return result;
     } catch (error) {
          if ((error as any).name === 'AbortError') {
-            throw new Error(`Request for ${requestType} timed out.`);
+            throw new Error(`Request timed out.`);
         }
-        console.error(`Error submitting ${requestType}:`, error);
+        console.error(`Error submitting request:`, error);
         if (error instanceof Error) {
            throw new Error(error.message);
         }
-        throw new Error(`An unknown error occurred while submitting the ${requestType} request.`);
+        throw new Error(`An unknown error occurred while submitting the request.`);
     }
 }
