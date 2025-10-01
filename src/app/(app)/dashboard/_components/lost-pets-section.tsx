@@ -91,11 +91,14 @@ export function LostPetsSection() {
                                 className="object-cover"
                                 data-ai-hint={'lost pet'}
                             />
+                             <Badge variant={'destructive'} className="absolute bottom-2 right-2 capitalize whitespace-nowrap">
+                                Lost
+                            </Badge>
                         </div>
                         <div className="p-4 flex-grow">
                             <div className="flex justify-between items-start">
                                 <h3 className="text-lg font-bold">{report.pet_name}</h3>
-                                <Badge variant={report.is_resolved ? 'default' : 'destructive'} className="capitalize whitespace-nowrap">
+                                 <Badge variant={report.is_resolved ? 'default' : 'secondary'} className="capitalize whitespace-nowrap">
                                     {report.is_resolved ? 'Resolved' : 'Active'}
                                  </Badge>
                             </div>
@@ -115,5 +118,3 @@ export function LostPetsSection() {
         </div>
     );
 }
-
-    

@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Pet } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Pen, Trash2 } from "lucide-react";
+import { BadgeCheck, Pen, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getMyPets } from "@/lib/action_api";
 import { useToast } from "@/hooks/use-toast";
@@ -126,7 +126,10 @@ export function MyPetsSection() {
                             )}
                         </div>
                         <CardHeader className="p-4 flex-grow">
-                            <CardTitle className="text-lg font-bold">{pet.name}</CardTitle>
+                            <CardTitle className="text-lg font-bold flex items-center gap-2">
+                                {pet.name}
+                                {pet.is_verified && <BadgeCheck className="h-5 w-5 text-primary" />}
+                            </CardTitle>
                              <p className="text-sm text-muted-foreground pt-1">{pet.breed}</p>
                         </CardHeader>
                         <CardFooter className="p-4 pt-0">
@@ -142,5 +145,3 @@ export function MyPetsSection() {
         </div>
     );
 }
-
-    

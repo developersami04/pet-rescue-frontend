@@ -62,6 +62,7 @@ export type Pet = {
   color: string | null;
   is_vaccinated: boolean;
   is_diseased: boolean;
+  is_verified: boolean;
   address: string | null;
   city: string | null;
   pincode: number | null;

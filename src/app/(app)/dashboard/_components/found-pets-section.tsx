@@ -13,6 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export function FoundPetsSection() {
     const [foundPets, setFoundPets] = useState<PetReport[]>([]);
@@ -91,11 +92,16 @@ export function FoundPetsSection() {
                                 className="object-cover"
                                 data-ai-hint={'found pet'}
                             />
+                            <Badge 
+                                className={cn("absolute bottom-2 right-2 capitalize bg-blue-500 text-white")}
+                            >
+                                Found
+                            </Badge>
                         </div>
                         <div className="p-4 flex-grow">
                             <div className="flex justify-between items-start">
                                 <h3 className="text-lg font-bold">{report.pet_name}</h3>
-                                <Badge variant={report.is_resolved ? 'default' : 'destructive'} className="capitalize whitespace-nowrap">
+                                <Badge variant={report.is_resolved ? 'default' : 'secondary'} className="capitalize whitespace-nowrap">
                                     {report.is_resolved ? 'Resolved' : 'Active'}
                                  </Badge>
                             </div>
@@ -115,5 +121,3 @@ export function FoundPetsSection() {
         </div>
     );
 }
-
-    

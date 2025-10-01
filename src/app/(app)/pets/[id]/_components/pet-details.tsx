@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import type { Pet } from '@/lib/data';
 import { useState } from 'react';
-import { Heart } from 'lucide-react';
+import { BadgeCheck, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type PetDetailsProps = {
@@ -27,8 +27,9 @@ export function PetDetails({ pet }: PetDetailsProps) {
     <div className="grid gap-4 md:gap-6">
       <div className="flex flex-col gap-2">
         <div className="flex justify-between items-start">
-          <h1 className="text-3xl md:text-4xl font-bold font-headline">
+          <h1 className="text-3xl md:text-4xl font-bold font-headline flex items-center gap-2">
             {pet.name}
+            {pet.is_verified && <BadgeCheck className="h-7 w-7 text-primary" />}
           </h1>
           <Button
             variant="ghost"
