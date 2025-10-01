@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -140,19 +140,30 @@ function DropdownNav({
 
 export function HeaderNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [localUsername, setLocalUsername] = useState<string | null>(null);
   const pathname = usePathname();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { user, isLoading } = useUserDetails();
+
+  useEffect(() => {
+    // Client-side only
+    setLocalUsername(localStorage.getItem('username'));
+  }, []);
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
   
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('username');
     window.dispatchEvent(new Event('storage')); // Manually trigger storage event
     router.push('/');
   };
+
+  const displayName = user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : localUsername;
+  const avatarFallback = user?.first_name ? user.first_name.charAt(0) : localUsername?.charAt(0).toUpperCase();
+  const avatarSeed = user?.username || localUsername;
 
 
   return (
@@ -197,12 +208,12 @@ export function HeaderNav() {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-               {isLoading ? (
+               {isLoading && !user ? (
                  <Skeleton className="h-9 w-9 rounded-full" />
                ) : (
                 <Avatar className="h-9 w-9 cursor-pointer">
-                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${'user?.username'}/100/100`} />
-                    <AvatarFallback>{user?.first_name.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${avatarSeed}/100/100`} />
+                    <AvatarFallback>{avatarFallback}</AvatarFallback>
                 </Avatar>
                )}
             </DropdownMenuTrigger>
@@ -311,19 +322,19 @@ export function HeaderNav() {
                  <div className="border-t p-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                             {isLoading ? (
+                             {isLoading && !user ? (
                                 <Skeleton className="h-9 w-9 rounded-full" />
                              ) : (
                                 <Avatar className="h-9 w-9">
-                                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${'user?.username'}/100/100`} />
-                                    <AvatarFallback>{user?.first_name.charAt(0)}</AvatarFallback>
+                                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${avatarSeed}/100/100`} />
+                                    <AvatarFallback>{avatarFallback}</AvatarFallback>
                                 </Avatar>
                              )}
                             <div>
-                                {isLoading ? (
+                                {isLoading && !user ? (
                                     <Skeleton className="h-4 w-24" />
                                 ) : (
-                                   <p className="text-sm font-medium">{user?.first_name} {user?.last_name}</p>
+                                   <p className="text-sm font-medium">{displayName}</p>
                                 )}
                             </div>
                         </div>
@@ -341,5 +352,3 @@ export function HeaderNav() {
     </header>
   );
 }
-
-    

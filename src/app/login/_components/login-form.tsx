@@ -50,6 +50,9 @@ export function LoginForm() {
       });
       localStorage.setItem('authToken', result.access_token);
       localStorage.setItem('refreshToken', result.refresh_token);
+      if (result.user && result.user.username) {
+        localStorage.setItem('username', result.user.username);
+      }
       window.dispatchEvent(new Event('storage')); // Manually trigger storage event
       router.push('/dashboard');
     } catch (error: any) {
