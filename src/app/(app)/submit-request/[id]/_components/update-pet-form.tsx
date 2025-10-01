@@ -167,7 +167,12 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
       if (data.pet_image) setPetImagePreview(data.pet_image);
       if (data.report_image) setReportImagePreview(data.report_image);
     } catch (error: any) {
-      toast({ variant: 'destructive', title: 'Failed to load pet data', description: error.message });
+      if (error.message.includes('You are not the owner of this pet.')) {
+        toast({ variant: 'destructive', title: 'Unauthorized', description: "You can only edit pets you own." });
+        router.push('/dashboard');
+      } else {
+        toast({ variant: 'destructive', title: 'Failed to load pet data', description: error.message });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -361,5 +366,3 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     </Form>
   );
 }
-
-    
