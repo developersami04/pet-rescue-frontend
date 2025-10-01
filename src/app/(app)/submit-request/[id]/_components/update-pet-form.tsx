@@ -65,8 +65,8 @@ const updatePetSchema = z.object({
   note: z.string().optional(),
 
   report_image: z.any().optional(),
-  pet_status: z.enum(['lost', 'found'], { required_error: 'Report type is required.' }),
-  message: z.string().min(10, 'Report message must be at least 10 characters.').max(500, 'Report message cannot exceed 500 characters.'),
+  pet_status: z.enum(['lost', 'found']).optional(),
+  message: z.string().optional(),
 });
 
 type PetType = {
@@ -81,6 +81,9 @@ type UpdatePetFormProps = {
 function getChangedValues(initialValues: any, currentValues: any): Partial<any> {
     const changedValues: Partial<any> = {};
     for (const key in currentValues) {
+        // Skip file inputs from this generic comparison
+        if (key === 'pet_image' || key === 'report_image') continue;
+
         const initialValue = initialValues[key];
         const currentValue = currentValues[key];
 
@@ -88,7 +91,7 @@ function getChangedValues(initialValues: any, currentValues: any): Partial<any> 
             if (!initialValue || format(new Date(initialValue), 'yyyy-MM-dd') !== format(currentValue, 'yyyy-MM-dd')) {
                 changedValues[key] = currentValue;
             }
-        } else if (initialValue !== currentValue) {
+        } else if (initialValue !== currentValue && currentValue !== undefined && currentValue !== null) {
             changedValues[key] = currentValue;
         }
     }
@@ -183,8 +186,10 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     }
 
     const changedValues = getChangedValues(initialData, values);
+    const petImageFile = values.pet_image instanceof FileList && values.pet_image.length > 0 ? values.pet_image[0] : null;
+    const reportImageFile = values.report_image instanceof FileList && values.report_image.length > 0 ? values.report_image[0] : null;
 
-    if (Object.keys(changedValues).length === 0 && !values.pet_image && !values.report_image) {
+    if (Object.keys(changedValues).length === 0 && !petImageFile && !reportImageFile) {
       toast({ title: 'No Changes Detected', description: 'You have not made any changes.' });
       return;
     }
@@ -193,9 +198,7 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     formData.append('pet_id', petId);
 
     Object.entries(changedValues).forEach(([key, value]) => {
-      if (key === 'pet_image' || key === 'report_image') {
-        if (value instanceof FileList && value.length > 0) formData.append(key, value[0]);
-      } else if (value instanceof Date) {
+      if (value instanceof Date) {
         formData.append(key, format(value, 'yyyy-MM-dd'));
       } else if (typeof value === 'boolean') {
         formData.append(key, String(value));
@@ -203,14 +206,13 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
         formData.append(key, String(value));
       }
     });
-     // Handle file inputs separately as they might not be in `changedValues`
-    if (values.pet_image instanceof FileList && values.pet_image.length > 0) {
-        formData.append('pet_image', values.pet_image[0]);
-    }
-    if (values.report_image instanceof FileList && values.report_image.length > 0) {
-        formData.append('report_image', values.report_image[0]);
-    }
 
+    if (petImageFile) {
+        formData.append('pet_image', petImageFile);
+    }
+    if (reportImageFile) {
+        formData.append('report_image', reportImageFile);
+    }
 
     try {
       const result = await updatePetRequest(token, formData);
@@ -264,7 +266,7 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
                     <FormItem><FormLabel>Type</FormLabel><Select onValueChange={(val) => field.onChange(Number(val))} value={String(field.value ?? '')} disabled={petTypes.length === 0}><FormControl><SelectTrigger><SelectValue placeholder="Select pet type" /></SelectTrigger></FormControl><SelectContent>{petTypes.map(petType => (<SelectItem key={petType.id} value={String(petType.id)}>{petType.name}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="breed" render={({ field }) => (
-                    <FormItem><FormLabel>Breed</FormLabel><FormControl><Input placeholder="Enter breed" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Breed</FormLabel><FormControl><Input placeholder="Enter breed" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="age" render={({ field }) => (
                     <FormItem><FormLabel>Age (in years)</FormLabel><FormControl><Input type="number" placeholder="Enter age" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
@@ -276,16 +278,16 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
                     <FormItem><FormLabel>Gender</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select gender" /></SelectTrigger></FormControl><SelectContent><SelectItem value="Male">Male</SelectItem><SelectItem value="Female">Female</SelectItem><SelectItem value="Unknown">Unknown</SelectItem></SelectContent></Select><FormMessage /></FormItem>
                 )} />
                  <FormField control={form.control} name="color" render={({ field }) => (
-                    <FormItem><FormLabel>Color</FormLabel><FormControl><Input placeholder="Enter color" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Color</FormLabel><FormControl><Input placeholder="Enter color" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                  <FormField control={form.control} name="address" render={({ field }) => (
-                    <FormItem><FormLabel>Address</FormLabel><FormControl><Input placeholder="Enter address" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Address</FormLabel><FormControl><Input placeholder="Enter address" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="city" render={({ field }) => (
-                    <FormItem><FormLabel>City</FormLabel><FormControl><Input placeholder="Enter city" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>City</FormLabel><FormControl><Input placeholder="Enter city" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                  <FormField control={form.control} name="state" render={({ field }) => (
-                    <FormItem><FormLabel>State</FormLabel><FormControl><Input placeholder="Enter state" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>State</FormLabel><FormControl><Input placeholder="Enter state" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                  <FormField control={form.control} name="pincode" render={({ field }) => (
                     <FormItem><FormLabel>Pincode</FormLabel><FormControl><Input type="number" placeholder="Enter pincode" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
@@ -301,7 +303,7 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
             </div>
         </div>
         <FormField control={form.control} name="description" render={({ field }) => (
-            <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea placeholder="Tell us about the pet..." className="resize-none" rows={5} {...field} /></FormControl><FormMessage /></FormItem>
+            <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea placeholder="Tell us about the pet..." className="resize-none" rows={5} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
         )} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <FormField control={form.control} name="available_for_adopt" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Available for Adoption</FormLabel></div></FormItem>)} />
@@ -344,7 +346,7 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
         )} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-2">
-                <FormField control={form.control} name="message" render={({ field }) => (<FormItem><FormLabel>Report Message</FormLabel><FormControl><Textarea placeholder="Describe where the pet was lost or found..." className="resize-none" rows={10} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="message" render={({ field }) => (<FormItem><FormLabel>Report Message</FormLabel><FormControl><Textarea placeholder="Describe where the pet was lost or found..." className="resize-none" rows={10} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
             </div>
             <div className="space-y-4">
                 <FormField control={form.control} name="report_image" render={({ field: { onChange, value, ...rest } }) => (<FormItem><FormLabel>Report Image (Optional)</FormLabel><FormControl><Input type="file" accept="image/png, image/jpeg, image/webp" onChange={(e) => { onChange(e.target.files); handleReportImageChange(e); }} {...rest} /></FormControl><FormMessage /></FormItem>)} />
