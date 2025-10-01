@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -9,14 +10,11 @@ import {
   BookOpen,
   Search,
   Menu,
-  X,
   ChevronDown,
   User,
   Settings,
   Inbox,
   LogOut,
-  MoreHorizontal,
-  Home,
   PlusCircle,
   Sun,
   Moon,
@@ -24,6 +22,7 @@ import {
   Info,
   Phone,
   Shapes,
+  Rss,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -51,6 +50,7 @@ import { Skeleton } from "./ui/skeleton";
 const navItems = {
   main: [
       { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
+      { href: "/feed", icon: Rss, label: "Feed" },
     ],
   pets: [
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },
