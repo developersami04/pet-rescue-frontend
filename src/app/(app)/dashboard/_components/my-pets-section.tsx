@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Pet } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { BadgeCheck, Pen, Trash2 } from "lucide-react";
+import { BadgeCheck, Clock, Pen, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getMyPets } from "@/lib/action_api";
 import { useToast } from "@/hooks/use-toast";
@@ -114,11 +114,13 @@ export function MyPetsSection() {
                                 className="object-cover"
                                 data-ai-hint={pet.breed ?? pet.type_name}
                             />
-                            {pet.is_verified && (
-                                <div className="absolute top-2 left-2 bg-background/80 p-1 rounded-full backdrop-blur-sm">
+                            <div className="absolute top-2 left-2 bg-background/80 p-1 rounded-full backdrop-blur-sm">
+                                {pet.is_verified ? (
                                     <BadgeCheck className="h-5 w-5 text-primary" />
-                                </div>
-                            )}
+                                ) : (
+                                    <Clock className="h-5 w-5 text-amber-500" />
+                                )}
+                            </div>
                             {pet.pet_status && !isResolved && (
                                 <Badge 
                                     className={cn("absolute bottom-2 right-2 capitalize", 
