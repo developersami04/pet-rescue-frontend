@@ -23,11 +23,11 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { CalendarIcon, Loader2, Upload } from 'lucide-react';
+import { CalendarIcon, Loader2, Trash2, Upload } from 'lucide-react';
 import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
-import { getPetTypes, getPetRequestFormData, updatePetRequest } from '@/lib/action_api';
+import { getPetTypes, getPetRequestFormData, updatePetRequest, deletePetRequest } from '@/lib/action_api';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
@@ -37,6 +37,8 @@ import { format, parseISO } from 'date-fns';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Calendar } from '@/components/ui/calendar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+
 
 const updatePetSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -109,6 +111,8 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
   const [petTypes, setPetTypes] = useState<PetType[]>([]);
   const [initialData, setInitialData] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+
 
   const form = useForm<z.infer<typeof updatePetSchema>>({
     resolver: zodResolver(updatePetSchema),
@@ -202,7 +206,6 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     }
 
     const formData = new FormData();
-    formData.append('pet_id', petId);
 
     Object.entries(changedValues).forEach(([key, value]) => {
       if (value instanceof Date) {
@@ -224,13 +227,32 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     }
 
     try {
-      const result = await updatePetRequest(token, formData);
+      const result = await updatePetRequest(token, petId, formData);
       toast({ title: 'Request Updated!', description: result.message || `Your request for ${values.name} has been updated.` });
       router.push('/dashboard');
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Update Failed', description: error.message });
     }
   }
+
+  async function handleDelete() {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        toast({ variant: 'destructive', title: 'Authentication Error' });
+        return;
+    }
+    setIsDeleting(true);
+    try {
+        await deletePetRequest(token, petId);
+        toast({ title: 'Pet Deleted', description: 'The pet has been successfully removed.'});
+        router.push('/dashboard');
+    } catch (error: any) {
+         toast({ variant: 'destructive', title: 'Deletion Failed', description: error.message });
+    } finally {
+        setIsDeleting(false);
+    }
+  }
+
 
   const handlePetImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -363,13 +385,35 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
             </div>
         </div>
 
-        <Button type="submit" disabled={isSubmitting || isLoading}>
-            {(isSubmitting || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Update Request
-        </Button>
+        <div className="flex items-center justify-between">
+            <Button type="submit" disabled={isSubmitting || isLoading}>
+                {(isSubmitting || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Update Request
+            </Button>
+            <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <Button type="button" variant="destructive" disabled={isDeleting}>
+                        {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete Pet
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete this pet
+                        and remove all associated data from our servers.
+                    </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </div>
       </form>
     </Form>
   );
 }
-
-    

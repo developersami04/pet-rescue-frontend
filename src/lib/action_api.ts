@@ -474,11 +474,10 @@ export async function getPetRequestFormData(token: string, petId: string): Promi
   if (!API_BASE_URL) {
     throw new Error('API is not configured. Please contact support.');
   }
-  const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.petRequestForm}`);
-  url.searchParams.append('pet_id', petId);
+  const url = `${API_BASE_URL}${API_ENDPOINTS.petRequestView}${petId}`;
 
   try {
-    const response = await fetchWithAuth(url.toString(), {
+    const response = await fetchWithAuth(url, {
       method: 'GET',
       cache: 'no-store',
     }, token);
@@ -501,13 +500,14 @@ export async function getPetRequestFormData(token: string, petId: string): Promi
   }
 }
 
-export async function updatePetRequest(token: string, formData: FormData) {
+export async function updatePetRequest(token: string, petId: string, formData: FormData) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.petRequestView}${petId}`;
 
     try {
-        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.updatePetRequest}`, {
+        const response = await fetchWithAuth(url, {
             method: 'PATCH',
             body: formData,
         }, token);
@@ -534,5 +534,34 @@ export async function updatePetRequest(token: string, formData: FormData) {
            throw new Error(error.message);
         }
         throw new Error(`An unknown error occurred while updating the request.`);
+    }
+}
+
+export async function deletePetRequest(token: string, petId: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.petRequestView}${petId}`;
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'DELETE',
+        }, token);
+
+        if (!response.ok && response.status !== 204) {
+            const result = await response.json();
+            throw new Error(result.message || result.detail || 'Failed to delete pet request.');
+        }
+
+        return { message: 'Pet request deleted successfully.' };
+    } catch (error) {
+         if ((error as any).name === 'AbortError') {
+            throw new Error('Delete request timed out.');
+        }
+        console.error('Error deleting pet request:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while deleting the request.');
     }
 }

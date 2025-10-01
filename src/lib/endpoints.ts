@@ -10,10 +10,8 @@ const API_ENDPOINTS = {
   changePassword: '/api/user-auth/change-password',
   allPets: '/api/pet-data/pets/',
   myPets: '/api/pet-data/my-pets',
-  requestSubmit: '/api/pet-data/request-pet-submit',
-  petRequestForm: '/api/pet-data/pet-request-form',
-  updatePetRequest: '/api/pet-data/pet-request-form',
-  petProfile: '/api/pet-data/pet-profile/', // e.g., /api/pet-data/pet-profile/31
+  requestSubmit: '/api/pet-data/pet-request-form/',
+  petRequestView: '/api/pet-data/pet-request-view/',
   myPetData: '/api/pet-data/my-pet-data/',
 };
 
