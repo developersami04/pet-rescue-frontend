@@ -13,6 +13,8 @@ import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 
 function MyPetsSkeleton() {
@@ -101,6 +103,8 @@ export function MyPetsSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {myPets.map(pet => {
                 const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/300/300`;
+                const petStatus = pet.pet_report?.pet_status;
+                const isResolved = pet.pet_report?.is_resolved;
                 return (
                     <Card key={pet.id} className="overflow-hidden flex flex-col">
                         <div className="relative aspect-square w-full">
@@ -111,6 +115,15 @@ export function MyPetsSection() {
                                 className="object-cover"
                                 data-ai-hint={pet.breed ?? pet.type_name}
                             />
+                            {petStatus && !isResolved && (
+                                <Badge 
+                                    className={cn("absolute top-2 right-2 capitalize", 
+                                        petStatus === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
+                                    )}
+                                    >
+                                        {petStatus}
+                                </Badge>
+                            )}
                         </div>
                         <CardHeader className="p-4 flex-grow">
                             <CardTitle className="text-lg font-bold">{pet.name}</CardTitle>
