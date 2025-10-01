@@ -469,3 +469,70 @@ export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopt
         throw new Error(`An unknown error occurred while fetching ${tab} data.`);
     }
 }
+
+export async function getPetRequestFormData(token: string, petId: string): Promise<any> {
+  if (!API_BASE_URL) {
+    throw new Error('API is not configured. Please contact support.');
+  }
+  const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.petRequestForm}`);
+  url.searchParams.append('pet_id', petId);
+
+  try {
+    const response = await fetchWithAuth(url.toString(), {
+      method: 'GET',
+      cache: 'no-store',
+    }, token);
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || result.detail || 'Failed to fetch pet request form data.');
+    }
+    return result.data;
+  } catch (error) {
+    if ((error as any).name === 'AbortError') {
+      throw new Error('Request for pet request data timed out.');
+    }
+    console.error('Error fetching pet request data:', error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error('An unknown error occurred while fetching pet request data.');
+  }
+}
+
+export async function updatePetRequest(token: string, formData: FormData) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.updatePetRequest}`, {
+            method: 'PATCH',
+            body: formData,
+        }, token);
+        
+        const result = await response.json();
+
+        if (!response.ok) {
+            const errorMessages = Object.entries(result).map(([key, value]) => {
+                if (Array.isArray(value)) {
+                    return `${key}: ${value.join(', ')}`;
+                }
+                return `${key}: ${value}`;
+            }).join('; ');
+            throw new Error(errorMessages || `Failed to update request.`);
+        }
+
+        return result;
+    } catch (error) {
+         if ((error as any).name === 'AbortError') {
+            throw new Error(`Update request timed out.`);
+        }
+        console.error(`Error updating request:`, error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error(`An unknown error occurred while updating the request.`);
+    }
+}
