@@ -9,23 +9,13 @@ type MedicalHistoryListProps = {
 };
 
 export function MedicalHistoryList({ medicalHistory }: MedicalHistoryListProps) {
+  const hasRecords = medicalHistory && (medicalHistory.vaccination_name || medicalHistory.disease_name || medicalHistory.last_vaccinated_date || medicalHistory.note);
 
-  if (!medicalHistory) {
-    return (
-       <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8 h-48 border rounded-lg">
-        <Stethoscope className="h-10 w-10 mb-4" />
-        <p>No medical history records are available for this pet.</p>
-      </div>
-    );
-  }
-  
-  const hasRecords = medicalHistory.vaccination_name || medicalHistory.disease_name || medicalHistory.last_vaccinated_date || medicalHistory.note;
-  
   if (!hasRecords) {
     return (
-       <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8 h-48 border rounded-lg">
-        <Stethoscope className="h-10 w-10 mb-4" />
-        <p>No medical history records are available for this pet.</p>
+       <div className="flex flex-col items-center justify-center text-center text-green-600 dark:text-green-500 p-8 h-48 border rounded-lg bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+        <ShieldCheck className="h-10 w-10 mb-4" />
+        <p className="font-semibold">This pet is healthy and has no recorded medical issues.</p>
       </div>
     );
   }
