@@ -1,15 +1,10 @@
-
 import Link from "next/link";
 import {
   Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+  CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, PawPrint } from "lucide-react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 type PetType = {
@@ -32,42 +27,29 @@ function getHash(input: string) {
   return Math.abs(hash);
 }
 
-
 export function CategoryCard({ petType }: CategoryCardProps) {
   const colors = [
-    "bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300",
-    "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300",
-    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300",
-    "bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300",
-    "bg-pink-100 text-pink-800 dark:bg-pink-900/50 dark:text-pink-300",
-    "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300",
-    "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300",
-    "bg-teal-100 text-teal-800 dark:bg-teal-900/50 dark:text-teal-300",
+    "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300",
+    "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300",
+    "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300",
+    "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300",
+    "bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300",
+    "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300",
+    "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300",
+    "bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300",
   ];
   const colorIndex = getHash(petType.name) % colors.length;
   const colorClasses = colors[colorIndex];
 
-
   return (
-    <Card className="flex flex-col justify-between overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-      <CardHeader>
-        <div className="flex items-center gap-4">
-            <div className={cn("p-3 rounded-full", colorClasses)}>
-                <PawPrint className="h-6 w-6"/>
-            </div>
-            <CardTitle>{petType.name}</CardTitle>
-        </div>
-      </CardHeader>
-      <CardFooter>
-        <Button asChild variant="secondary" className="w-full">
-          <Link href={`/pets?type=${petType.name}`}>
-            View {petType.name}s
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
-      </CardFooter>
-    </Card>
+    <Link href={`/pets?type=${petType.name}`} className="group">
+        <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full flex flex-col", colorClasses)}>
+            <CardContent className="p-6 flex flex-col items-center justify-center text-center flex-grow">
+                <PawPrint className="h-12 w-12 mb-4 opacity-70 group-hover:opacity-100 transition-opacity" />
+                <h3 className="text-xl font-bold">{petType.name}</h3>
+                <p className="text-sm mt-1">View All</p>
+            </CardContent>
+        </Card>
+    </Link>
   );
 }
-
-    

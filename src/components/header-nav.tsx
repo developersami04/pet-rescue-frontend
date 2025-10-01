@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -50,7 +49,6 @@ import { Skeleton } from "./ui/skeleton";
 const navItems = {
   main: [
       { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
-      { href: "/feed", icon: Rss, label: "Feed" },
     ],
   pets: [
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },

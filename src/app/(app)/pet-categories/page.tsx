@@ -1,8 +1,7 @@
-
 import { PageHeader } from "@/components/page-header";
 import { getPetTypes } from "@/lib/action_api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CategoryView } from "./_components/category-view";
+import { CategoryCard } from "./_components/category-card";
 
 type PetType = {
   id: number;
@@ -29,7 +28,15 @@ export default async function PetCategoriesPage() {
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
-      <CategoryView petTypes={petTypes} />
+       <PageHeader
+            title="Pet Categories"
+            description="Browse pets by their category."
+        />
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+            {petTypes.map((petType) => (
+                <CategoryCard key={petType.id} petType={petType} />
+            ))}
+        </div>
     </div>
   );
 }
