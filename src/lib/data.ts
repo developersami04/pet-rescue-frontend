@@ -74,6 +74,7 @@ export type Pet = {
   medical_history: MedicalHistory | null;
   adoption_requests: AdoptionRequest[] | null;
   pet_report: PetReport | null;
+  pet_status?: 'lost' | 'found' | null; // Added for my-pets response
   // Deprecated fields from previous API versions, kept for potential reference in components that haven't been updated.
   image?: string | null;
   available_for_adopt?: boolean;

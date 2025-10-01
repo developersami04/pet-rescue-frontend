@@ -103,8 +103,7 @@ export function MyPetsSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {myPets.map(pet => {
                 const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/300/300`;
-                const petStatus = pet.pet_report?.pet_status;
-                const isResolved = pet.pet_report?.is_resolved;
+                const isResolved = pet.pet_report?.is_resolved ?? false; // Fallback for my-pets where pet_report might not exist
                 return (
                     <Card key={pet.id} className="overflow-hidden flex flex-col">
                         <div className="relative aspect-square w-full">
@@ -115,13 +114,13 @@ export function MyPetsSection() {
                                 className="object-cover"
                                 data-ai-hint={pet.breed ?? pet.type_name}
                             />
-                            {petStatus && !isResolved && (
+                            {pet.pet_status && !isResolved && (
                                 <Badge 
                                     className={cn("absolute bottom-2 right-2 capitalize", 
-                                        petStatus === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
+                                        pet.pet_status === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
                                     )}
                                     >
-                                        {petStatus}
+                                        {pet.pet_status}
                                 </Badge>
                             )}
                         </div>
