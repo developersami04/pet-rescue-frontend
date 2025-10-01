@@ -11,6 +11,8 @@ import {
 import { Button } from '@/components/ui/button';
 import type { Pet } from '@/lib/data';
 import { PawPrint } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 type PetCardProps = {
   pet: Pet;
@@ -18,6 +20,8 @@ type PetCardProps = {
 
 export function PetCard({ pet }: PetCardProps) {
   const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/400/300`;
+  const petStatus = pet.pet_report?.pet_status;
+  const isResolved = pet.pet_report?.is_resolved;
 
   return (
     <Card className="flex flex-col overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg">
@@ -29,10 +33,19 @@ export function PetCard({ pet }: PetCardProps) {
           className="object-cover"
           data-ai-hint={pet.breed ?? pet.type_name}
         />
-         {!pet.pet_image && (
+        {!pet.pet_image && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/30">
             <PawPrint className="h-12 w-12 text-white/50" />
           </div>
+        )}
+        {petStatus && !isResolved && (
+           <Badge 
+             className={cn("absolute top-2 right-2 capitalize", 
+                petStatus === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
+             )}
+            >
+                {petStatus}
+            </Badge>
         )}
       </div>
       <CardHeader>
