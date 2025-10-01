@@ -29,6 +29,7 @@ export type MyAdoptionRequest = {
     id: number;
     pet: number;
     pet_name: string;
+    owner_name: string;
     requester_id: number;
     requester_name: string;
     created_at: string;

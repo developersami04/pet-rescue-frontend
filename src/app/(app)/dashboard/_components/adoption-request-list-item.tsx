@@ -56,6 +56,9 @@ export function AdoptionRequestListItem({ request }: AdoptionRequestListItemProp
                 <div className="col-span-2">
                     <h3 className="text-lg font-bold">{request.pet_name}</h3>
                     <p className="text-sm text-muted-foreground">
+                        Owner: {request.owner_name}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
                         Requested {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
                     </p>
                 </div>

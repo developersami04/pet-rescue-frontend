@@ -131,8 +131,11 @@ export function MyAdoptionRequestsSection() {
                                 </div>
                                 <div className="p-4 flex-grow">
                                     <div className="flex justify-between items-start">
-                                        <h3 className="text-lg font-bold">{req.pet_name}</h3>
-                                    <Badge variant={getStatusVariant(req.status)} className="capitalize">
+                                        <div>
+                                            <h3 className="text-lg font-bold">{req.pet_name}</h3>
+                                            <p className="text-sm text-muted-foreground">Owner: {req.owner_name}</p>
+                                        </div>
+                                        <Badge variant={getStatusVariant(req.status)} className="capitalize">
                                             {req.status}
                                         </Badge>
                                     </div>
@@ -161,5 +164,3 @@ export function MyAdoptionRequestsSection() {
         </>
     );
 }
-
-    
