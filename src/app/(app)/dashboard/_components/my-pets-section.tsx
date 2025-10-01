@@ -1,11 +1,11 @@
 
 'use client';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Pet } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { BadgeCheck, Clock, Pen, Trash2 } from "lucide-react";
+import { BadgeCheck, Clock, LayoutGrid, List, Pen, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getMyPets } from "@/lib/action_api";
 import { useToast } from "@/hooks/use-toast";
@@ -15,6 +15,7 @@ import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { MyPetListItem } from "./my-pet-list-item";
 
 
 function MyPetsSkeleton() {
@@ -44,6 +45,7 @@ export function MyPetsSection() {
     const [isLoading, setIsLoading] = useState(true);
     const { toast } = useToast();
     const router = useRouter();
+    const [view, setView] = useState('grid');
 
 
     useEffect(() => {
@@ -100,53 +102,83 @@ export function MyPetsSection() {
     }
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {myPets.map(pet => {
-                const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/300/300`;
-                const isResolved = pet.pet_report?.is_resolved ?? false; // Fallback for my-pets where pet_report might not exist
-                return (
-                    <Card key={pet.id} className="overflow-hidden flex flex-col">
-                        <div className="relative aspect-square w-full">
-                            <Image
-                                src={imageUrl}
-                                alt={pet.name}
-                                fill
-                                className="object-cover"
-                                data-ai-hint={pet.breed ?? pet.type_name}
-                            />
-                            <div className="absolute top-2 left-2 bg-background/80 p-1 rounded-full backdrop-blur-sm">
-                                {pet.is_verified ? (
-                                    <BadgeCheck className="h-5 w-5 text-primary" />
-                                ) : (
-                                    <Clock className="h-5 w-5 text-amber-500" />
-                                )}
-                            </div>
-                            {pet.pet_status && !isResolved && (
-                                <Badge 
-                                    className={cn("absolute bottom-2 right-2 capitalize", 
-                                        pet.pet_status === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
+        <>
+            <div className="flex items-center justify-end mb-4">
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant={view === 'grid' ? 'secondary' : 'ghost'}
+                        size="icon"
+                        onClick={() => setView('grid')}
+                        aria-label="Grid view"
+                    >
+                        <LayoutGrid className="h-5 w-5" />
+                    </Button>
+                    <Button
+                        variant={view === 'list' ? 'secondary' : 'ghost'}
+                        size="icon"
+                        onClick={() => setView('list')}
+                        aria-label="List view"
+                    >
+                        <List className="h-5 w-5" />
+                    </Button>
+                </div>
+            </div>
+            {view === 'grid' ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {myPets.map(pet => {
+                        const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/300/300`;
+                        const isResolved = pet.pet_report?.is_resolved ?? false;
+                        return (
+                            <Card key={pet.id} className="overflow-hidden flex flex-col">
+                                <div className="relative aspect-square w-full">
+                                    <Image
+                                        src={imageUrl}
+                                        alt={pet.name}
+                                        fill
+                                        className="object-cover"
+                                        data-ai-hint={pet.breed ?? pet.type_name}
+                                    />
+                                    <div className="absolute top-2 left-2 bg-background/80 p-1 rounded-full backdrop-blur-sm">
+                                        {pet.is_verified ? (
+                                            <BadgeCheck className="h-5 w-5 text-primary" />
+                                        ) : (
+                                            <Clock className="h-5 w-5 text-amber-500" />
+                                        )}
+                                    </div>
+                                    {pet.pet_status && !isResolved && (
+                                        <Badge 
+                                            className={cn("absolute bottom-2 right-2 capitalize", 
+                                                pet.pet_status === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
+                                            )}
+                                            >
+                                                {pet.pet_status}
+                                        </Badge>
                                     )}
-                                    >
-                                        {pet.pet_status}
-                                </Badge>
-                            )}
-                        </div>
-                        <CardHeader className="p-4 flex-grow">
-                            <CardTitle className="text-lg font-bold flex items-center gap-2">
-                                {pet.name}
-                            </CardTitle>
-                             <p className="text-sm text-muted-foreground pt-1">{pet.breed}</p>
-                        </CardHeader>
-                        <CardFooter className="p-4 pt-0">
-                            <Button asChild variant="secondary" className="w-full">
-                                <Link href={`/pets/${pet.id}`}>
-                                    <Pen className="mr-2 h-4 w-4" /> View Details
-                                </Link>
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                )
-            })}
-        </div>
+                                </div>
+                                <CardHeader className="p-4 flex-grow">
+                                    <CardTitle className="text-lg font-bold flex items-center gap-2">
+                                        {pet.name}
+                                    </CardTitle>
+                                    <p className="text-sm text-muted-foreground pt-1">{pet.breed}</p>
+                                </CardHeader>
+                                <CardFooter className="p-4 pt-0">
+                                    <Button asChild variant="secondary" className="w-full">
+                                        <Link href={`/pets/${pet.id}`}>
+                                            <Pen className="mr-2 h-4 w-4" /> View Details
+                                        </Link>
+                                    </Button>
+                                </CardFooter>
+                            </Card>
+                        )
+                    })}
+                </div>
+            ) : (
+                <div className="space-y-4">
+                    {myPets.map(pet => (
+                        <MyPetListItem key={pet.id} pet={pet} />
+                    ))}
+                </div>
+            )}
+        </>
     );
 }
