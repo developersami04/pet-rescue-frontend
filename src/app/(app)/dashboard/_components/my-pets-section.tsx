@@ -114,6 +114,11 @@ export function MyPetsSection() {
                                 className="object-cover"
                                 data-ai-hint={pet.breed ?? pet.type_name}
                             />
+                            {pet.is_verified && (
+                                <div className="absolute top-2 left-2 bg-background/80 p-1 rounded-full backdrop-blur-sm">
+                                    <BadgeCheck className="h-5 w-5 text-primary" />
+                                </div>
+                            )}
                             {pet.pet_status && !isResolved && (
                                 <Badge 
                                     className={cn("absolute bottom-2 right-2 capitalize", 
@@ -127,7 +132,6 @@ export function MyPetsSection() {
                         <CardHeader className="p-4 flex-grow">
                             <CardTitle className="text-lg font-bold flex items-center gap-2">
                                 {pet.name}
-                                {pet.is_verified && <BadgeCheck className="h-5 w-5 text-primary" />}
                             </CardTitle>
                              <p className="text-sm text-muted-foreground pt-1">{pet.breed}</p>
                         </CardHeader>
