@@ -57,12 +57,12 @@ const updatePetSchema = z.object({
   state: z.string().optional(),
   color: z.string().min(1, 'Color is required.'),
 
-  disease_name: z.string().optional(),
-  stage: z.string().optional(),
+  disease_name: z.string().optional().transform(e => e === '' ? null : e),
+  stage: z.string().optional().transform(e => e === '' ? null : e),
   no_of_years: z.coerce.number().optional().nullable(),
-  vaccination_name: z.string().optional(),
+  vaccination_name: z.string().optional().transform(e => e === '' ? null : e),
   last_vaccinated_date: z.date().optional().nullable(),
-  note: z.string().optional(),
+  note: z.string().optional().transform(e => e === '' ? null : e),
 
   report_image: z.any().optional(),
   pet_status: z.enum(['lost', 'found']).optional(),
@@ -85,13 +85,16 @@ function getChangedValues(initialValues: any, currentValues: any): Partial<any> 
 
         const initialValue = initialValues[key];
         const currentValue = currentValues[key];
+        
+        const initialString = initialValue instanceof Date ? format(new Date(initialValue), 'yyyy-MM-dd') : String(initialValue ?? '');
+        const currentString = currentValue instanceof Date ? format(currentValue, 'yyyy-MM-dd') : String(currentValue ?? '');
 
-        if (currentValue instanceof Date) {
-            if (!initialValue || format(new Date(initialValue), 'yyyy-MM-dd') !== format(currentValue, 'yyyy-MM-dd')) {
+        if (initialString !== currentString) {
+             if (currentValue === null || currentValue === '') {
+                 changedValues[key] = null;
+             } else {
                 changedValues[key] = currentValue;
-            }
-        } else if (String(initialValue ?? '') !== String(currentValue ?? '')) {
-            changedValues[key] = currentValue;
+             }
         }
     }
     return changedValues;
@@ -206,7 +209,9 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
         formData.append(key, format(value, 'yyyy-MM-dd'));
       } else if (typeof value === 'boolean') {
         formData.append(key, String(value));
-      } else if (value !== null && value !== undefined) {
+      } else if (value === null) {
+        formData.append(key, '');
+      } else if (value !== undefined) {
         formData.append(key, String(value));
       }
     });
@@ -366,3 +371,5 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     </Form>
   );
 }
+
+    
