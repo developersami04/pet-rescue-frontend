@@ -10,9 +10,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MedicalHistoryList } from "./_components/medical-history-list";
+import { MedicalHistory } from "./_components/medical-history";
 import { AdoptionRequestsList } from "./_components/adoption-requests-list";
-import { PetReportList } from "./_components/pet-report-list";
+import { PetReport } from "./_components/pet-report";
 import { Badge } from "@/components/ui/badge";
 
 
@@ -139,13 +139,13 @@ export default function PetProfilePage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="medical-history" className="mt-6">
-          <MedicalHistoryList medicalHistory={pet.medical_history} />
+          <MedicalHistory medicalHistory={pet.medical_history} />
         </TabsContent>
         <TabsContent value="adoption-requests" className="mt-6">
             <AdoptionRequestsList requests={pet.adoption_requests} />
         </TabsContent>
         <TabsContent value="reports" className="mt-6">
-            <PetReportList reports={reports} />
+            <PetReport reports={reports} />
         </TabsContent>
       </Tabs>
     </div>
