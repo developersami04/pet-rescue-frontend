@@ -117,7 +117,7 @@ export function MyPetsSection() {
                             />
                             {petStatus && !isResolved && (
                                 <Badge 
-                                    className={cn("absolute top-2 right-2 capitalize", 
+                                    className={cn("absolute bottom-2 right-2 capitalize", 
                                         petStatus === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
                                     )}
                                     >
