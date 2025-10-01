@@ -22,8 +22,7 @@ export type AdoptionRequest = {
     requester_name: string;
     created_at: string;
     message: string;
-    request_status: 'pending' | 'approved' | 'rejected';
-    is_approved?: boolean; // Keep for compatibility if used elsewhere, but prefer request_status
+    status: 'pending' | 'approved' | 'rejected';
 };
 
 export type MyAdoptionRequest = {

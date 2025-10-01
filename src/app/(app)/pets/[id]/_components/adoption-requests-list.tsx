@@ -68,8 +68,8 @@ export function AdoptionRequestsList({ requests }: AdoptionRequestsListProps) {
                     <TableCell className="font-medium">{req.requester_name}</TableCell>
                      <TableCell>{req.message}</TableCell>
                     <TableCell className="text-right">
-                        <Badge variant={getStatusVariant(req.request_status)} className="capitalize flex items-center w-fit ml-auto">
-                           {getStatusIcon(req.request_status)} {req.request_status}
+                        <Badge variant={getStatusVariant(req.status)} className="capitalize flex items-center w-fit ml-auto">
+                           {getStatusIcon(req.status)} {req.status}
                         </Badge>
                     </TableCell>
                 </TableRow>

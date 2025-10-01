@@ -19,7 +19,7 @@ export function PetDetails({ pet }: PetDetailsProps) {
   const [isLiked, setIsLiked] = useState(false);
   
   const isLost = pet.pet_report?.pet_status === 'lost' && !pet.pet_report?.is_resolved;
-  const isAdopted = pet.adoption_requests?.some(r => r.request_status === 'approved') ?? false;
+  const isAdopted = pet.adoption_requests?.some(r => r.status === 'approved') ?? false;
   const isAvailableForAdoption = !isLost && !isAdopted;
 
 
