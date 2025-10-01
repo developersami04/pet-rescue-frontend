@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { z } from "zod";
@@ -433,5 +434,38 @@ export async function submitRequest(token: string, formData: FormData) {
            throw new Error(error.message);
         }
         throw new Error(`An unknown error occurred while submitting the request.`);
+    }
+}
+
+export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopted'): Promise<any[]> {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.myPetData}`);
+    url.searchParams.append('tab', tab);
+
+    try {
+        const response = await fetchWithAuth(url.toString(), {
+            method: 'GET',
+            cache: 'no-store' 
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || `Failed to fetch ${tab} data.`);
+        }
+
+        return result.data || [];
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error(`Request to fetch ${tab} data timed out.`);
+        }
+        console.error(`Error fetching ${tab} data:`, error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error(`An unknown error occurred while fetching ${tab} data.`);
     }
 }

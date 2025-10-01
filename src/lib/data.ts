@@ -24,6 +24,18 @@ export type AdoptionRequest = {
     user: number;
 };
 
+export type MyAdoptionRequest = {
+    id: number;
+    pet: number;
+    pet_name: string;
+    requester_id: number;
+    requester_name: string;
+    created_at: string;
+    message: string;
+    status: 'pending' | 'approved' | 'rejected';
+}
+
+
 export type PetReport = {
     id: number;
     pet: number;

@@ -10,8 +10,9 @@ const API_ENDPOINTS = {
   changePassword: '/api/user-auth/change-password',
   allPets: '/api/pet-data/pets/',
   myPets: '/api/pet-data/my-pets',
-  requestSubmit: '/api/pet-data/pet-request-form',
+  requestSubmit: '/api/pet-data/request-pet-submit',
   petProfile: '/api/pet-data/pet-profile/', // e.g., /api/pet-data/pet-profile/31
+  myPetData: '/api/pet-data/my-pet-data/',
 };
 
 export const API_REQUEST_TIMEOUT = 10000; 
