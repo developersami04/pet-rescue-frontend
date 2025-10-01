@@ -57,12 +57,10 @@ const navItems = {
     { href: "/pet-categories", icon: Shapes, label: "Pet Categories" },
     { href: "/submit-request", icon: PlusCircle, label: "Submit a Request" },
   ],
-  resources: [
-    { href: "/resources", icon: BookOpen, label: "Resources" },
-  ],
   more: [
       { href: "/about-us", icon: Info, label: "About Us" },
       { href: "/contact-us", icon: Phone, label: "Contact Us" },
+      { href: "/resources", icon: BookOpen, label: "Resources" },
   ]
 };
 
@@ -301,7 +299,7 @@ export function HeaderNav() {
                     />
                   </div>
                   <nav className="flex flex-col gap-1">
-                    {[...navItems.main, ...navItems.pets, ...navItems.resources, ...navItems.more].map(
+                    {[...navItems.main, ...navItems.pets, ...navItems.more].map(
                       (item) => (
                         <NavLink
                           key={item.href}
