@@ -59,3 +59,5 @@ export function useUserDetails() {
 
   return { user, isLoading, error, refreshUserDetails: fetchUserDetails };
 }
+
+    
