@@ -163,8 +163,8 @@ export function MyPetsSection() {
                                 </CardHeader>
                                 <CardFooter className="p-4 pt-0">
                                     <Button asChild variant="secondary" className="w-full">
-                                        <Link href={`/pets/${pet.id}`}>
-                                            <Pen className="mr-2 h-4 w-4" /> View Details
+                                        <Link href={`/submit-request/${pet.id}`}>
+                                            <Pen className="mr-2 h-4 w-4" /> Edit Details
                                         </Link>
                                     </Button>
                                 </CardFooter>

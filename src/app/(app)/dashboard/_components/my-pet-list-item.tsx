@@ -57,8 +57,8 @@ export function MyPetListItem({ pet }: MyPetListItemProps) {
                 </div>
                 <div className="flex justify-end">
                      <Button asChild variant="secondary">
-                        <Link href={`/pets/${pet.id}`}>
-                            <Pen className="mr-2 h-4 w-4" /> View Details
+                        <Link href={`/submit-request/${pet.id}`}>
+                            <Pen className="mr-2 h-4 w-4" /> Edit Details
                         </Link>
                     </Button>
                 </div>
