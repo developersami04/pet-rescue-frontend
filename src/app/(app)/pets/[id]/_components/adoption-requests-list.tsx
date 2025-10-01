@@ -58,15 +58,17 @@ export function AdoptionRequestsList({ requests }: AdoptionRequestsListProps) {
             <TableHeader>
                 <TableRow>
                 <TableHead>Requester</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Message</TableHead>
+                <TableHead className="text-right">Status</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {requests.map((req) => (
                 <TableRow key={req.id}>
                     <TableCell className="font-medium">{req.requester_name}</TableCell>
-                    <TableCell>
-                        <Badge variant={getStatusVariant(req.request_status)} className="capitalize flex items-center w-fit">
+                     <TableCell>{req.message}</TableCell>
+                    <TableCell className="text-right">
+                        <Badge variant={getStatusVariant(req.request_status)} className="capitalize flex items-center w-fit ml-auto">
                            {getStatusIcon(req.request_status)} {req.request_status}
                         </Badge>
                     </TableCell>

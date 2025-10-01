@@ -18,10 +18,12 @@ export type AdoptionRequest = {
     id: number;
     pet: number;
     pet_name: string;
+    requester_id: number;
     requester_name: string;
-    request_status: string;
-    is_approved: boolean;
-    user: number;
+    created_at: string;
+    message: string;
+    request_status: 'pending' | 'approved' | 'rejected';
+    is_approved?: boolean; // Keep for compatibility if used elsewhere, but prefer request_status
 };
 
 export type MyAdoptionRequest = {
