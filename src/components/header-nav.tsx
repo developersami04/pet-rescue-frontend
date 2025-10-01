@@ -55,7 +55,7 @@ const navItems = {
   pets: [
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },
     { href: "/pet-categories", icon: Shapes, label: "Pet Categories" },
-    { href: "/submit-request", icon: PlusCircle, label: "Submit a Request" },
+    { href: "/submit-request", icon: PlusCircle, label: "Pet Request Form" },
   ],
   more: [
       { href: "/about-us", icon: Info, label: "About Us" },

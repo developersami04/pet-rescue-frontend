@@ -14,7 +14,7 @@ export default function SubmitRequestPage() {
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
       <PageHeader
-        title="Submit a Request"
+        title="Pet Request Form"
         description="Fill out the form below to add a pet, update medical history, or report a pet."
       />
       <Card>
