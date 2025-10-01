@@ -125,27 +125,27 @@ export default function PetProfilePage() {
       <Tabs defaultValue="medical-history" className="mt-12">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="medical-history">Medical History</TabsTrigger>
-          <TabsTrigger value="adoption-requests">
-            Adoption Requests 
-            {pet.adoption_requests && pet.adoption_requests.length > 0 && 
-              <Badge className="ml-2">{pet.adoption_requests.length}</Badge>
-            }
-          </TabsTrigger>
           <TabsTrigger value="reports">
             Reports
             {reports.length > 0 &&
               <Badge variant="destructive" className="ml-2">{reports.length}</Badge>
             }
           </TabsTrigger>
+          <TabsTrigger value="adoption-requests">
+            Adoption Requests 
+            {pet.adoption_requests && pet.adoption_requests.length > 0 && 
+              <Badge className="ml-2">{pet.adoption_requests.length}</Badge>
+            }
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="medical-history" className="mt-6">
           <MedicalHistory medicalHistory={pet.medical_history} />
         </TabsContent>
+         <TabsContent value="reports" className="mt-6">
+            <PetReport reports={reports} />
+        </TabsContent>
         <TabsContent value="adoption-requests" className="mt-6">
             <AdoptionRequestsList requests={pet.adoption_requests} />
-        </TabsContent>
-        <TabsContent value="reports" className="mt-6">
-            <PetReport reports={reports} />
         </TabsContent>
       </Tabs>
     </div>
