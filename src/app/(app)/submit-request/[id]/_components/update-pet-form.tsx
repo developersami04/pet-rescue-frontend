@@ -81,7 +81,6 @@ type UpdatePetFormProps = {
 function getChangedValues(initialValues: any, currentValues: any): Partial<any> {
     const changedValues: Partial<any> = {};
     for (const key in currentValues) {
-        // Skip file inputs from this generic comparison
         if (key === 'pet_image' || key === 'report_image') continue;
 
         const initialValue = initialValues[key];
@@ -91,7 +90,7 @@ function getChangedValues(initialValues: any, currentValues: any): Partial<any> 
             if (!initialValue || format(new Date(initialValue), 'yyyy-MM-dd') !== format(currentValue, 'yyyy-MM-dd')) {
                 changedValues[key] = currentValue;
             }
-        } else if (initialValue !== currentValue && currentValue !== undefined && currentValue !== null) {
+        } else if (String(initialValue ?? '') !== String(currentValue ?? '')) {
             changedValues[key] = currentValue;
         }
     }
@@ -362,3 +361,5 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     </Form>
   );
 }
+
+    
