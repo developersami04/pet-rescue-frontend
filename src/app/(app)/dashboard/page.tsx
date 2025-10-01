@@ -48,7 +48,7 @@ export default function DashboardPage() {
       <Separator className="my-8" />
       
         <Tabs defaultValue="my-pets" className="mt-8">
-            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mb-6">
+            <TabsList className="mb-6 h-auto flex-wrap justify-start">
                 <TabsTrigger value="my-pets">My Pets</TabsTrigger>
                 <TabsTrigger value="lost-pets">Lost Pets</TabsTrigger>
                 <TabsTrigger value="found-pets">Found Pets</TabsTrigger>
