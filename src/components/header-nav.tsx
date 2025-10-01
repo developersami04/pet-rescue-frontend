@@ -7,7 +7,6 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutGrid,
   PawPrint,
-  Map,
   BookOpen,
   Search,
   Menu,
@@ -57,7 +56,6 @@ const navItems = {
   pets: [
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },
     { href: "/pet-categories", icon: Shapes, label: "Pet Categories" },
-    { href: "/map", icon: Map, label: "Map View" },
     { href: "/submit-request", icon: PlusCircle, label: "Submit a Request" },
   ],
   resources: [
