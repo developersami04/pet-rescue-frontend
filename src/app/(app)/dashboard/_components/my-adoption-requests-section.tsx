@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { AdoptionRequestListItem } from "./adoption-request-list-item";
+import Link from "next/link";
 
 type MyAdoptionRequestsSectionProps = {
     requests: MyAdoptionRequest[];
@@ -68,19 +69,23 @@ export function MyAdoptionRequestsSection({ requests }: MyAdoptionRequestsSectio
                         const imageUrl = `https://picsum.photos/seed/${req.pet}/300/300`;
                         return (
                             <Card key={req.id} className="overflow-hidden flex flex-col">
-                                <div className="relative aspect-square w-full">
-                                    <Image
-                                        src={imageUrl}
-                                        alt={req.pet_name}
-                                        fill
-                                        className="object-cover"
-                                        data-ai-hint={'pet'}
-                                    />
-                                </div>
+                                 <Link href={`/pets/${req.pet}`} className="group">
+                                    <div className="relative aspect-square w-full">
+                                        <Image
+                                            src={imageUrl}
+                                            alt={req.pet_name}
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                            data-ai-hint={'pet'}
+                                        />
+                                    </div>
+                                </Link>
                                 <div className="p-4 flex-grow">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <h3 className="text-lg font-bold">{req.pet_name}</h3>
+                                            <Link href={`/pets/${req.pet}`} className="hover:underline">
+                                                <h3 className="text-lg font-bold">{req.pet_name}</h3>
+                                            </Link>
                                             <p className="text-sm text-muted-foreground">Owner: {req.owner_name}</p>
                                         </div>
                                         <Badge variant={getStatusVariant(req.status)} className="capitalize">

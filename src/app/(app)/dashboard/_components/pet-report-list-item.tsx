@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { Card } from "@/components/ui/card";
@@ -8,6 +7,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { AlertTriangle } from "lucide-react";
+import Link from "next/link";
 
 
 type PetReportListItemProps = {
@@ -30,7 +30,9 @@ export function PetReportListItem({ report }: PetReportListItemProps) {
             </div>
             <div className="flex-grow grid grid-cols-1 md:grid-cols-3 items-center gap-4">
                 <div className="md:col-span-2">
-                    <h3 className="text-lg font-bold">{report.pet_name}</h3>
+                    <Link href={`/pets/${report.pet}`} className="hover:underline">
+                        <h3 className="text-lg font-bold">{report.pet_name}</h3>
+                    </Link>
                     <p className="text-sm text-muted-foreground">Report Status: {report.report_status}</p>
                 </div>
                 <div className="flex justify-start md:justify-center">

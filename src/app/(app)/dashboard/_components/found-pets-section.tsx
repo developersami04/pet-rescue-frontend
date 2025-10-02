@@ -57,36 +57,33 @@ export function FoundPetsSection({ foundPets }: FoundPetsSectionProps) {
                         const imageUrl = report.report_image ?? `https://picsum.photos/seed/${report.pet}/300/300`;
                         return (
                             <Card key={report.id} className="overflow-hidden flex flex-col">
-                                <div className="relative aspect-square w-full">
-                                    <Image
-                                        src={imageUrl}
-                                        alt={report.pet_name}
-                                        fill
-                                        className="object-cover"
-                                        data-ai-hint={'found pet'}
-                                    />
-                                    <Badge 
-                                        className={cn("absolute bottom-2 right-2 capitalize bg-blue-500 text-white")}
-                                    >
-                                        Found
-                                    </Badge>
-                                </div>
+                                <Link href={`/pets/${report.pet}`} className="group">
+                                    <div className="relative aspect-square w-full">
+                                        <Image
+                                            src={imageUrl}
+                                            alt={report.pet_name}
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                            data-ai-hint={'found pet'}
+                                        />
+                                        <Badge 
+                                            className={cn("absolute bottom-2 right-2 capitalize bg-blue-500 text-white")}
+                                        >
+                                            Found
+                                        </Badge>
+                                    </div>
+                                </Link>
                                 <div className="p-4 flex-grow">
                                     <div className="flex justify-between items-start">
-                                        <h3 className="text-lg font-bold">{report.pet_name}</h3>
+                                         <Link href={`/pets/${report.pet}`} className="hover:underline">
+                                            <h3 className="text-lg font-bold">{report.pet_name}</h3>
+                                        </Link>
                                         <Badge variant={report.is_resolved ? 'default' : 'secondary'} className="capitalize whitespace-nowrap">
                                             {report.is_resolved ? 'Resolved' : 'Active'}
                                         </Badge>
                                     </div>
                                     <p className="text-sm text-muted-foreground pt-1">Status: {report.report_status}</p>
                                     
-                                </div>
-                                <div className="p-4 pt-0">
-                                    <Button asChild variant="secondary" className="w-full">
-                                        <Link href={`/pets/${report.pet}`}>
-                                            View Pet Details
-                                        </Link>
-                                    </Button>
                                 </div>
                             </Card>
                         )

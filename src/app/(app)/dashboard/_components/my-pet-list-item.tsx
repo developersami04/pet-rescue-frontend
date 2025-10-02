@@ -38,7 +38,9 @@ export function MyPetListItem({ pet }: MyPetListItemProps) {
             </div>
             <div className="flex-grow grid grid-cols-5 items-center gap-4">
                 <div className="col-span-2">
-                    <h3 className="text-lg font-bold">{pet.name}</h3>
+                    <Link href={`/pets/${pet.id}`} className="hover:underline">
+                        <h3 className="text-lg font-bold">{pet.name}</h3>
+                    </Link>
                     <p className="text-sm text-muted-foreground">{pet.breed || 'Unknown Breed'}</p>
                 </div>
                 <div>

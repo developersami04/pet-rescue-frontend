@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { Card } from "@/components/ui/card";
@@ -8,6 +7,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { Check, FileText, X } from "lucide-react";
+import Link from "next/link";
 
 type AdoptionRequestListItemProps = {
     request: MyAdoptionRequest;
@@ -52,7 +52,9 @@ export function AdoptionRequestListItem({ request }: AdoptionRequestListItemProp
             </div>
             <div className="flex-grow grid grid-cols-1 md:grid-cols-3 items-center gap-4">
                 <div className="md:col-span-2">
-                    <h3 className="text-lg font-bold">{request.pet_name}</h3>
+                    <Link href={`/pets/${request.pet}`} className="hover:underline">
+                        <h3 className="text-lg font-bold">{request.pet_name}</h3>
+                    </Link>
                     <p className="text-sm text-muted-foreground">
                         Owner: {request.owner_name}
                     </p>
