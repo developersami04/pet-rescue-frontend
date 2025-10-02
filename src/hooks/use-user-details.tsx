@@ -21,6 +21,7 @@ export function useUserDetails() {
     if (authUser) {
       setUser(authUser);
       setIsLoading(false);
+      // We still might want to fetch fresh details, so we don't return here.
     }
     
     const token = localStorage.getItem('authToken');

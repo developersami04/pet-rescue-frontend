@@ -6,7 +6,7 @@ import { Pet } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { BadgeCheck, Clock, LayoutGrid, List, Pen, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getMyPets } from "@/lib/action_api";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
@@ -47,38 +47,39 @@ export function MyPetsSection() {
     const router = useRouter();
     const [view, setView] = useState('grid');
 
+    const fetchMyPets = useCallback(async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            const userPets = await getMyPets(token);
+            setMyPets(userPets);
+        } catch (error: any) {
+            if (error.message.includes('Session expired')) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Session Expired',
+                    description: 'Please log in again to continue.',
+                });
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken');
+                window.dispatchEvent(new Event('storage'));
+                router.push('/login');
+            } else {
+                console.error("Failed to fetch user's pets:", error);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }, [router, toast]);
+
 
     useEffect(() => {
-        async function fetchMyPets() {
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                setIsLoading(false);
-                return;
-            }
-
-            try {
-                const userPets = await getMyPets(token);
-                setMyPets(userPets);
-            } catch (error: any) {
-                if (error.message.includes('Session expired')) {
-                    toast({
-                        variant: 'destructive',
-                        title: 'Session Expired',
-                        description: 'Please log in again to continue.',
-                    });
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('refreshToken');
-                    window.dispatchEvent(new Event('storage'));
-                    router.push('/login');
-                } else {
-                    console.error("Failed to fetch user's pets:", error);
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        }
         fetchMyPets();
-    }, [router, toast]);
+    }, [fetchMyPets]);
 
     if (isLoading) {
         return <MyPetsSkeleton />;

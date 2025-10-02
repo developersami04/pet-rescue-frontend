@@ -1,10 +1,9 @@
 
-
 'use client';
 
 import { Card } from "@/components/ui/card";
 import { AlertTriangle, LayoutGrid, List, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { PetReport } from "@/lib/data";
 import { getMyPetData } from "@/lib/action_api";
 import { useToast } from "@/hooks/use-toast";
@@ -22,43 +21,44 @@ export function LostPetsSection() {
     const { toast } = useToast();
     const router = useRouter();
 
+    const fetchLostPets = useCallback(async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            const reports = await getMyPetData(token, 'lost');
+            setLostPets(reports as PetReport[]);
+        } catch (error: any) {
+            if (error.message.includes('Session expired')) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Session Expired',
+                    description: 'Please log in again to continue.',
+                });
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken');
+                window.dispatchEvent(new Event('storage'));
+                router.push('/login');
+            } else {
+                console.error("Failed to fetch lost pets:", error);
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: 'Could not fetch lost pet reports.',
+                });
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }, [router, toast]);
+
 
     useEffect(() => {
-        async function fetchLostPets() {
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                setIsLoading(false);
-                return;
-            }
-
-            try {
-                const reports = await getMyPetData(token, 'lost');
-                setLostPets(reports as PetReport[]);
-            } catch (error: any) {
-                if (error.message.includes('Session expired')) {
-                    toast({
-                        variant: 'destructive',
-                        title: 'Session Expired',
-                        description: 'Please log in again to continue.',
-                    });
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('refreshToken');
-                    window.dispatchEvent(new Event('storage'));
-                    router.push('/login');
-                } else {
-                    console.error("Failed to fetch lost pets:", error);
-                    toast({
-                        variant: 'destructive',
-                        title: 'Error',
-                        description: 'Could not fetch lost pet reports.',
-                    });
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        }
         fetchLostPets();
-    }, [router, toast]);
+    }, [fetchLostPets]);
 
 
     if (isLoading) {

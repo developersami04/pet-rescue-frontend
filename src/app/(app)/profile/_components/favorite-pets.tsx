@@ -6,7 +6,7 @@ import { Pet } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getAllPets } from "@/lib/action_api";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
@@ -17,38 +17,38 @@ export function FavoritePets() {
     const { toast } = useToast();
     const router = useRouter();
 
+    const fetchPets = useCallback(async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            setIsLoading(false);
+            return;
+        }
+        try {
+            const allPets = await getAllPets(token);
+            // Mocking favorites for now, e.g., first 3 pets
+            setFavoritePets(allPets.slice(0, 3));
+        } catch (error: any) {
+            if (error.message.includes('Session expired')) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Session Expired',
+                    description: 'Please log in again to continue.',
+                });
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken');
+                window.dispatchEvent(new Event('storage'));
+                router.push('/login');
+            } else {
+                console.error("Failed to fetch favorite pets:", error);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }, [router, toast]);
 
     useEffect(() => {
-        async function fetchPets() {
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                setIsLoading(false);
-                return;
-            }
-            try {
-                const allPets = await getAllPets(token);
-                // Mocking favorites for now, e.g., first 3 pets
-                setFavoritePets(allPets.slice(0, 3));
-            } catch (error: any) {
-                if (error.message.includes('Session expired')) {
-                    toast({
-                        variant: 'destructive',
-                        title: 'Session Expired',
-                        description: 'Please log in again to continue.',
-                    });
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('refreshToken');
-                    window.dispatchEvent(new Event('storage'));
-                    router.push('/login');
-                } else {
-                    console.error("Failed to fetch favorite pets:", error);
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        }
         fetchPets();
-    }, [router, toast]);
+    }, [fetchPets]);
 
     return (
         <Card>
@@ -91,5 +91,3 @@ export function FavoritePets() {
         </Card>
     );
 }
-
-    

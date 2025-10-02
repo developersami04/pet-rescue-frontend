@@ -1,10 +1,9 @@
 
-
 'use client';
 
 import { Card } from "@/components/ui/card";
 import { FileText, LayoutGrid, List, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { MyAdoptionRequest } from "@/lib/data";
 import { getMyPetData } from "@/lib/action_api";
 import { useToast } from "@/hooks/use-toast";
@@ -23,43 +22,43 @@ export function MyAdoptionRequestsSection() {
     const { toast } = useToast();
     const router = useRouter();
 
+    const fetchAdoptionRequests = useCallback(async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            const reqs = await getMyPetData(token, 'adopted');
+            setRequests(reqs as MyAdoptionRequest[]);
+        } catch (error: any) {
+            if (error.message.includes('Session expired')) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Session Expired',
+                    description: 'Please log in again to continue.',
+                });
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken');
+                window.dispatchEvent(new Event('storage'));
+                router.push('/login');
+            } else {
+                console.error("Failed to fetch adoption requests:", error);
+                 toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: 'Could not fetch your adoption requests.',
+                });
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }, [router, toast]);
 
     useEffect(() => {
-        async function fetchAdoptionRequests() {
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                setIsLoading(false);
-                return;
-            }
-
-            try {
-                const reqs = await getMyPetData(token, 'adopted');
-                setRequests(reqs as MyAdoptionRequest[]);
-            } catch (error: any) {
-                if (error.message.includes('Session expired')) {
-                    toast({
-                        variant: 'destructive',
-                        title: 'Session Expired',
-                        description: 'Please log in again to continue.',
-                    });
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('refreshToken');
-                    window.dispatchEvent(new Event('storage'));
-                    router.push('/login');
-                } else {
-                    console.error("Failed to fetch adoption requests:", error);
-                     toast({
-                        variant: 'destructive',
-                        title: 'Error',
-                        description: 'Could not fetch your adoption requests.',
-                    });
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        }
         fetchAdoptionRequests();
-    }, [router, toast]);
+    }, [fetchAdoptionRequests]);
     
     const getStatusVariant = (status: string) => {
         switch (status.toLowerCase()) {
@@ -117,7 +116,7 @@ export function MyAdoptionRequestsSection() {
             {view === 'grid' ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {requests.map(req => {
-                        const imageUrl = `https://picsum.photos/seed/${req.pet}/300/300`;
+                        const imageUrl = `https.picsum.photos/seed/${req.pet}/300/300`;
                         return (
                             <Card key={req.id} className="overflow-hidden flex flex-col">
                                 <div className="relative aspect-square w-full">
