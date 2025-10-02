@@ -161,14 +161,13 @@ export function AddPetForm() {
     const formData = new FormData();
     const allKeys = Object.keys(basePetSchema.shape);
     
-    // Set available_for_adopt based on pet_status
     const availableForAdopt = values.pet_status === 'adopt';
     formData.append('available_for_adopt', String(availableForAdopt));
 
-    // If status is 'adopt', don't send 'pet_status' to backend, it's a frontend-only state
+    // Handle pet_status and message based on the selection
     if (values.pet_status === 'adopt') {
-        formData.append('pet_status', '');
-        formData.append('message', values.description || ''); // Or send an empty message
+        formData.append('pet_status', 'adopt');
+        formData.append('message', values.description || ''); 
     } else {
         formData.append('pet_status', values.pet_status);
         formData.append('message', values.message || '');
@@ -383,3 +382,5 @@ export function AddPetForm() {
     </Form>
   );
 }
+
+    

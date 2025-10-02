@@ -219,10 +219,6 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     if (changedValues.hasOwnProperty('pet_status')) {
         const availableForAdopt = changedValues.pet_status === 'adopt';
         changedValues['available_for_adopt'] = availableForAdopt;
-
-        if (availableForAdopt) {
-            changedValues.pet_status = ''; // Don't send 'adopt' to backend
-        }
     }
 
 
@@ -237,7 +233,9 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     const formData = new FormData();
 
     Object.entries(changedValues).forEach(([key, value]) => {
-      if (value instanceof Date) {
+      if (key === 'pet_status' && value === 'adopt') {
+        formData.append(key, 'adopt');
+      } else if (value instanceof Date) {
         formData.append(key, format(value, 'yyyy-MM-dd'));
       } else if (typeof value === 'boolean') {
         formData.append(key, String(value));
