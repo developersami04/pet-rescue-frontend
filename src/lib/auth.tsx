@@ -31,6 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     
     // Avoid showing loading state on every tab switch/re-focus
+    // We check user state directly here before setting loading
     if (!user) {
       setIsLoading(true);
     }
@@ -52,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error("Auth check failed:", error);
     }
     setIsLoading(false);
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     verifyAuth();
