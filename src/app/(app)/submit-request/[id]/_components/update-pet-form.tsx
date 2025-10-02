@@ -51,7 +51,6 @@ const updatePetSchema = z.object({
   pet_image: z.any().optional(),
   is_vaccinated: z.boolean().default(false),
   is_diseased: z.boolean().default(false),
-  available_for_adopt: z.boolean().default(true),
   is_founded: z.boolean().default(false),
   address: z.string().optional(),
   city: z.string().optional(),
@@ -67,7 +66,7 @@ const updatePetSchema = z.object({
   note: z.string().optional().nullable().transform(e => e === '' ? null : e),
 
   report_image: z.any().optional(),
-  pet_status: z.enum(['lost', 'found']).optional(),
+  pet_status: z.enum(['lost', 'found', 'adopt']).optional(),
   message: z.string().optional(),
 });
 
@@ -134,7 +133,6 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
       description: '',
       is_vaccinated: false,
       is_diseased: false,
-      available_for_adopt: false,
       is_founded: false,
       address: '',
       city: '',
@@ -174,8 +172,10 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     try {
       setIsLoading(true);
       const data = await getPetRequestFormData(token, petId);
+      const pet_status = data.available_for_adopt ? 'adopt' : data.pet_status || '';
       const formData = {
         ...data,
+        pet_status: pet_status,
         last_vaccinated_date: data.last_vaccinated_date ? parseISO(data.last_vaccinated_date) : null,
       };
       form.reset(formData);
@@ -212,8 +212,20 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
       toast({ variant: 'destructive', title: 'Authentication Error' });
       return;
     }
-
+    
     const changedValues = getChangedValues(initialData, values);
+
+    // Set available_for_adopt based on pet_status
+    if (changedValues.hasOwnProperty('pet_status')) {
+        const availableForAdopt = changedValues.pet_status === 'adopt';
+        changedValues['available_for_adopt'] = availableForAdopt;
+
+        if (availableForAdopt) {
+            changedValues.pet_status = ''; // Don't send 'adopt' to backend
+        }
+    }
+
+
     const petImageFile = values.pet_image instanceof FileList && values.pet_image.length > 0 ? values.pet_image[0] : null;
     const reportImageFile = values.report_image instanceof FileList && values.report_image.length > 0 ? values.report_image[0] : null;
 
@@ -354,7 +366,6 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
             <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea placeholder="Tell us about the pet..." className="resize-none" rows={5} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
         )} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <FormField control={form.control} name="available_for_adopt" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Available for Adoption</FormLabel></div></FormItem>)} />
             <FormField control={form.control} name="is_founded" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Is this a Found Pet?</FormLabel></div></FormItem>)} />
             <FormField control={form.control} name="is_vaccinated" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Vaccinated?</FormLabel></div></FormItem>)} />
             <FormField control={form.control} name="is_diseased" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Any Diseases?</FormLabel></div></FormItem>)} />
@@ -390,7 +401,7 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
         
         <h3 className="text-lg font-medium">Report Status</h3>
          <FormField control={form.control} name="pet_status" render={({ field }) => (
-            <FormItem className="space-y-3"><FormLabel>Report Type</FormLabel><FormControl><RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-row space-x-4"><FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="lost" /></FormControl><FormLabel className="font-normal">Lost</FormLabel></FormItem><FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="found" /></FormControl><FormLabel className="font-normal">Found</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem>
+            <FormItem className="space-y-3"><FormLabel>Report Type</FormLabel><FormControl><RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4"><FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="adopt" /></FormControl><FormLabel className="font-normal">Available for Adopt</FormLabel></FormItem><FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="lost" /></FormControl><FormLabel className="font-normal">Lost</FormLabel></FormItem><FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="found" /></FormControl><FormLabel className="font-normal">Found</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem>
         )} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-2">

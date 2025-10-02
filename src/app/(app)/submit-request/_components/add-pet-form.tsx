@@ -50,7 +50,6 @@ const addPetSchema = z.object({
     .optional(),
   is_vaccinated: z.boolean().default(false),
   is_diseased: z.boolean().default(false),
-  available_for_adopt: z.boolean().default(true),
   is_founded: z.boolean().default(false),
   address: z.string().optional(),
   city: z.string().optional(),
@@ -68,8 +67,16 @@ const addPetSchema = z.object({
 
   // Pet Report
   report_image: z.any().optional(),
-  pet_status: z.enum(['lost', 'found'], { required_error: 'Report type is required.' }),
-  message: z.string().min(10, 'Report message must be at least 10 characters.').max(500, 'Report message cannot exceed 500 characters.'),
+  pet_status: z.enum(['lost', 'found', 'adopt'], { required_error: 'Report type is required.' }),
+  message: z.string().min(10, 'Report message must be at least 10 characters.').max(500, 'Report message cannot exceed 500 characters.').optional(),
+}).superRefine((data, ctx) => {
+    if (data.pet_status !== 'adopt' && !data.message) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Report message is required when status is 'lost' or 'found'.",
+            path: ['message'],
+        });
+    }
 });
 
 type PetType = {
@@ -95,7 +102,6 @@ export function AddPetForm() {
       description: '',
       is_vaccinated: false,
       is_diseased: false,
-      available_for_adopt: false,
       is_founded: false,
       address: '',
       city: '',
@@ -152,7 +158,23 @@ export function AddPetForm() {
     const formData = new FormData();
     const allKeys = Object.keys(addPetSchema.shape);
     
+    // Set available_for_adopt based on pet_status
+    const availableForAdopt = values.pet_status === 'adopt';
+    formData.append('available_for_adopt', String(availableForAdopt));
+
+    // If status is 'adopt', don't send 'pet_status' to backend, it's a frontend-only state
+    if (values.pet_status === 'adopt') {
+        formData.append('pet_status', '');
+        formData.append('message', values.description || ''); // Or send an empty message
+    } else {
+        formData.append('pet_status', values.pet_status);
+        formData.append('message', values.message || '');
+    }
+
     allKeys.forEach(key => {
+        // Skip keys that have been handled manually
+        if (key === 'pet_status' || key === 'message') return;
+
         const value = values[key as keyof typeof values];
 
         if (key === 'pet_image' || key === 'report_image') {
@@ -275,7 +297,6 @@ export function AddPetForm() {
             <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea placeholder="Tell us about the pet..." className="resize-none" rows={5} {...field} /></FormControl><FormMessage /></FormItem>
         )} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <FormField control={form.control} name="available_for_adopt" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Available for Adoption</FormLabel></div></FormItem>)} />
             <FormField control={form.control} name="is_founded" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Is this a Found Pet?</FormLabel></div></FormItem>)} />
             <FormField control={form.control} name="is_vaccinated" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Vaccinated?</FormLabel></div></FormItem>)} />
             <FormField control={form.control} name="is_diseased" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Any Diseases?</FormLabel></div></FormItem>)} />
@@ -339,7 +360,7 @@ export function AddPetForm() {
         {/* Report Section */}
         <h3 className="text-lg font-medium">Report Status</h3>
          <FormField control={form.control} name="pet_status" render={({ field }) => (
-            <FormItem className="space-y-3"><FormLabel>Report Type</FormLabel><FormControl><RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-row space-x-4"><FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="lost" /></FormControl><FormLabel className="font-normal">Lost</FormLabel></FormItem><FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="found" /></FormControl><FormLabel className="font-normal">Found</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem>
+            <FormItem className="space-y-3"><FormLabel>Report Type</FormLabel><FormControl><RadioGroup onValueChange={field.onChange} value={field.value} className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4"><FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="adopt" /></FormControl><FormLabel className="font-normal">Available for Adopt</FormLabel></FormItem><FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="lost" /></FormControl><FormLabel className="font-normal">Lost</FormLabel></FormItem><FormItem className="flex items-center space-x-3 space-y-0"><FormControl><RadioGroupItem value="found" /></FormControl><FormLabel className="font-normal">Found</FormLabel></FormItem></RadioGroup></FormControl><FormMessage /></FormItem>
         )} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-2">
