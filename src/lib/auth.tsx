@@ -5,6 +5,7 @@ import { useState, useEffect, useContext, createContext, useCallback } from 'rea
 import { checkUserAuth } from './action_api';
 import { toast } from '@/hooks/use-toast';
 import { User } from './data';
+import { useRouter } from 'next/navigation';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -20,7 +21,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
   
+  const logout = useCallback(() => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('username');
+    setIsAuthenticated(false);
+    setUser(null);
+    window.dispatchEvent(new Event('storage'));
+  }, []);
+
   const verifyAuth = useCallback(async (isLoginEvent = false) => {
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -53,13 +64,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error("Auth check failed:", error);
     }
     setIsLoading(false);
-  }, []);
+  }, [router, toast, logout]);
 
   useEffect(() => {
     verifyAuth();
 
-    const handleStorageChange = () => {
-      verifyAuth();
+    const handleStorageChange = (e: StorageEvent) => {
+      // When storage changes, re-verify auth
+      // This handles login/logout in other tabs
+      if(e.key === 'authToken' || e.key === null) {
+        verifyAuth();
+      }
     };
 
     window.addEventListener('storage', handleStorageChange);
@@ -67,15 +82,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, [verifyAuth]);
-
-  const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('username');
-    setIsAuthenticated(false);
-    setUser(null);
-    window.dispatchEvent(new Event('storage'));
-  };
 
   const login = (token: string, refreshToken: string) => {
     localStorage.setItem('authToken', token);
