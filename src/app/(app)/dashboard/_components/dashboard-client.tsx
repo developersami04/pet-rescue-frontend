@@ -37,8 +37,8 @@ export function DashboardClient() {
             getMyPets(token),
             getMyPetData(token, 'lost'),
             getMyPetData(token, 'found'),
-            getMyPetData(token, 'adopt'),
-            getMyPetData(token, 'adoptable')
+            getMyPetData(token, 'my-adoption-requests'),
+            getMyPetData(token, 'adopt')
         ]);
 
         setMyPets(myPetsData);
