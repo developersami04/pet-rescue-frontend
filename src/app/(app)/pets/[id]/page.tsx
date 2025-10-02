@@ -1,6 +1,8 @@
 
+'use client';
+
 import type { Pet } from "@/lib/data";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { PetImageCarousel } from "./_components/pet-image-carousel";
 import { PetDetails } from "./_components/pet-details";
 import { getPetById } from "@/lib/action_api";
@@ -11,35 +13,91 @@ import { MedicalHistoryList } from "./_components/medical-history-list";
 import { AdoptionRequestsList } from "./_components/adoption-requests-list";
 import { PetReportList } from "./_components/pet-report-list";
 import { Badge } from "@/components/ui/badge";
-import { cookies } from "next/headers";
+import { useEffect, useState }from "react";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
-async function getPetData(petId: string) {
-    const cookieStore = cookies();
-    const token = cookieStore.get('authToken')?.value;
-
-    if (!token) {
-        // This case should ideally be handled by middleware, but we can have a fallback.
-        // For a server component, we can't redirect directly, but we can show an error or a login prompt.
-        // Or, if this page is protected by the layout, this might not even be reached.
-        return { pet: null, error: "Authentication required to view pet details." };
-    }
-
-    try {
-        const petData = await getPetById(token, petId);
-        return { pet: petData, error: null };
-    } catch (e: any) {
-        console.error("Failed to fetch pet details on server:", e);
-        if (e.message.toLowerCase().includes('not found')) {
-            notFound();
-        }
-        return { pet: null, error: e.message || "Failed to fetch pet details." };
-    }
+function PetProfileSkeleton() {
+  return (
+    <div className="container mx-auto py-8 px-4 md:px-6">
+      <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+        <Skeleton className="aspect-square w-full rounded-lg" />
+        <div className="space-y-4">
+            <Skeleton className="h-10 w-3/4" />
+            <div className="flex gap-2">
+                <Skeleton className="h-6 w-20" />
+                <Skeleton className="h-6 w-24" />
+                <Skeleton className="h-6 w-16" />
+            </div>
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-10 w-full" />
+        </div>
+      </div>
+       <div className="mt-12">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-48 w-full mt-6" />
+      </div>
+    </div>
+  )
 }
 
 
-export default async function PetProfilePage({ params }: { params: { id: string } }) {
-  const { id: petId } = params;
-  const { pet, error } = await getPetData(petId);
+export default function PetProfilePage() {
+  const params = useParams();
+  const petId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const [pet, setPet] = useState<Pet | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
+  const router = useRouter();
+  
+  useEffect(() => {
+    async function fetchPet() {
+        if (!petId) {
+            setIsLoading(false);
+            return;
+        };
+
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            setError("Authentication required to view pet details.");
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+            const foundPet = await getPetById(token, petId);
+            if (foundPet) {
+                setPet(foundPet);
+            } else {
+                setError("Pet not found.");
+            }
+        } catch (e: any) {
+            if (e.message.includes('Session expired')) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Session Expired',
+                    description: 'Please log in again to continue.',
+                });
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken');
+                window.dispatchEvent(new Event('storage'));
+                router.push('/login');
+            } else {
+                setError(e.message || "Failed to fetch pet details.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    fetchPet();
+  }, [petId, router, toast]);
+
+
+  if (isLoading) {
+    return <PetProfileSkeleton />;
+  }
 
   if (error) {
     return (
