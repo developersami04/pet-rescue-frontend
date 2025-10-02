@@ -1,89 +1,24 @@
 
 'use client';
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Pet } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { BadgeCheck, Clock, LayoutGrid, List, Pen, Trash2 } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
-import { getMyPets } from "@/lib/action_api";
-import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
+import { BadgeCheck, Clock, LayoutGrid, List, Pen } from "lucide-react";
+import { useState } from "react";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { MyPetListItem } from "./my-pet-list-item";
 
-
-function MyPetsSkeleton() {
-    return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-                <CardSkeleton key={i} />
-            ))}
-        </div>
-    );
+type MyPetsSectionProps = {
+    myPets: Pet[];
 }
 
-function CardSkeleton() {
-    return (
-        <div className="flex flex-col space-y-3">
-            <Skeleton className="h-48 w-full rounded-lg" />
-            <div className="space-y-2">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-8 w-full" />
-            </div>
-        </div>
-    )
-}
-
-export function MyPetsSection() {
-    const [myPets, setMyPets] = useState<Pet[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const { toast } = useToast();
-    const router = useRouter();
+export function MyPetsSection({ myPets }: MyPetsSectionProps) {
     const [view, setView] = useState('grid');
-
-    const fetchMyPets = useCallback(async () => {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            setIsLoading(false);
-            return;
-        }
-
-        try {
-            const userPets = await getMyPets(token);
-            setMyPets(userPets);
-        } catch (error: any) {
-            if (error.message.includes('Session expired')) {
-                toast({
-                    variant: 'destructive',
-                    title: 'Session Expired',
-                    description: 'Please log in again to continue.',
-                });
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('refreshToken');
-                window.dispatchEvent(new Event('storage'));
-                router.push('/login');
-            } else {
-                console.error("Failed to fetch user's pets:", error);
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    }, [router, toast]);
-
-
-    useEffect(() => {
-        fetchMyPets();
-    }, [fetchMyPets]);
-
-    if (isLoading) {
-        return <MyPetsSkeleton />;
-    }
 
     if (myPets.length === 0) {
         return (

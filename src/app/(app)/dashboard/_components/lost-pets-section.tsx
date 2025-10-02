@@ -2,72 +2,21 @@
 'use client';
 
 import { Card } from "@/components/ui/card";
-import { AlertTriangle, LayoutGrid, List, Loader2 } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { AlertTriangle, LayoutGrid, List } from "lucide-react";
+import { useState } from "react";
 import { PetReport } from "@/lib/data";
-import { getMyPetData } from "@/lib/action_api";
-import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PetReportListItem } from "./pet-report-list-item";
 
-export function LostPetsSection() {
-    const [lostPets, setLostPets] = useState<PetReport[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+type LostPetsSectionProps = {
+    lostPets: PetReport[];
+}
+
+export function LostPetsSection({ lostPets }: LostPetsSectionProps) {
     const [view, setView] = useState('grid');
-    const { toast } = useToast();
-    const router = useRouter();
-
-    const fetchLostPets = useCallback(async () => {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            setIsLoading(false);
-            return;
-        }
-
-        try {
-            const reports = await getMyPetData(token, 'lost');
-            setLostPets(reports as PetReport[]);
-        } catch (error: any) {
-            if (error.message.includes('Session expired')) {
-                toast({
-                    variant: 'destructive',
-                    title: 'Session Expired',
-                    description: 'Please log in again to continue.',
-                });
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('refreshToken');
-                window.dispatchEvent(new Event('storage'));
-                router.push('/login');
-            } else {
-                console.error("Failed to fetch lost pets:", error);
-                toast({
-                    variant: 'destructive',
-                    title: 'Error',
-                    description: 'Could not fetch lost pet reports.',
-                });
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    }, [router, toast]);
-
-
-    useEffect(() => {
-        fetchLostPets();
-    }, [fetchLostPets]);
-
-
-    if (isLoading) {
-        return (
-             <div className="flex items-center justify-center p-8 h-64">
-                <Loader2 className="h-12 w-12 animate-spin text-primary" />
-            </div>
-        )
-    }
 
     if (lostPets.length === 0) {
         return (

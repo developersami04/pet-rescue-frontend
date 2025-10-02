@@ -2,12 +2,9 @@
 'use client';
 
 import { Card } from "@/components/ui/card";
-import { FileText, LayoutGrid, List, Loader2 } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { FileText, LayoutGrid, List } from "lucide-react";
+import { useState } from "react";
 import { MyAdoptionRequest } from "@/lib/data";
-import { getMyPetData } from "@/lib/action_api";
-import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -15,50 +12,12 @@ import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { AdoptionRequestListItem } from "./adoption-request-list-item";
 
-export function MyAdoptionRequestsSection() {
-    const [requests, setRequests] = useState<MyAdoptionRequest[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+type MyAdoptionRequestsSectionProps = {
+    requests: MyAdoptionRequest[];
+}
+
+export function MyAdoptionRequestsSection({ requests }: MyAdoptionRequestsSectionProps) {
     const [view, setView] = useState('grid');
-    const { toast } = useToast();
-    const router = useRouter();
-
-    const fetchAdoptionRequests = useCallback(async () => {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            setIsLoading(false);
-            return;
-        }
-
-        try {
-            const reqs = await getMyPetData(token, 'adopted');
-            setRequests(reqs as MyAdoptionRequest[]);
-        } catch (error: any) {
-            if (error.message.includes('Session expired')) {
-                toast({
-                    variant: 'destructive',
-                    title: 'Session Expired',
-                    description: 'Please log in again to continue.',
-                });
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('refreshToken');
-                window.dispatchEvent(new Event('storage'));
-                router.push('/login');
-            } else {
-                console.error("Failed to fetch adoption requests:", error);
-                 toast({
-                    variant: 'destructive',
-                    title: 'Error',
-                    description: 'Could not fetch your adoption requests.',
-                });
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    }, [router, toast]);
-
-    useEffect(() => {
-        fetchAdoptionRequests();
-    }, [fetchAdoptionRequests]);
     
     const getStatusVariant = (status: string) => {
         switch (status.toLowerCase()) {
@@ -71,15 +30,6 @@ export function MyAdoptionRequestsSection() {
             return 'secondary';
         }
     };
-
-
-    if (isLoading) {
-        return (
-             <div className="flex items-center justify-center p-8 h-64">
-                <Loader2 className="h-12 w-12 animate-spin text-primary" />
-            </div>
-        )
-    }
 
     if (requests.length === 0) {
         return (
