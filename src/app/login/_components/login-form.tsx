@@ -21,6 +21,7 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { loginUser } from '@/lib/action_api';
+import { useAuth } from '@/lib/auth.tsx';
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required.'),
@@ -31,6 +32,7 @@ export function LoginForm() {
   const { toast } = useToast();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { login } = useAuth();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -44,16 +46,12 @@ export function LoginForm() {
     setIsSubmitting(true);
     try {
       const result = await loginUser(values);
-      toast({
-        title: 'Login Successful!',
-        description: result.message || 'Welcome back!',
-      });
-      localStorage.setItem('authToken', result.access_token);
-      localStorage.setItem('refreshToken', result.refresh_token);
+      login(result.access_token, result.refresh_token);
+      
       if (result.user && result.user.username) {
         localStorage.setItem('username', result.user.username);
       }
-      window.dispatchEvent(new Event('storage')); // Manually trigger storage event
+      
       router.push('/dashboard');
     } catch (error: any) {
       toast({

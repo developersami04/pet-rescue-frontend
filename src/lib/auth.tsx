@@ -21,7 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   
-  const verifyAuth = useCallback(async () => {
+  const verifyAuth = useCallback(async (isLoginEvent = false) => {
     const token = localStorage.getItem('authToken');
     if (!token) {
       setIsAuthenticated(false);
@@ -30,13 +30,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     
-    setIsLoading(true);
+    // Avoid showing loading state on every tab switch/re-focus
+    if (!user) {
+      setIsLoading(true);
+    }
+    
     const { isAuthenticated: authStatus, user: userData, error, message } = await checkUserAuth(token);
     
     if (authStatus && userData) {
       setIsAuthenticated(true);
       setUser(userData);
-      toast({ title: "Login Successful", description: message });
+      if (isLoginEvent) {
+          toast({ title: "Login Successful", description: message });
+      }
     } else {
       setIsAuthenticated(false);
       setUser(null);
@@ -46,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error("Auth check failed:", error);
     }
     setIsLoading(false);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     verifyAuth();
@@ -73,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = (token: string, refreshToken: string) => {
     localStorage.setItem('authToken', token);
     localStorage.setItem('refreshToken', refreshToken);
-    verifyAuth(); // Re-verify auth after login
+    verifyAuth(true); // Re-verify auth after login, indicating it's a login event
   }
 
   return (
