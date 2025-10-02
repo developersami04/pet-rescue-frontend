@@ -5,89 +5,77 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Pet } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Pen, Trash2 } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
-import { getMyPets } from "@/lib/action_api";
-import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
+import { Pen } from "lucide-react";
+import Link from "next/link";
+import { MyPetListItem } from "../../dashboard/_components/my-pet-list-item";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export function MyPets() {
-    const [myPets, setMyPets] = useState<Pet[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const { toast } = useToast();
-    const router = useRouter();
+type MyPetsProps = {
+    myPets: Pet[];
+    isLoading: boolean;
+}
 
-    const fetchMyPets = useCallback(async () => {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            setIsLoading(false);
-            return;
-        }
+function MyPetsSkeleton() {
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(3)].map((_, i) => (
+                 <CardSkeleton key={i} />
+            ))}
+        </div>
+    );
+}
 
-        try {
-            const userPets = await getMyPets(token);
-            setMyPets(userPets);
-        } catch (error: any) {
-            if (error.message.includes('Session expired')) {
-                toast({
-                    variant: 'destructive',
-                    title: 'Session Expired',
-                    description: 'Please log in again to continue.',
-                });
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('refreshToken');
-                window.dispatchEvent(new Event('storage'));
-                router.push('/login');
-            } else {
-                console.error("Failed to fetch user's pets:", error);
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    }, [router, toast]);
+function CardSkeleton() {
+    return (
+        <div className="flex flex-col space-y-3">
+            <Skeleton className="h-48 w-full rounded-lg" />
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-8 w-full" />
+            </div>
+        </div>
+    )
+}
 
-
-    useEffect(() => {
-        fetchMyPets();
-    }, [fetchMyPets]);
-
+export function MyPets({ myPets, isLoading }: MyPetsProps) {
     return (
         <Card>
             <CardHeader>
                 <CardTitle>My Pets</CardTitle>
                 <CardDescription>Pets you have listed for adoption.</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <CardContent>
                 {isLoading ? (
-                    <p>Loading your pets...</p>
+                    <MyPetsSkeleton />
                 ) : myPets.length > 0 ? (
-                    myPets.map(pet => {
-                        const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/300/300`;
-                        return (
-                            <Card key={pet.id} className="overflow-hidden">
-                                <div className="relative aspect-square w-full">
-                                    <Image
-                                        src={imageUrl}
-                                        alt={pet.name}
-                                        fill
-                                        className="object-cover"
-                                        data-ai-hint={pet.breed ?? pet.type_name}
-                                    />
-                                </div>
-                                <CardHeader className="p-4">
-                                    <CardTitle className="text-base font-bold">{pet.name}</CardTitle>
-                                </CardHeader>
-                                <CardFooter className="p-4 pt-0 grid grid-cols-2 gap-2">
-                                    <Button variant="outline" size="sm">
-                                        <Pen className="mr-2 h-4 w-4" /> Edit
-                                    </Button>
-                                    <Button variant="destructive" size="sm">
-                                        <Trash2 className="mr-2 h-4 w-4" /> Delete
-                                    </Button>
-                                </CardFooter>
-                            </Card>
-                        )
-                    })
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {myPets.map(pet => {
+                            const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/300/300`;
+                            return (
+                                <Card key={pet.id} className="overflow-hidden">
+                                    <div className="relative aspect-square w-full">
+                                        <Image
+                                            src={imageUrl}
+                                            alt={pet.name}
+                                            fill
+                                            className="object-cover"
+                                            data-ai-hint={pet.breed ?? pet.type_name}
+                                        />
+                                    </div>
+                                    <CardHeader className="p-4">
+                                        <CardTitle className="text-base font-bold">{pet.name}</CardTitle>
+                                    </CardHeader>
+                                    <CardFooter className="p-4 pt-0">
+                                        <Button asChild className="w-full" variant="secondary" size="sm">
+                                            <Link href={`/submit-request/${pet.id}`}>
+                                                <Pen className="mr-2 h-4 w-4" /> Edit
+                                            </Link>
+                                        </Button>
+                                    </CardFooter>
+                                </Card>
+                            )
+                        })}
+                    </div>
                 ) : (
                     <p className="text-muted-foreground col-span-full text-center py-8">You haven't added any pets yet.</p>
                 )}
