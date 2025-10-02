@@ -50,7 +50,7 @@ export function MyPets({ myPets, isLoading }: MyPetsProps) {
                 ) : myPets.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {myPets.map(pet => {
-                            const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/300/300`;
+                            const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/300/300`;
                             return (
                                 <Card key={pet.id} className="overflow-hidden">
                                     <div className="relative aspect-square w-full">

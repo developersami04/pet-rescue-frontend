@@ -15,7 +15,7 @@ type MyPetListItemProps = {
 }
 
 export function MyPetListItem({ pet }: MyPetListItemProps) {
-    const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/100/100`;
+    const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/100/100`;
     const isResolved = pet.pet_report?.is_resolved ?? false;
 
     return (

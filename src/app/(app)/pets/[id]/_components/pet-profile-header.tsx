@@ -14,7 +14,7 @@ type PetProfileHeaderProps = {
 }
 
 export function PetProfileHeader({ pet }: PetProfileHeaderProps) {
-    const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/800/600`;
+    const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/800/600`;
     const petStatus = pet.pet_report?.pet_status;
     const isResolved = pet.pet_report?.is_resolved;
 
@@ -58,4 +58,3 @@ export function PetProfileHeader({ pet }: PetProfileHeaderProps) {
        </div>
     );
 }
-

@@ -19,7 +19,7 @@ type PetCardProps = {
 };
 
 export function PetCard({ pet }: PetCardProps) {
-  const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/400/300`;
+  const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/400/300`;
   const petStatus = pet.pet_report?.pet_status;
   const isResolved = pet.pet_report?.is_resolved;
 

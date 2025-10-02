@@ -62,7 +62,7 @@ export function MyPetsSection({ myPets }: MyPetsSectionProps) {
             {view === 'grid' ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {myPets.map(pet => {
-                        const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/300/300`;
+                        const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/300/300`;
                         const isResolved = pet.pet_report?.is_resolved ?? false;
                         return (
                             <Card key={pet.id} className="overflow-hidden flex flex-col">

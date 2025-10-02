@@ -71,7 +71,7 @@ export function UserProfileCard() {
             <CardContent className="p-6 pt-0">
                 <div className="flex items-end -mt-16">
                      <Avatar className="h-28 w-28 rounded-full border-4 border-background bg-background shadow-md">
-                        <AvatarImage src={user.profile_image ?? `https://picsum.photos/seed/${user.username}/200`} alt={user.username} />
+                        <AvatarImage src={user.profile_image || `https://picsum.photos/seed/${user.username}/200`} alt={user.username} />
                         <AvatarFallback className="text-4xl">{avatarFallback}</AvatarFallback>
                     </Avatar>
                      <div className="ml-4 flex items-center gap-2">
