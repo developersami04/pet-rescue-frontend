@@ -110,5 +110,3 @@ export function MyRequestsSection({ requests }: MyRequestsSectionProps) {
         </>
     );
 }
-
-// Rename the file to my-requests-section.tsx

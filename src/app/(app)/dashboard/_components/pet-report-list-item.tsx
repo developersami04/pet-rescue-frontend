@@ -6,7 +6,7 @@ import { PetReport } from "@/lib/data";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Hand } from "lucide-react";
 import Link from "next/link";
 
 
@@ -16,6 +16,37 @@ type PetReportListItemProps = {
 
 export function PetReportListItem({ report }: PetReportListItemProps) {
     const imageUrl = report.report_image ?? `https://picsum.photos/seed/${report.pet}/100/100`;
+
+    const getStatusInfo = (status: 'lost' | 'found' | 'adoptable') => {
+        switch (status) {
+            case 'lost':
+                return {
+                    icon: <AlertTriangle className="mr-1 h-3 w-3" />,
+                    style: 'bg-destructive/90 text-destructive-foreground',
+                    text: 'Lost',
+                };
+            case 'found':
+                 return {
+                    icon: <AlertTriangle className="mr-1 h-3 w-3" />,
+                    style: 'bg-blue-500 text-white',
+                    text: 'Found',
+                };
+            case 'adoptable':
+                 return {
+                    icon: <Hand className="mr-1 h-3 w-3" />,
+                    style: 'bg-green-500 text-white',
+                    text: 'Adoptable',
+                };
+            default:
+                 return {
+                    icon: null,
+                    style: 'bg-secondary text-secondary-foreground',
+                    text: status,
+                };
+        }
+    }
+
+    const statusInfo = getStatusInfo(report.pet_status);
 
     return (
         <Card className="p-4 flex items-center gap-4 transition-all duration-300 hover:shadow-md hover:border-primary/50">
@@ -37,12 +68,10 @@ export function PetReportListItem({ report }: PetReportListItemProps) {
                 </div>
                 <div className="flex justify-start md:justify-center">
                     <Badge 
-                        className={cn("capitalize whitespace-nowrap", 
-                            report.pet_status === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
-                        )}
+                        className={cn("capitalize whitespace-nowrap", statusInfo.style)}
                         >
-                            <AlertTriangle className="mr-1 h-3 w-3" />
-                            {report.pet_status}
+                            {statusInfo.icon}
+                            {statusInfo.text}
                     </Badge>
                 </div>
                  <div className="flex justify-start md:justify-end">

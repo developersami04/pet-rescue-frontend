@@ -8,17 +8,19 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LostPetsSection } from "./lost-pets-section";
 import { FoundPetsSection } from "./found-pets-section";
-import { MyAdoptionRequestsSection } from "./my-adoption-requests-section";
+import { MyRequestsSection } from "./my-requests-section";
 import { Pet, PetReport, MyAdoptionRequest } from "@/lib/data";
 import { getMyPets, getMyPetData } from "@/lib/action_api";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { AdoptablePetsSection } from "./adoptable-pets-section";
 
 export function DashboardClient() {
   const [myPets, setMyPets] = useState<Pet[]>([]);
   const [lostPets, setLostPets] = useState<PetReport[]>([]);
   const [foundPets, setFoundPets] = useState<PetReport[]>([]);
   const [adoptionRequests, setAdoptionRequests] = useState<MyAdoptionRequest[]>([]);
+  const [adoptablePets, setAdoptablePets] = useState<PetReport[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const router = useRouter();
@@ -31,17 +33,19 @@ export function DashboardClient() {
     }
     setIsLoading(true);
     try {
-        const [myPetsData, lostPetsData, foundPetsData, adoptionRequestsData] = await Promise.all([
+        const [myPetsData, lostPetsData, foundPetsData, adoptionRequestsData, adoptablePetsData] = await Promise.all([
             getMyPets(token),
             getMyPetData(token, 'lost'),
             getMyPetData(token, 'found'),
             getMyPetData(token, 'adopt'),
+            getMyPetData(token, 'adoptable')
         ]);
 
         setMyPets(myPetsData);
         setLostPets(lostPetsData as PetReport[]);
         setFoundPets(foundPetsData as PetReport[]);
         setAdoptionRequests(adoptionRequestsData as MyAdoptionRequest[]);
+        setAdoptablePets(adoptablePetsData as PetReport[]);
 
     } catch (error: any) {
          if (error.message.includes('Session expired')) {
@@ -81,6 +85,7 @@ export function DashboardClient() {
                 <TabsTrigger value="my-pets">My Pets</TabsTrigger>
                 <TabsTrigger value="lost-pets">Lost Pets</TabsTrigger>
                 <TabsTrigger value="found-pets">Found Pets</TabsTrigger>
+                <TabsTrigger value="adoptable-pets">Adoptable Pets</TabsTrigger>
                 <TabsTrigger value="my-requests">My Adopt Requests</TabsTrigger>
             </TabsList>
             {isLoading ? (
@@ -98,8 +103,11 @@ export function DashboardClient() {
                     <TabsContent value="found-pets">
                         <FoundPetsSection foundPets={foundPets} />
                     </TabsContent>
+                    <TabsContent value="adoptable-pets">
+                        <AdoptablePetsSection adoptablePets={adoptablePets} />
+                    </TabsContent>
                     <TabsContent value="my-requests">
-                        <MyAdoptionRequestsSection requests={adoptionRequests} />
+                        <MyRequestsSection requests={adoptionRequests} />
                     </TabsContent>
                 </>
             )}
