@@ -4,12 +4,10 @@
 
 import { Card } from "@/components/ui/card";
 import { MyAdoptionRequest } from "@/lib/data";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
-import { ArrowRight, Check, FileText, X } from "lucide-react";
+import { Check, FileText, X } from "lucide-react";
 
 type AdoptionRequestListItemProps = {
     request: MyAdoptionRequest;
@@ -52,8 +50,8 @@ export function AdoptionRequestListItem({ request }: AdoptionRequestListItemProp
                     data-ai-hint={'pet'}
                 />
             </div>
-            <div className="flex-grow grid grid-cols-5 items-center gap-4">
-                <div className="col-span-2">
+            <div className="flex-grow grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                <div className="md:col-span-2">
                     <h3 className="text-lg font-bold">{request.pet_name}</h3>
                     <p className="text-sm text-muted-foreground">
                         Owner: {request.owner_name}
@@ -62,21 +60,13 @@ export function AdoptionRequestListItem({ request }: AdoptionRequestListItemProp
                         Requested {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
                     </p>
                 </div>
-                <div>
+                <div className="flex justify-start md:justify-end">
                      <Badge variant={getStatusVariant(request.status)} className="capitalize">
                         <div className="flex items-center gap-1">
                             {getStatusIcon(request.status)}
                             {request.status}
                         </div>
                     </Badge>
-                </div>
-                <div className="col-span-2 flex justify-end">
-                     <Button asChild variant="secondary">
-                        <Link href={`/pets/${request.pet}`}>
-                            View Pet
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                    </Button>
                 </div>
             </div>
         </Card>

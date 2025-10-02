@@ -1,11 +1,9 @@
 
 'use client';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Pet } from "@/lib/data";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import { getAllPets } from "@/lib/action_api";
 import { useToast } from "@/hooks/use-toast";
@@ -76,11 +74,6 @@ export function FavoritePets() {
                                 <CardHeader className="p-4">
                                     <CardTitle className="text-base font-bold">{pet.name}</CardTitle>
                                 </CardHeader>
-                                <CardFooter className="p-4 pt-0">
-                                    <Button asChild className="w-full" variant="secondary" size="sm">
-                                        <Link href={`/pets/${pet.id}`}>View</Link>
-                                    </Button>
-                                </CardFooter>
                             </Card>
                         )
                     })

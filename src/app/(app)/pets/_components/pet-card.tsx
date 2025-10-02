@@ -59,11 +59,6 @@ export function PetCard({ pet }: PetCardProps) {
           {pet.breed || 'Unknown Breed'} &bull; {pet.age ?? 'Unknown'} {pet.age === 1 ? 'year' : 'years'} old
         </p>
       </CardContent>
-      <CardFooter>
-        <Button asChild className="w-full">
-          <Link href={`/pets/${pet.id}`}>View Profile</Link>
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

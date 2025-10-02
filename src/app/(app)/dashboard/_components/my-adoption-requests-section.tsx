@@ -6,7 +6,6 @@ import { FileText, LayoutGrid, List } from "lucide-react";
 import { useState } from "react";
 import { MyAdoptionRequest } from "@/lib/data";
 import Image from "next/image";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
@@ -91,13 +90,6 @@ export function MyAdoptionRequestsSection({ requests }: MyAdoptionRequestsSectio
                                     <p className="text-sm text-muted-foreground pt-1">
                                         Requested {formatDistanceToNow(new Date(req.created_at), { addSuffix: true })}
                                     </p>
-                                </div>
-                                <div className="p-4 pt-0">
-                                    <Button asChild variant="secondary" className="w-full">
-                                        <Link href={`/pets/${req.pet}`}>
-                                            View Pet
-                                        </Link>
-                                    </Button>
                                 </div>
                             </Card>
                         )
