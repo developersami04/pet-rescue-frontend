@@ -1,10 +1,10 @@
 
-
 const API_ENDPOINTS = {
   petTypes: '/api/pet-data/pet-types/',
   register: '/api/user-auth/register',
   login: '/api/user-auth/login',
   refreshToken: '/api/user-auth/token-refresh',
+  userCheck: '/api/user-auth/user-check',
   userDetails: '/api/user-auth/user-details',
   updateUserDetails: '/api/user-auth/update-account',
   changePassword: '/api/user-auth/change-password',

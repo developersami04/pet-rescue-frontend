@@ -3,7 +3,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth';
+import { useAuth } from '@/lib/auth.tsx';
 import { HeroSection } from './_components/hero-section';
 import { WhyAdoptSection } from './_components/why-adopt-section';
 import { Skeleton } from '@/components/ui/skeleton';

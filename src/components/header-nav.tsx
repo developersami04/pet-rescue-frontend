@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -43,7 +44,7 @@ import { cn } from "@/lib/utils";
 import { Logo } from "./icons";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { useUserDetails } from "@/hooks/use-user-details";
+import { useAuth } from '@/lib/auth.tsx';
 import { Skeleton } from "./ui/skeleton";
 
 const navItems = {
@@ -133,30 +134,21 @@ function DropdownNav({
 
 export function HeaderNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [localUsername, setLocalUsername] = useState<string | null>(null);
   const pathname = usePathname();
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
-  const { user, isLoading } = useUserDetails();
-
-  useEffect(() => {
-    // Client-side only
-    setLocalUsername(localStorage.getItem('username'));
-  }, []);
-
+  const { setTheme } = useTheme();
+  const { user, isLoading, logout } = useAuth();
+  
   const closeMobileMenu = () => setMobileMenuOpen(false);
   
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('username');
-    window.dispatchEvent(new Event('storage')); // Manually trigger storage event
+    logout();
     router.push('/');
   };
 
-  const displayName = user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : localUsername;
-  const avatarFallback = user?.first_name ? user.first_name.charAt(0) : localUsername?.charAt(0).toUpperCase();
-  const avatarSeed = user?.username || localUsername;
+  const displayName = user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user?.username;
+  const avatarFallback = user?.first_name ? user.first_name.charAt(0) : user?.username?.charAt(0).toUpperCase();
+  const avatarSeed = user?.username;
 
 
   return (

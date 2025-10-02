@@ -6,15 +6,23 @@ import type { User } from '@/lib/data';
 import { getUserDetails } from '@/lib/action_api';
 import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth.tsx';
 
 export function useUserDetails() {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user: authUser, logout } = useAuth();
+  const [user, setUser] = useState<User | null>(authUser);
+  const [isLoading, setIsLoading] = useState(!authUser);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const router = useRouter();
 
   const fetchUserDetails = useCallback(async () => {
+    // If we already have the user from the global context, no need to fetch again initially
+    if (authUser) {
+      setUser(authUser);
+      setIsLoading(false);
+    }
+    
     const token = localStorage.getItem('authToken');
     if (!token) {
       setError('No authentication token found.');
@@ -22,8 +30,6 @@ export function useUserDetails() {
       return;
     }
 
-    // Do not set loading to true here to avoid skeleton on background refresh
-    // setIsLoading(true);
     try {
       const userDetails = await getUserDetails(token);
       setUser(userDetails);
@@ -35,9 +41,7 @@ export function useUserDetails() {
           title: 'Session Expired',
           description: 'Please log in again to continue.',
         });
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('refreshToken');
-        window.dispatchEvent(new Event('storage'));
+        logout();
         router.push('/login');
       } else {
         setError(e.message || 'Failed to fetch user details.');
@@ -50,14 +54,11 @@ export function useUserDetails() {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, router]);
+  }, [toast, router, authUser, logout]);
 
   useEffect(() => {
-    setIsLoading(true);
     fetchUserDetails();
   }, [fetchUserDetails]);
 
   return { user, isLoading, error, refreshUserDetails: fetchUserDetails };
 }
-
-    

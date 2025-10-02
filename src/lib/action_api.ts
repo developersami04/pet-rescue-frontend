@@ -231,6 +231,32 @@ export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
     }
 }
 
+
+export async function checkUserAuth(token: string) {
+    if (!API_BASE_URL) {
+        return { isAuthenticated: false, user: null, error: 'API not configured.' };
+    }
+    
+    try {
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.userCheck}`, {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` },
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+            return { isAuthenticated: false, user: null, error: result.detail || 'Token validation failed.' };
+        }
+
+        return { isAuthenticated: true, user: result.user, message: result.message, error: null };
+    } catch (error) {
+        console.error('Error checking auth:', error);
+        return { isAuthenticated: false, user: null, error: 'An unknown error occurred.' };
+    }
+}
+
+
 export async function getUserDetails(token: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');

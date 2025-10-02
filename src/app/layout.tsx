@@ -4,21 +4,41 @@
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
-import { useAuth } from '@/lib/auth';
+import { useAuth, AuthProvider } from '@/lib/auth.tsx';
 import { LandingHeader } from './_components/landing-header';
 import { HeaderNav } from '@/components/header-nav';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeProvider } from '@/components/theme-provider';
+
+function AppLayout({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  const Header = isAuthenticated ? HeaderNav : LandingHeader;
+
+  return (
+    <>
+      {isLoading ? (
+        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+            <Skeleton className="h-8 w-24" />
+            <Skeleton className="h-9 w-9 rounded-full" />
+          </div>
+        </header>
+      ) : (
+        <Header />
+      )}
+
+      <main className="flex-1">{children}</main>
+    </>
+  );
+}
+
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  const Header = isAuthenticated ? HeaderNav : LandingHeader;
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -42,20 +62,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {isLoading ? (
-            <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <div className="container flex h-16 items-center justify-between px-4 md:px-6">
-                <Skeleton className="h-8 w-24" />
-                <Skeleton className="h-9 w-9 rounded-full" />
-              </div>
-            </header>
-          ) : (
-            <Header />
-          )}
-
-          <main className="flex-1">{children}</main>
-          
-          <Toaster />
+          <AuthProvider>
+            <AppLayout>
+              {children}
+            </AppLayout>
+            <Toaster />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
