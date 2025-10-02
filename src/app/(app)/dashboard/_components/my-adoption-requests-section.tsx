@@ -66,7 +66,7 @@ export function MyAdoptionRequestsSection({ requests }: MyAdoptionRequestsSectio
             {view === 'grid' ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {requests.map(req => {
-                        const imageUrl = `https.picsum.photos/seed/${req.pet}/300/300`;
+                        const imageUrl = `https://picsum.photos/seed/${req.pet}/300/300`;
                         return (
                             <Card key={req.id} className="overflow-hidden flex flex-col">
                                 <div className="relative aspect-square w-full">
