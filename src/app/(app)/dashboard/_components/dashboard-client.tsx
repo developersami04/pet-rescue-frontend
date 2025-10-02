@@ -14,6 +14,7 @@ import { getMyPets, getMyPetData } from "@/lib/action_api";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { AdoptablePetsSection } from "./adoptable-pets-section";
+import { DashboardStats } from "./dashboard-stats";
 
 export function DashboardClient() {
   const [myPets, setMyPets] = useState<Pet[]>([]);
@@ -69,7 +70,6 @@ export function DashboardClient() {
     } finally {
         setIsLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, toast]);
 
   useEffect(() => {
@@ -78,6 +78,13 @@ export function DashboardClient() {
 
   return (
     <>
+      <DashboardStats 
+        myPetsCount={myPets.length}
+        lostPetsCount={lostPets.length}
+        foundPetsCount={foundPets.length}
+        myRequestsCount={adoptionRequests.length}
+        isLoading={isLoading}
+      />
       <Separator className="my-8" />
       
         <Tabs defaultValue="my-pets" className="mt-8">

@@ -1,24 +1,10 @@
 
 import { PageHeader } from "@/components/page-header";
-import { DashboardStats } from "./_components/dashboard-stats";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
-import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { DashboardClient } from "./_components/dashboard-client";
 
-
-function DashboardStatsSkeleton() {
-    return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Skeleton className="h-28" />
-            <Skeleton className="h-28" />
-            <Skeleton className="h-28" />
-            <Skeleton className="h-28" />
-        </div>
-    )
-}
 
 export default function DashboardPage() {
   return (
@@ -36,9 +22,6 @@ export default function DashboardPage() {
           </Link>
         </Button>
       </div>
-      <Suspense fallback={<DashboardStatsSkeleton />}>
-        <DashboardStats />
-      </Suspense>
       
       <DashboardClient />
     </div>

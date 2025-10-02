@@ -1,52 +1,72 @@
 
+'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { pets, organizations } from "@/lib/data";
-import { PawPrint, Home, Users, Dog } from "lucide-react";
+import { PawPrint, AlertTriangle, Search, FileText } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
+type DashboardStatsProps = {
+    myPetsCount: number;
+    lostPetsCount: number;
+    foundPetsCount: number;
+    myRequestsCount: number;
+    isLoading: boolean;
+}
 
-export async function DashboardStats() {
-
-    return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Available Pets</CardTitle>
-                    <PawPrint className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">{pets.length}</div>
-                    <p className="text-xs text-muted-foreground">
-                        ready for their forever homes
-                    </p>
-                </CardContent>
-            </Card>
+function StatCard({ title, value, icon, isLoading }: { title: string, value: number, icon: React.ReactNode, isLoading: boolean }) {
+    if (isLoading) {
+        return (
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                        Rescue Organizations
+                        <Skeleton className="h-4 w-3/4" />
                     </CardTitle>
-                    <Home className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">{organizations.length}</div>
-                    <p className="text-xs text-muted-foreground">
-                        partnered with us to save lives
-                    </p>
+                    <Skeleton className="h-8 w-1/2" />
                 </CardContent>
             </Card>
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Happy Adoptions</CardTitle>
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">+1,234</div>
-                    <p className="text-xs text-muted-foreground">
-                        pets have found loving families
-                    </p>
-                </CardContent>
-            </Card>
+        )
+    }
+    return (
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{title}</CardTitle>
+                <div className="text-muted-foreground">{icon}</div>
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{value}</div>
+            </CardContent>
+        </Card>
+    )
+}
+
+export function DashboardStats({ 
+    myPetsCount,
+    lostPetsCount,
+    foundPetsCount,
+    myRequestsCount,
+    isLoading 
+}: DashboardStatsProps) {
+
+    const stats = [
+        { title: "My Pets", value: myPetsCount, icon: <PawPrint className="h-4 w-4" /> },
+        { title: "Lost Pets", value: lostPetsCount, icon: <AlertTriangle className="h-4 w-4" /> },
+        { title: "Found Pets", value: foundPetsCount, icon: <Search className="h-4 w-4" /> },
+        { title: "My Requests", value: myRequestsCount, icon: <FileText className="h-4 w-4" /> },
+    ];
+
+    return (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {stats.map(stat => (
+                 <StatCard 
+                    key={stat.title}
+                    title={stat.title}
+                    value={stat.value}
+                    icon={stat.icon}
+                    isLoading={isLoading}
+                 />
+            ))}
         </div>
     );
 }
