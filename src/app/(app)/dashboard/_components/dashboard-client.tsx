@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { MyPetsSection } from "./my-pets-section";
 import { Separator } from "@/components/ui/separator";
@@ -69,7 +69,7 @@ export function DashboardClient() {
     } finally {
         setIsLoading(false);
     }
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, toast]);
 
   useEffect(() => {
