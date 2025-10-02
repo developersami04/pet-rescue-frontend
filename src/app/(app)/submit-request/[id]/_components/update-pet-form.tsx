@@ -171,8 +171,16 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
       };
       form.reset(formData);
       setInitialData(formData);
-      if (data.pet_image) setPetImagePreview(data.pet_image);
-      if (data.report_image) setReportImagePreview(data.report_image);
+      if (data.pet_image) {
+        setPetImagePreview(data.pet_image);
+      } else {
+        setPetImagePreview(null);
+      }
+      if (data.report_image) {
+        setReportImagePreview(data.report_image);
+      } else {
+        setReportImagePreview(null);
+      }
     } catch (error: any) {
       if (error.message.includes('You are not the owner of this pet.')) {
         toast({ variant: 'destructive', title: 'Unauthorized', description: "You can only edit pets you own." });
