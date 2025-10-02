@@ -12,7 +12,7 @@ type PetType = {
   name: string;
 };
 
-const API_BASE_URL = process.env.API_BASE_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 async function fetchWithTimeout(url: string, options: RequestInit, timeout = API_REQUEST_TIMEOUT) {
     const controller = new AbortController();
@@ -463,7 +463,7 @@ export async function submitRequest(token: string, formData: FormData) {
     }
 }
 
-export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopted'): Promise<any[]> {
+export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopt'): Promise<any[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
