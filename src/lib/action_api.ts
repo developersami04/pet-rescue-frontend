@@ -484,15 +484,16 @@ export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopt
         }
 
         return result.data || [];
-    } catch (error) {
-        if ((error as any).name === 'AbortError') {
+    } catch (error: any) {
+        if (error.name === 'AbortError') {
             throw new Error(`Request to fetch ${tab} data timed out.`);
         }
-        console.error(`Error fetching ${tab} data:`, error);
-        if (error instanceof Error) {
-           throw new Error(error.message);
+        // Handle session expiration specifically
+        if (error.message?.includes('Session expired')) {
+            throw new Error('Session expired');
         }
-        throw new Error(`An unknown error occurred while fetching ${tab} data.`);
+        console.error(`Error fetching ${tab} data:`, error);
+        throw new Error(error.message || `An unknown error occurred while fetching ${tab} data.`);
     }
 }
 
