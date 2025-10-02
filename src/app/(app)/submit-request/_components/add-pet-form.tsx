@@ -37,7 +37,7 @@ import { format } from 'date-fns';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Calendar } from '@/components/ui/calendar';
 
-const addPetSchema = z.object({
+const basePetSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   pet_type: z.coerce.number().min(1, 'Pet type is required.'),
   breed: z.string().optional(),
@@ -69,7 +69,9 @@ const addPetSchema = z.object({
   report_image: z.any().optional(),
   pet_status: z.enum(['lost', 'found', 'adopt'], { required_error: 'Report type is required.' }),
   message: z.string().min(10, 'Report message must be at least 10 characters.').max(500, 'Report message cannot exceed 500 characters.').optional(),
-}).superRefine((data, ctx) => {
+});
+
+const addPetSchema = basePetSchema.superRefine((data, ctx) => {
     if (data.pet_status !== 'adopt' && !data.message) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -78,6 +80,7 @@ const addPetSchema = z.object({
         });
     }
 });
+
 
 type PetType = {
   id: number;
@@ -156,7 +159,7 @@ export function AddPetForm() {
     }
     
     const formData = new FormData();
-    const allKeys = Object.keys(addPetSchema.shape);
+    const allKeys = Object.keys(basePetSchema.shape);
     
     // Set available_for_adopt based on pet_status
     const availableForAdopt = values.pet_status === 'adopt';
@@ -380,5 +383,3 @@ export function AddPetForm() {
     </Form>
   );
 }
-
-    
