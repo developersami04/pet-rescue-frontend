@@ -146,8 +146,8 @@ export function HeaderNav() {
     router.push('/');
   };
 
-  const displayName = user?.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user?.username;
-  const avatarFallback = user?.first_name ? user.first_name.charAt(0) : user?.username?.charAt(0).toUpperCase();
+  const displayName = user?.full_name || user?.username;
+  const avatarFallback = user?.full_name ? user.full_name.charAt(0) : user?.username?.charAt(0).toUpperCase();
   const avatarSeed = user?.username;
 
 
@@ -203,7 +203,10 @@ export function HeaderNav() {
                )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Hi, {displayName}</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                <div className="font-semibold">{displayName}</div>
+                <div className="text-xs text-muted-foreground">{user?.email}</div>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link href="/profile">
@@ -317,9 +320,15 @@ export function HeaderNav() {
                              )}
                             <div>
                                 {isLoading && !user ? (
-                                    <Skeleton className="h-4 w-24" />
+                                    <div className="space-y-1">
+                                      <Skeleton className="h-4 w-24" />
+                                      <Skeleton className="h-3 w-32" />
+                                    </div>
                                 ) : (
-                                   <p className="text-sm font-medium">{displayName}</p>
+                                   <div>
+                                    <p className="text-sm font-medium">{displayName}</p>
+                                    <p className="text-xs text-muted-foreground">{user?.email}</p>
+                                   </div>
                                 )}
                             </div>
                         </div>
@@ -337,3 +346,5 @@ export function HeaderNav() {
     </header>
   );
 }
+
+    

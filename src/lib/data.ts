@@ -105,6 +105,7 @@ export type User = {
   email: string;
   first_name: string;
   last_name: string;
+  full_name?: string;
   is_verified: boolean;
   phone_no: string | null;
   gender: 'Male' | 'Female' | 'Other' | 'Prefer Not To Say';
@@ -144,3 +145,5 @@ export const resources: Resource[] = [
       content: 'Many common household items can be toxic to pets. These include certain plants (like lilies and tulips), human foods (like chocolate, grapes, onions, and xylitol), and cleaning products. Keep all chemicals and medications securely stored out of reach. Be mindful of electrical cords and small objects that could be choking hazards. Pet-proofing your home is an essential step in responsible pet ownership.',
     },
 ];
+
+    
