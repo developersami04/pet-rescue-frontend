@@ -1,0 +1,61 @@
+
+'use client';
+
+import { Button } from "@/components/ui/button";
+import { Pet } from "@/lib/data";
+import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { Hand, MessageSquareQuote } from "lucide-react";
+
+
+type PetProfileHeaderProps = {
+    pet: Pet;
+}
+
+export function PetProfileHeader({ pet }: PetProfileHeaderProps) {
+    const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/800/600`;
+    const petStatus = pet.pet_report?.pet_status;
+    const isResolved = pet.pet_report?.is_resolved;
+
+    return (
+       <div className="relative h-96 w-full rounded-lg overflow-hidden bg-muted">
+            <Image
+                src={imageUrl}
+                alt={pet.name}
+                fill
+                className="object-cover"
+                data-ai-hint={pet.breed ?? pet.type_name}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+            <div className="absolute bottom-0 left-0 p-6 text-white">
+                <div className="flex items-center gap-4">
+                    <h1 className="text-4xl font-bold font-headline">{pet.name}</h1>
+                    {petStatus && !isResolved && (
+                        <Badge
+                            className={cn("capitalize text-base",
+                                petStatus === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
+                            )}
+                        >
+                            {petStatus}
+                        </Badge>
+                    )}
+                </div>
+                 <p className="mt-2 text-lg max-w-2xl text-white/90">{pet.description}</p>
+            </div>
+            <div className="absolute top-6 right-6 flex gap-2">
+                {pet.available_for_adopt && (
+                    <Button>
+                        <Hand className="mr-2 h-4 w-4" />
+                        Request to Adopt
+                    </Button>
+                )}
+                 <Button variant="secondary">
+                    <MessageSquareQuote className="mr-2 h-4 w-4" />
+                    Contact Owner
+                </Button>
+            </div>
+       </div>
+    );
+}
+

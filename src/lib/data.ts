@@ -5,7 +5,7 @@ export type MedicalHistory = {
     pet: number;
     pet_name: string;
     disease_name: string | null;
-    stage: number | null;
+    stage: string | null;
     no_of_years: number | null;
     vaccination_name: string | null;
     last_vaccinated_date: string | null;
@@ -18,6 +18,7 @@ export type AdoptionRequest = {
     id: number;
     pet: number;
     pet_name: string;
+    owner_name: string;
     requester_id: number;
     requester_name: string;
     created_at: string;
@@ -75,9 +76,7 @@ export type Pet = {
   medical_history: MedicalHistory | null;
   adoption_requests: AdoptionRequest[] | null;
   pet_report: PetReport | null;
-  pet_status?: 'lost' | 'found' | null; // Added for my-pets response
-  // Deprecated fields from previous API versions, kept for potential reference in components that haven't been updated.
-  image?: string | null;
+  pet_status?: 'lost' | 'found' | null;
   available_for_adopt?: boolean;
 };
 
@@ -145,5 +144,3 @@ export const resources: Resource[] = [
       content: 'Many common household items can be toxic to pets. These include certain plants (like lilies and tulips), human foods (like chocolate, grapes, onions, and xylitol), and cleaning products. Keep all chemicals and medications securely stored out of reach. Be mindful of electrical cords and small objects that could be choking hazards. Pet-proofing your home is an essential step in responsible pet ownership.',
     },
 ];
-
-    

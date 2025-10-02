@@ -14,6 +14,8 @@ const API_ENDPOINTS = {
   myPets: '/api/pet-data/my-pets/',
   myPetData: '/api/pet-data/my-pet-data/',
   
+  petProfile: '/api/pet-data/pet-profile/',
+
   requestSubmit: '/api/pet-data/pet-request-form/',
   petRequestView: '/api/pet-data/pet-request-view/',
 };
