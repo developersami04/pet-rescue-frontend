@@ -66,34 +66,38 @@ export function MyPetsSection({ myPets }: MyPetsSectionProps) {
                         const isResolved = pet.pet_report?.is_resolved ?? false;
                         return (
                             <Card key={pet.id} className="overflow-hidden flex flex-col">
-                                <div className="relative aspect-square w-full">
-                                    <Image
-                                        src={imageUrl}
-                                        alt={pet.name}
-                                        fill
-                                        className="object-cover"
-                                        data-ai-hint={pet.breed ?? pet.type_name}
-                                    />
-                                    <div className="absolute top-2 left-2 bg-background/80 p-1 rounded-full backdrop-blur-sm">
-                                        {pet.is_verified ? (
-                                            <BadgeCheck className="h-5 w-5 text-primary" />
-                                        ) : (
-                                            <Clock className="h-5 w-5 text-amber-500" />
+                                <Link href={`/pets/${pet.id}`} className="group">
+                                    <div className="relative aspect-square w-full">
+                                        <Image
+                                            src={imageUrl}
+                                            alt={pet.name}
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                            data-ai-hint={pet.breed ?? pet.type_name}
+                                        />
+                                        <div className="absolute top-2 left-2 bg-background/80 p-1 rounded-full backdrop-blur-sm">
+                                            {pet.is_verified ? (
+                                                <BadgeCheck className="h-5 w-5 text-primary" />
+                                            ) : (
+                                                <Clock className="h-5 w-5 text-amber-500" />
+                                            )}
+                                        </div>
+                                        {pet.pet_status && !isResolved && (
+                                            <Badge 
+                                                className={cn("absolute bottom-2 right-2 capitalize", 
+                                                    pet.pet_status === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
+                                                )}
+                                                >
+                                                    {pet.pet_status}
+                                            </Badge>
                                         )}
                                     </div>
-                                    {pet.pet_status && !isResolved && (
-                                        <Badge 
-                                            className={cn("absolute bottom-2 right-2 capitalize", 
-                                                pet.pet_status === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
-                                            )}
-                                            >
-                                                {pet.pet_status}
-                                        </Badge>
-                                    )}
-                                </div>
+                                </Link>
                                 <CardHeader className="p-4 flex-grow">
-                                    <CardTitle className="text-lg font-bold flex items-center gap-2">
-                                        {pet.name}
+                                    <CardTitle className="text-lg font-bold">
+                                         <Link href={`/pets/${pet.id}`} className="hover:underline">
+                                            {pet.name}
+                                        </Link>
                                     </CardTitle>
                                     <p className="text-sm text-muted-foreground pt-1">{pet.breed}</p>
                                 </CardHeader>
