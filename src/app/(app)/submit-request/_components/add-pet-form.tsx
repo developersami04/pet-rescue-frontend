@@ -59,12 +59,12 @@ const addPetSchema = z.object({
   color: z.string().min(1, 'Color is required.'),
 
   // Medical History
-  disease_name: z.string().optional().transform(e => e === '' ? null : e),
-  stage: z.string().optional().transform(e => e === '' ? null : e),
+  disease_name: z.string().optional().nullable().transform(e => e === '' ? null : e),
+  stage: z.string().optional().nullable().transform(e => e === '' ? null : e),
   no_of_years: z.coerce.number().optional().nullable(),
-  vaccination_name: z.string().optional().transform(e => e === '' ? null : e),
+  vaccination_name: z.string().optional().nullable().transform(e => e === '' ? null : e),
   last_vaccinated_date: z.date().optional().nullable(),
-  note: z.string().optional().transform(e => e === '' ? null : e),
+  note: z.string().optional().nullable().transform(e => e === '' ? null : e),
 
   // Pet Report
   report_image: z.any().optional(),

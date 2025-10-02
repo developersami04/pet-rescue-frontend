@@ -59,12 +59,12 @@ const updatePetSchema = z.object({
   state: z.string().optional(),
   color: z.string().min(1, 'Color is required.'),
 
-  disease_name: z.string().optional().transform(e => e === '' ? null : e),
-  stage: z.string().optional().transform(e => e === '' ? null : e),
+  disease_name: z.string().optional().nullable().transform(e => e === '' ? null : e),
+  stage: z.string().optional().nullable().transform(e => e === '' ? null : e),
   no_of_years: z.coerce.number().optional().nullable(),
-  vaccination_name: z.string().optional().transform(e => e === '' ? null : e),
+  vaccination_name: z.string().optional().nullable().transform(e => e === '' ? null : e),
   last_vaccinated_date: z.date().optional().nullable(),
-  note: z.string().optional().transform(e => e === '' ? null : e),
+  note: z.string().optional().nullable().transform(e => e === '' ? null : e),
 
   report_image: z.any().optional(),
   pet_status: z.enum(['lost', 'found']).optional(),
@@ -82,21 +82,30 @@ type UpdatePetFormProps = {
 
 function getChangedValues(initialValues: any, currentValues: any): Partial<any> {
     const changedValues: Partial<any> = {};
-    for (const key in currentValues) {
+    const allKeys = Object.keys(currentValues);
+
+    for (const key of allKeys) {
         if (key === 'pet_image' || key === 'report_image') continue;
 
         const initialValue = initialValues[key];
         const currentValue = currentValues[key];
-        
-        const initialString = initialValue instanceof Date ? format(new Date(initialValue), 'yyyy-MM-dd') : String(initialValue ?? '');
-        const currentString = currentValue instanceof Date ? format(currentValue, 'yyyy-MM-dd') : String(currentValue ?? '');
 
-        if (initialString !== currentString) {
-             if (currentValue === null || currentValue === '') {
-                 changedValues[key] = null;
-             } else {
+        // Handle date comparison
+        if (initialValue instanceof Date || currentValue instanceof Date) {
+            const initialDate = initialValue ? format(new Date(initialValue), 'yyyy-MM-dd') : null;
+            const currentDate = currentValue ? format(new Date(currentValue), 'yyyy-MM-dd') : null;
+            if (initialDate !== currentDate) {
                 changedValues[key] = currentValue;
-             }
+            }
+            continue;
+        }
+
+        // Handle null, undefined, and empty strings consistently
+        const initialNormalized = initialValue === null || initialValue === undefined ? '' : String(initialValue);
+        const currentNormalized = currentValue === null || currentValue === undefined ? '' : String(currentValue);
+
+        if (initialNormalized !== currentNormalized) {
+            changedValues[key] = currentValue;
         }
     }
     return changedValues;
