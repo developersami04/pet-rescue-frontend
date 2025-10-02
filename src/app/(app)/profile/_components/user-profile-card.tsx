@@ -1,26 +1,44 @@
-
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
-import { PawPrint, Heart, Home, Award } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Award, BadgeCheck, Mail, MapPin, Phone, User as UserIcon } from "lucide-react";
 import { useUserDetails } from "@/hooks/use-user-details";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+
+function ProfileSkeleton() {
+    return (
+        <Card className="overflow-hidden">
+            <CardHeader className="p-0">
+                <Skeleton className="h-32 w-full" />
+            </CardHeader>
+            <CardContent className="p-6 pt-0">
+                <div className="flex items-end -mt-12">
+                     <Skeleton className="h-24 w-24 rounded-full border-4 border-background" />
+                </div>
+                <div className="mt-4 space-y-2">
+                    <Skeleton className="h-7 w-1/2" />
+                    <Skeleton className="h-4 w-1/4" />
+                </div>
+                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-full" />
+                </div>
+            </CardContent>
+        </Card>
+    )
+}
+
 
 export function UserProfileCard() {
     const { user, isLoading, error } = useUserDetails();
 
     if (isLoading) {
-        return (
-             <Card>
-                <CardContent className="p-6 flex flex-col items-center text-center">
-                    <Skeleton className="h-24 w-24 rounded-full mb-4" />
-                    <Skeleton className="h-6 w-3/4 mb-2" />
-                    <Skeleton className="h-4 w-1/2" />
-                </CardContent>
-            </Card>
-        )
+        return <ProfileSkeleton />;
     }
 
     if (error) {
@@ -36,38 +54,64 @@ export function UserProfileCard() {
         return null;
     }
 
+    const fullName = `${user.first_name} ${user.last_name}`;
+    const avatarFallback = user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '');
+
     return (
-        <Card>
-            <CardContent className="p-6 flex flex-col items-center text-center">
-                <Avatar className="h-24 w-24 mb-4">
-                    <AvatarImage src={user.profile_image ?? `https://picsum.photos/seed/${user.username}/200/200`} alt={user.username} />
-                    <AvatarFallback>{user.first_name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <h2 className="text-xl font-bold">{user.first_name} {user.last_name}</h2>
-                <p className="text-muted-foreground">@{user.username}</p>
-                
-                <div className="mt-6 w-full grid grid-cols-2 gap-4 text-muted-foreground">
-                    <div className="text-center flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted/50">
-                        <Heart className="w-5 h-5 text-destructive"/>
-                        <h3 className="font-bold text-lg text-foreground">3</h3>
-                        <p className="text-xs">Favorites</p>
-                    </div>
-                    <div className="text-center flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted/50">
-                        <Home className="w-5 h-5 text-primary"/>
-                        <h3 className="font-bold text-lg text-foreground">1</h3>
-                        <p className="text-xs">Adoptions</p>
-                    </div>
-                    <div className="text-center flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted/50">
-                        <PawPrint className="w-5 h-5 text-accent-foreground"/>
-                        <h3 className="font-bold text-lg text-foreground">5</h3>
-                        <p className="text-xs">Pets Added</p>
-                    </div>
-                    <div className="text-center flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted/50">
-                         <Award className="w-5 h-5 text-yellow-500"/>
-                        <h3 className="font-bold text-lg text-foreground">2</h3>
-                        <p className="text-xs">Rescued</p>
+        <Card className="overflow-hidden shadow-lg">
+            <CardHeader className="p-0">
+                <div className="h-32 bg-gradient-to-r from-primary/50 to-accent/50" />
+            </CardHeader>
+            <CardContent className="p-6 pt-0">
+                <div className="flex items-end -mt-16">
+                     <Avatar className="h-28 w-28 rounded-full border-4 border-background bg-background shadow-md">
+                        <AvatarImage src={user.profile_image ?? `https://picsum.photos/seed/${user.username}/200`} alt={user.username} />
+                        <AvatarFallback className="text-4xl">{avatarFallback}</AvatarFallback>
+                    </Avatar>
+                     <div className="ml-4 flex items-center gap-2">
+                        {user.is_verified && (
+                            <Badge variant="default" className="gap-1 pl-2 pr-3">
+                                <BadgeCheck className="h-4 w-4" /> Verified
+                            </Badge>
+                        )}
+                         {user.is_staff && (
+                            <Badge variant="secondary" className="gap-1 pl-2 pr-3">
+                                <Award className="h-4 w-4" /> Admin
+                            </Badge>
+                         )}
                     </div>
                 </div>
+                <div className="mt-4">
+                    <h2 className="text-2xl font-bold font-headline">{fullName}</h2>
+                    <p className="text-muted-foreground">@{user.username}</p>
+                </div>
+                
+                <Separator className="my-6" />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div className="flex items-center gap-3 text-muted-foreground">
+                        <UserIcon className="h-5 w-5" />
+                        <span className="text-foreground">{user.gender}</span>
+                    </div>
+                     <div className="flex items-center gap-3 text-muted-foreground">
+                        <Mail className="h-5 w-5" />
+                        <a href={`mailto:${user.email}`} className="text-foreground hover:underline">{user.email}</a>
+                    </div>
+                    <div className="flex items-center gap-3 text-muted-foreground">
+                        <Phone className="h-5 w-5" />
+                        <a href={`tel:${user.phone_no}`} className="text-foreground hover:underline">{user.phone_no}</a>
+                    </div>
+                     <div className="flex items-center gap-3 text-muted-foreground">
+                        <MapPin className="h-5 w-5" />
+                        <span className="text-foreground">{user.city}, {user.state}</span>
+                    </div>
+                </div>
+
+                 <div className="mt-4 rounded-lg bg-muted/50 p-4 text-sm">
+                    <p className="font-medium text-foreground">{user.address}</p>
+                    <p className="text-muted-foreground">{user.city}, {user.state} - {user.pin_code}</p>
+                </div>
+
             </CardContent>
         </Card>
     );
