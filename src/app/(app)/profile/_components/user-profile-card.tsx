@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -55,7 +56,12 @@ export function UserProfileCard() {
     }
 
     const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username;
-    const avatarFallback = (user.first_name ? user.first_name.charAt(0) : '') + (user.last_name ? user.last_name.charAt(0) : '') || user.username.charAt(0).toUpperCase();
+    
+    const firstInitial = user.first_name ? user.first_name.charAt(0) : '';
+    const lastInitial = user.last_name ? user.last_name.charAt(0) : '';
+    const usernameInitial = user.username ? user.username.charAt(0).toUpperCase() : '';
+    const avatarFallback = `${firstInitial}${lastInitial}` || usernameInitial || 'U';
+
 
     return (
         <Card className="overflow-hidden shadow-lg">
