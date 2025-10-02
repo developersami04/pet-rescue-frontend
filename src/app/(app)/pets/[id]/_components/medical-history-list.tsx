@@ -1,7 +1,7 @@
 
 import type { MedicalHistory } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Stethoscope, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
 type MedicalHistoryListProps = {

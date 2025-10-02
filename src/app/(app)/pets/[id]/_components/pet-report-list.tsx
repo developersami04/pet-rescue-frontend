@@ -3,7 +3,6 @@ import type { PetReport } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Flag } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
 
 type PetReportListProps = {
   reports: PetReport[];

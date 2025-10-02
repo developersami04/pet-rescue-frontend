@@ -1,103 +1,45 @@
 
-'use client';
 import type { Pet } from "@/lib/data";
-import { notFound, useParams, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 import { PetImageCarousel } from "./_components/pet-image-carousel";
 import { PetDetails } from "./_components/pet-details";
-import { useEffect, useState } from "react";
 import { getPetById } from "@/lib/action_api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MedicalHistory } from "./_components/medical-history";
+import { MedicalHistoryList } from "./_components/medical-history-list";
 import { AdoptionRequestsList } from "./_components/adoption-requests-list";
-import { PetReport } from "./_components/pet-report";
+import { PetReportList } from "./_components/pet-report-list";
 import { Badge } from "@/components/ui/badge";
+import { cookies } from "next/headers";
 
+async function getPetData(petId: string) {
+    const cookieStore = cookies();
+    const token = cookieStore.get('authToken')?.value;
 
-function PetProfilePageSkeleton() {
-    return (
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-            <div className="grid gap-4">
-                <Skeleton className="aspect-square w-full" />
-            </div>
-            <div className="grid gap-4 md:gap-6">
-                <div className="flex flex-col gap-2">
-                    <Skeleton className="h-10 w-3/4" />
-                    <div className="flex items-center gap-2 flex-wrap">
-                        <Skeleton className="h-6 w-16" />
-                        <Skeleton className="h-6 w-24" />
-                        <Skeleton className="h-6 w-20" />
-                    </div>
-                </div>
-                <Skeleton className="h-24 w-full" />
-                <div className="grid gap-2">
-                    <Skeleton className="h-6 w-1/3" />
-                    <Skeleton className="h-px w-full" />
-                    <Skeleton className="h-12 w-full" />
-                </div>
-                <Skeleton className="h-12 w-full" />
-            </div>
-        </div>
-    )
+    if (!token) {
+        // This case should ideally be handled by middleware, but we can have a fallback.
+        // For a server component, we can't redirect directly, but we can show an error or a login prompt.
+        // Or, if this page is protected by the layout, this might not even be reached.
+        return { pet: null, error: "Authentication required to view pet details." };
+    }
+
+    try {
+        const petData = await getPetById(token, petId);
+        return { pet: petData, error: null };
+    } catch (e: any) {
+        console.error("Failed to fetch pet details on server:", e);
+        if (e.message.toLowerCase().includes('not found')) {
+            notFound();
+        }
+        return { pet: null, error: e.message || "Failed to fetch pet details." };
+    }
 }
 
-export default function PetProfilePage() {
-  const params = useParams();
-  const petId = Array.isArray(params.id) ? params.id[0] : params.id;
-  const [pet, setPet] = useState<Pet | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-  const { toast } = useToast();
-  
-  useEffect(() => {
-    async function fetchPet() {
-        if (!petId) return;
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            setError("Authentication required.");
-            setIsLoading(false);
-            return;
-        }
 
-        try {
-            const petData = await getPetById(token, petId);
-            setPet(petData);
-        } catch (e: any) {
-            if (e.message.includes('Session expired')) {
-                toast({
-                    variant: 'destructive',
-                    title: 'Session Expired',
-                    description: 'Please log in again to continue.',
-                });
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('refreshToken');
-                window.dispatchEvent(new Event('storage'));
-                router.push('/login');
-            } else {
-                setError(e.message || "Failed to fetch pet details.");
-                // Check for 404 Not Found specifically if possible from the error
-                if (e.message.toLowerCase().includes('not found')) {
-                  notFound();
-                }
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    }
-    fetchPet();
-  }, [petId, router, toast]);
-
-
-  if (isLoading) {
-    return (
-        <div className="container mx-auto py-8 px-4 md:px-6">
-            <PetProfilePageSkeleton />
-        </div>
-    );
-  }
+export default async function PetProfilePage({ params }: { params: { id: string } }) {
+  const { id: petId } = params;
+  const { pet, error } = await getPetData(petId);
 
   if (error) {
     return (
@@ -139,10 +81,10 @@ export default function PetProfilePage() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="medical-history" className="mt-6">
-          <MedicalHistory medicalHistory={pet.medical_history} />
+          <MedicalHistoryList medicalHistory={pet.medical_history} />
         </TabsContent>
          <TabsContent value="reports" className="mt-6">
-            <PetReport reports={reports} />
+            <PetReportList reports={reports} />
         </TabsContent>
         <TabsContent value="adoption-requests" className="mt-6">
             <AdoptionRequestsList requests={pet.adoption_requests} />
@@ -151,5 +93,3 @@ export default function PetProfilePage() {
     </div>
   );
 }
-
-    
