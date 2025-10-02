@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem('authToken');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('username');
-      console.error("Auth check failed:", error);
+      // The console.error was removed from here as it's a normal flow for an expired token.
     }
     setIsLoading(false);
   }, [router, toast, logout]);
