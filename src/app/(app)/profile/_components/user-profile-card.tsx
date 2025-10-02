@@ -54,8 +54,8 @@ export function UserProfileCard() {
         return null;
     }
 
-    const fullName = `${user.first_name} ${user.last_name}`;
-    const avatarFallback = user.first_name.charAt(0) + (user.last_name ? user.last_name.charAt(0) : '');
+    const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username;
+    const avatarFallback = (user.first_name ? user.first_name.charAt(0) : '') + (user.last_name ? user.last_name.charAt(0) : '') || user.username.charAt(0).toUpperCase();
 
     return (
         <Card className="overflow-hidden shadow-lg">
