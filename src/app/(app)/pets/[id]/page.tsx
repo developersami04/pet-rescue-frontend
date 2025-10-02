@@ -89,7 +89,7 @@ export default function PetProfilePage() {
             </div>
         </div>
 
-        {isOwner && pet.available_for_adopt && pet.adoption_requests && pet.adoption_requests.length > 0 && (
+        {isOwner && pet.adoption_requests && pet.adoption_requests.length > 0 && (
             <AdoptionRequestsCard requests={pet.adoption_requests} petName={pet.name}/>
         )}
 
