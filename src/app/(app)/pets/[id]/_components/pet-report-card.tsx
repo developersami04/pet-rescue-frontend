@@ -61,3 +61,4 @@ export function PetReportCard({ report }: PetReportCardProps) {
         </Card>
     );
 }
+
