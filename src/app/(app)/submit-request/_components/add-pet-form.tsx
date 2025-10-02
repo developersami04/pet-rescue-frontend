@@ -59,12 +59,12 @@ const addPetSchema = z.object({
   color: z.string().min(1, 'Color is required.'),
 
   // Medical History
-  disease_name: z.string().optional(),
-  stage: z.string().optional(),
+  disease_name: z.string().optional().transform(e => e === '' ? null : e),
+  stage: z.string().optional().transform(e => e === '' ? null : e),
   no_of_years: z.coerce.number().optional().nullable(),
-  vaccination_name: z.string().optional(),
+  vaccination_name: z.string().optional().transform(e => e === '' ? null : e),
   last_vaccinated_date: z.date().optional().nullable(),
-  note: z.string().optional(),
+  note: z.string().optional().transform(e => e === '' ? null : e),
 
   // Pet Report
   report_image: z.any().optional(),
@@ -286,9 +286,9 @@ export function AddPetForm() {
         {/* Medical History Section */}
         <h3 className="text-lg font-medium">Medical History (Optional)</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <FormField control={form.control} name="disease_name" render={({ field }) => (<FormItem><FormLabel>Disease Name</FormLabel><FormControl><Input placeholder="e.g., Rabies" {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={form.control} name="vaccination_name" render={({ field }) => (<FormItem><FormLabel>Vaccine Name</FormLabel><FormControl><Input placeholder="e.g., Anti-Rabies Vaccine" {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={form.control} name="stage" render={({ field }) => (<FormItem><FormLabel>Stage</FormLabel><FormControl><Input placeholder="Enter stage" {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="disease_name" render={({ field }) => (<FormItem><FormLabel>Disease Name</FormLabel><FormControl><Input placeholder="e.g., Rabies" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="vaccination_name" render={({ field }) => (<FormItem><FormLabel>Vaccine Name</FormLabel><FormControl><Input placeholder="e.g., Anti-Rabies Vaccine" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="stage" render={({ field }) => (<FormItem><FormLabel>Stage</FormLabel><FormControl><Input placeholder="Enter stage" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
             <FormField control={form.control} name="no_of_years" render={({ field }) => (<FormItem><FormLabel>Years Since Vaccination</FormLabel><FormControl><Input type="number" placeholder="Enter years" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
             <FormField
                 control={form.control}
@@ -332,7 +332,7 @@ export function AddPetForm() {
                 )}
             />
         </div>
-        <FormField control={form.control} name="note" render={({ field }) => (<FormItem><FormLabel>Note</FormLabel><FormControl><Textarea placeholder="Add any additional medical notes..." className="resize-none" rows={4} {...field} /></FormControl><FormMessage /></FormItem>)} />
+        <FormField control={form.control} name="note" render={({ field }) => (<FormItem><FormLabel>Note</FormLabel><FormControl><Textarea placeholder="Add any additional medical notes..." className="resize-none" rows={4} {...field} value={field.value ?? ''}/></FormControl><FormMessage /></FormItem>)} />
 
         <Separator className="my-8" />
         
@@ -359,3 +359,5 @@ export function AddPetForm() {
     </Form>
   );
 }
+
+    
