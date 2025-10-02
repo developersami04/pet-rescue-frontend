@@ -8,12 +8,12 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LostPetsSection } from "./lost-pets-section";
 import { FoundPetsSection } from "./found-pets-section";
+import { AdoptablePetsSection } from "./adoptable-pets-section";
 import { MyRequestsSection } from "./my-requests-section";
 import { Pet, PetReport, MyAdoptionRequest } from "@/lib/data";
 import { getMyPets, getMyPetData } from "@/lib/action_api";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { AdoptablePetsSection } from "./adoptable-pets-section";
 import { DashboardStats } from "./dashboard-stats";
 
 export function DashboardClient() {

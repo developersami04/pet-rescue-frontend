@@ -3,7 +3,7 @@
 
 import { UserProfileCard } from "./_components/user-profile-card";
 import { FavoritePets } from "./_components/favorite-pets";
-import { MyPets } from "./_components/my-pets";
+import { MyPetsSection } from "../dashboard/_components/my-pets-section";
 import { useEffect, useState, useCallback } from "react";
 import type { Pet } from "@/lib/data";
 import { getMyPets } from "@/lib/action_api";
@@ -61,7 +61,7 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
             <UserProfileCard />
-            <MyPets myPets={myPets} isLoading={isLoading} />
+            <MyPetsSection myPets={myPets} />
         </div>
         <div className="lg:col-span-1">
             <FavoritePets />
