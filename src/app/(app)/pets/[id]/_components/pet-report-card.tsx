@@ -1,54 +1,48 @@
 
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { PetReport } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, User, MessageCircle } from "lucide-react";
+import { User, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-type PetReportCardProps = {
+type PetReportContentProps = {
     report: PetReport | null;
 }
 
-export function PetReportCard({ report }: PetReportCardProps) {
-    if (!report) return null;
+export function PetReportContent({ report }: PetReportContentProps) {
+    if (!report) return (
+         <p className="text-muted-foreground text-sm">No report information available for this pet.</p>
+    );
 
     const imageUrl = report.report_image;
 
     return (
-        <Card className={cn("border-l-4", report.pet_status === 'lost' ? 'border-destructive' : 'border-blue-500')}>
-            <CardHeader>
-                <div className="flex justify-between items-start">
-                    <div>
-                        <CardTitle className="flex items-center gap-2">
-                             <AlertTriangle className={cn(report.pet_status === 'lost' ? 'text-destructive' : 'text-blue-500')} />
-                            Pet Report: <span className="capitalize">{report.pet_status}</span>
-                        </CardTitle>
-                        <CardDescription>
-                            This pet was reported by {report.reporter_name}.
-                        </CardDescription>
-                    </div>
-                    <Badge variant={report.is_resolved ? 'default' : 'secondary'}>
-                        {report.is_resolved ? 'Resolved' : 'Active'}
-                    </Badge>
+        <div className="pt-2 space-y-6">
+            <div className="flex justify-between items-start">
+                <div className="flex flex-col gap-1">
+                    <p className="text-sm font-semibold">Report Status: <span className="capitalize text-muted-foreground font-normal">{report.pet_status}</span></p>
+                    <p className="text-sm font-semibold">Activity: <span className="capitalize text-muted-foreground font-normal">{report.report_status}</span></p>
                 </div>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 space-y-4">
+                 <Badge variant={report.is_resolved ? 'default' : 'secondary'}>
+                    {report.is_resolved ? 'Resolved' : 'Active'}
+                </Badge>
+            </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
                     <div className="flex items-start gap-3">
-                         <MessageCircle className="h-5 w-5 mt-1 flex-shrink-0 text-muted-foreground" />
+                         <MessageCircle className="h-5 w-5 mt-0.5 flex-shrink-0 text-muted-foreground" />
                         <div>
-                             <p className="font-semibold">Reporter's Message</p>
-                             <p className="text-muted-foreground">{report.message || "No message provided."}</p>
+                             <p className="font-semibold text-sm">Reporter's Message</p>
+                             <p className="text-muted-foreground text-sm">{report.message || "No message provided."}</p>
                         </div>
                     </div>
                      <div className="flex items-start gap-3">
-                         <User className="h-5 w-5 mt-1 flex-shrink-0 text-muted-foreground" />
+                         <User className="h-5 w-5 mt-0.5 flex-shrink-0 text-muted-foreground" />
                         <div>
-                             <p className="font-semibold">Reported By</p>
-                             <p className="text-muted-foreground">{report.reporter_name}</p>
+                             <p className="font-semibold text-sm">Reported By</p>
+                             <p className="text-muted-foreground text-sm">{report.reporter_name}</p>
                         </div>
                     </div>
                 </div>
@@ -57,8 +51,7 @@ export function PetReportCard({ report }: PetReportCardProps) {
                         <Image src={imageUrl} alt={`Report image for ${report.pet_name}`} fill className="object-cover" />
                     </div>
                 )}
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }
-

@@ -12,9 +12,11 @@ import Loading from './loading';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { PetProfileHeader } from './_components/pet-profile-header';
 import { PetDetailsCard } from './_components/pet-details-card';
-import { MedicalHistoryCard } from './_components/medical-history-card';
-import { PetReportCard } from './_components/pet-report-card';
+import { MedicalHistoryContent } from './_components/medical-history-card';
+import { PetReportContent } from './_components/pet-report-card';
 import { AdoptionRequestsCard } from './_components/adoption-request-card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function PetProfilePage() {
   const params = useParams();
@@ -81,11 +83,27 @@ export default function PetProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-8">
                 <PetDetailsCard pet={pet} />
-                <PetReportCard report={pet.pet_report} />
             </div>
 
             <div className="lg:col-span-1 space-y-8">
-                <MedicalHistoryCard history={pet.medical_history} />
+                <Card>
+                    <CardContent className="p-4">
+                        <Accordion type="single" collapsible defaultValue="medical-history" className="w-full">
+                            <AccordionItem value="medical-history">
+                                <AccordionTrigger className="text-base font-semibold hover:no-underline">Medical History</AccordionTrigger>
+                                <AccordionContent>
+                                    <MedicalHistoryContent history={pet.medical_history} />
+                                </AccordionContent>
+                            </AccordionItem>
+                            <AccordionItem value="pet-report">
+                                <AccordionTrigger className="text-base font-semibold hover:no-underline">Pet Report</AccordionTrigger>
+                                <AccordionContent>
+                                    <PetReportContent report={pet.pet_report} />
+                                </AccordionContent>
+                            </AccordionItem>
+                        </Accordion>
+                    </CardContent>
+                </Card>
             </div>
         </div>
 
