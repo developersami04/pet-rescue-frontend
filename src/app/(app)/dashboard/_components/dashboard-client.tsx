@@ -20,8 +20,8 @@ export function DashboardClient() {
   const [myPets, setMyPets] = useState<Pet[]>([]);
   const [lostPets, setLostPets] = useState<PetReport[]>([]);
   const [foundPets, setFoundPets] = useState<PetReport[]>([]);
-  const [adoptionRequests, setAdoptionRequests] = useState<MyAdoptionRequest[]>([]);
   const [adoptablePets, setAdoptablePets] = useState<PetReport[]>([]);
+  const [adoptionRequests, setAdoptionRequests] = useState<MyAdoptionRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const router = useRouter();
@@ -45,8 +45,8 @@ export function DashboardClient() {
         setMyPets(myPetsData);
         setLostPets(lostPetsData as PetReport[]);
         setFoundPets(foundPetsData as PetReport[]);
-        setAdoptionRequests(adoptionRequestsData as MyAdoptionRequest[]);
         setAdoptablePets(adoptablePetsData as PetReport[]);
+        setAdoptionRequests(adoptionRequestsData as MyAdoptionRequest[]);
 
     } catch (error: any) {
          if (error.message.includes('Session expired')) {
@@ -82,6 +82,7 @@ export function DashboardClient() {
         myPetsCount={myPets.length}
         lostPetsCount={lostPets.length}
         foundPetsCount={foundPets.length}
+        adoptablePetsCount={adoptablePets.length}
         myRequestsCount={adoptionRequests.length}
         isLoading={isLoading}
       />
