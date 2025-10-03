@@ -4,6 +4,7 @@
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { AlertTriangle, Search, Hand } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const tabInfo = [
     { value: "lost", label: "Lost", icon: AlertTriangle },
@@ -17,11 +18,14 @@ type ReportTabsProps = {
 };
 
 export function ReportTabs({ activeTab, onTabChange }: ReportTabsProps) {
+    const isMobile = useIsMobile();
+
     return (
         <div className="sticky top-16 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-40 py-2 -mt-2">
             <TabsList className="h-auto p-1 justify-center bg-muted/50 w-full rounded-lg">
                 {tabInfo.map((tab) => {
                     const isActive = activeTab === tab.value;
+                    const showLabel = !isMobile || (isMobile && isActive);
                     return (
                         <TabsTrigger
                             key={tab.value}
@@ -33,7 +37,8 @@ export function ReportTabs({ activeTab, onTabChange }: ReportTabsProps) {
                             )}
                         >
                             <tab.icon className="h-5 w-5" />
-                            <span className="hidden sm:inline-block">{tab.label}</span>
+                            {showLabel && <span className="hidden sm:inline-block">{tab.label}</span>}
+                            {isMobile && isActive && <span className="sm:hidden">{tab.label}</span>}
                         </TabsTrigger>
                     );
                 })}
