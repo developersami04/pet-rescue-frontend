@@ -69,7 +69,12 @@ export function ReportsClient() {
     }, [fetchPets]);
 
     const filteredPets = useMemo(() => {
-        return pets.filter(pet => pet.pet_status === activeTab);
+        return pets.filter(pet => {
+            if (activeTab === 'adopt') {
+                return pet.available_for_adopt;
+            }
+            return pet.pet_status === activeTab;
+        });
     }, [pets, activeTab]);
 
     if (isLoading) {

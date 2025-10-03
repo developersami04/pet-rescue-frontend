@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // The console.error was removed from here as it's a normal flow for an expired token.
     }
     setIsLoading(false);
-  }, [router, toast, logout]);
+  }, [router, toast, logout, user]);
 
   useEffect(() => {
     verifyAuth();
@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [verifyAuth]);
+  }, []); // Changed dependency to [] to run only once on mount
 
   const login = (token: string, refreshToken: string) => {
     localStorage.setItem('authToken', token);
