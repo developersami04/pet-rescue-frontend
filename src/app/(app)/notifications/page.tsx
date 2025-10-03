@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { Notification } from '@/lib/data';
-import { getNotifications } from '@/lib/actions/notification.actions';
+import { getNotifications } from '@/lib/actions';
 import { useAuth } from '@/lib/auth.tsx';
 
 export default function NotificationsPage() {

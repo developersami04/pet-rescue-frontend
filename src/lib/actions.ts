@@ -1,10 +1,217 @@
+
 'use server';
 
-import API_ENDPOINTS from "../endpoints";
-import { fetchWithAuth, fetchWithTimeout } from "../api";
-import type { Pet } from "../data";
+import { z } from "zod";
+import API_ENDPOINTS from "./endpoints";
+import { fetchWithAuth, fetchWithTimeout } from "./api";
+import type { Pet, Notification } from "./data";
+
+// From user.actions.ts
+
+const registerUserSchema = z.object({
+  firstName: z.string().min(1, 'First name is required.'),
+  lastName: z.string().optional(),
+  username: z.string().min(3, 'Username must be at least 3 characters.'),
+  email: z.string().email('Please enter a valid email address.'),
+  password: z.string().min(6, 'Password must be at least 6 characters.'),
+  phone_no: z.string().min(10, 'Please enter a valid phone number.'),
+  gender: z.enum(['Male', 'Female', 'Other', 'Prefer Not To Say']),
+  address: z.string().min(1, 'Address is required.'),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  pin_code: z.coerce.number().optional().nullable(),
+});
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+export async function registerUser(userData: z.infer<typeof registerUserSchema>) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    const payload = {
+        username: userData.username,
+        email: userData.email,
+        password: userData.password,
+        first_name: userData.firstName,
+        last_name: userData.lastName || "",
+        profile_image: null,
+        phone_no: userData.phone_no,
+        gender: userData.gender,
+        pin_code: userData.pin_code,
+        address: userData.address,
+        city: userData.city || "",
+        state: userData.state || ""
+    };
+
+    try {
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.register}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            if (result.message && Array.isArray(result.message) && result.message.length > 0) {
+                 throw new Error(result.message.join(' '));
+            }
+            throw new Error(result.detail || 'Failed to register user.');
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Registration timed out. Please try again.');
+        }
+        console.error('Error registering user:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred during registration.');
+    }
+}
+
+const loginUserSchema = z.object({
+  username: z.string().min(1, 'Username is required.'),
+  password: z.string().min(1, 'Password is required.'),
+});
+
+export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.login}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(credentials),
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || 'Failed to log in.');
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Login request timed out. Please try again.');
+        }
+        console.error('Error logging in:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred during login.');
+    }
+}
+
+
+export async function checkUserAuth(token: string) {
+    if (!API_BASE_URL) {
+        return { isAuthenticated: false, user: null, error: 'API not configured.' };
+    }
+    
+    try {
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.userCheck}`, {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` },
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+            return { isAuthenticated: false, user: null, error: result.detail || 'Token validation failed.' };
+        }
+
+        return { isAuthenticated: true, user: result.user, message: result.message, error: null };
+    } catch (error) {
+        console.error('Error checking auth:', error);
+        return { isAuthenticated: false, user: null, error: 'An unknown error occurred.' };
+    }
+}
+
+
+export async function getUserDetails(token: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.userDetails}`, {
+            method: 'GET',
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || 'Failed to fetch user details.');
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request for user details timed out.');
+        }
+        console.error('Error fetching user details:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching user details.');
+    }
+}
+
+export async function updateUserDetails(token: string, userData: Record<string, any> | FormData) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    
+    const isPasswordChange = userData instanceof FormData ? false : userData.hasOwnProperty('current_password');
+    const endpoint = isPasswordChange ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
+    const method = isPasswordChange ? 'POST' : 'PATCH';
+    
+    const body = userData instanceof FormData ? userData : JSON.stringify(userData);
+
+    try {
+        const response = await fetchWithAuth(`${API_BASE_URL}${endpoint}`, {
+            method: method,
+            body: body,
+        }, token);
+        
+        const result = await response.json();
+
+        if (!response.ok) {
+            // Flatten errors if they are in a nested object
+            if (typeof result === 'object' && result !== null) {
+                const errorMessages = Object.values(result).flat().join(' ');
+                if (errorMessages) {
+                    throw new Error(errorMessages);
+                }
+            }
+            throw new Error(result.message || result.detail || 'Failed to update user details.');
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('User details update request timed out.');
+        }
+        console.error('Error updating user details:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while updating user details.');
+    }
+}
+
+// From pet.actions.ts
 
 type PetType = {
   id: number;
@@ -367,5 +574,100 @@ export async function deleteAdoptionRequest(token: string, requestId: number) {
         console.error('Error deleting adoption request:', error);
         if (error instanceof Error) throw error;
         throw new Error('An unknown error occurred while deleting the adoption request.');
+    }
+}
+
+// From notification.actions.ts
+
+export async function getNotifications(
+  token: string,
+  filters: { pet_status?: string; read_status?: string } = {}
+): Promise<Notification[]> {
+  if (!API_BASE_URL) {
+    throw new Error('API is not configured. Please contact support.');
+  }
+
+  const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.notifications}`);
+  if (filters.pet_status && filters.pet_status !== 'all') {
+    url.searchParams.append('pet_status', filters.pet_status);
+  }
+  if (filters.read_status && filters.read_status !== 'all') {
+    url.searchParams.append('read_status', filters.read_status);
+  }
+
+  try {
+    const response = await fetchWithAuth(url.toString(), {
+      method: 'GET',
+      cache: 'no-store',
+    }, token);
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || result.detail || 'Failed to fetch notifications.');
+    }
+    
+    // Transform the nested data into the flat Notification structure
+    const transformedData = result.data.map((item: any): Notification => ({
+        id: item.id,
+        message: item.content, // Map content to message
+        created_at: item.created_at,
+        is_read: item.is_read,
+        pet_id: item.pet,
+        pet_name: item.pet_name,
+        pet_image: item.pet_data?.pet_image || null,
+        pet_status: item.pet_data?.pet_status || 'adoptable',
+    }));
+
+    return transformedData || [];
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      throw new Error('Request for notifications timed out.');
+    }
+    if (error.message?.includes('Session expired')) {
+      throw new Error('Session expired');
+    }
+    console.error('Error fetching notifications:', error);
+    throw new Error(error.message || 'An unknown error occurred while fetching notifications.');
+  }
+}
+
+export async function readNotification(token: string, notificationId: number) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.notifications}${notificationId}/`;
+
+    try {
+        const response = await fetchWithAuth(url, { method: 'GET' }, token);
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to read notification.');
+        }
+        return result.data;
+    } catch (error) {
+        console.error('Error reading notification:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred.');
+    }
+}
+
+export async function deleteNotification(token: string, notificationId: number) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.notifications}${notificationId}/`;
+
+    try {
+        const response = await fetchWithAuth(url, { method: 'DELETE' }, token);
+        if (!response.ok && response.status !== 204) {
+            const result = await response.json();
+            throw new Error(result.message || 'Failed to delete notification.');
+        }
+        return { message: 'Notification deleted successfully.' };
+    } catch (error) {
+        console.error('Error deleting notification:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred.');
     }
 }

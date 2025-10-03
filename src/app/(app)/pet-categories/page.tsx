@@ -1,7 +1,7 @@
 
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
-import { getPetTypes } from "@/lib/actions/pet.actions";
+import { getPetTypes } from "@/lib/actions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
