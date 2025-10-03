@@ -7,13 +7,15 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Hand, MessageSquareQuote } from "lucide-react";
+import { AdoptionRequestDialog } from "./adoption-request-dialog";
 
 
 type PetProfileHeaderProps = {
     pet: Pet;
+    onUpdate: () => void;
 }
 
-export function PetProfileHeader({ pet }: PetProfileHeaderProps) {
+export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
     const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/800/600`;
     const petStatus = pet.pet_report?.pet_status;
     const isResolved = pet.pet_report?.is_resolved;
@@ -45,10 +47,12 @@ export function PetProfileHeader({ pet }: PetProfileHeaderProps) {
             </div>
             <div className="absolute top-6 right-6 flex gap-2">
                 {pet.available_for_adopt && (
-                    <Button>
-                        <Hand className="mr-2 h-4 w-4" />
-                        Request to Adopt
-                    </Button>
+                    <AdoptionRequestDialog petId={pet.id} petName={pet.name} onUpdate={onUpdate}>
+                        <Button>
+                            <Hand className="mr-2 h-4 w-4" />
+                            Request to Adopt
+                        </Button>
+                    </AdoptionRequestDialog>
                 )}
                  <Button variant="secondary">
                     <MessageSquareQuote className="mr-2 h-4 w-4" />

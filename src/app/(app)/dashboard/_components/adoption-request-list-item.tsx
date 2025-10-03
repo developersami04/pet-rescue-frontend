@@ -6,14 +6,18 @@ import { MyAdoptionRequest } from "@/lib/data";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
-import { Check, FileText, X } from "lucide-react";
+import { Check, FileText, Pen, Trash2, X } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { UpdateAdoptionRequestDialog } from "./update-adoption-request-dialog";
+import { DeleteAdoptionRequestDialog } from "./delete-adoption-request-dialog";
 
 type AdoptionRequestListItemProps = {
     request: MyAdoptionRequest;
+    onUpdate: () => void;
 }
 
-export function AdoptionRequestListItem({ request }: AdoptionRequestListItemProps) {
+export function AdoptionRequestListItem({ request, onUpdate }: AdoptionRequestListItemProps) {
     const imageUrl = `https://picsum.photos/seed/${request.pet}/100/100`;
 
     const getStatusVariant = (status: string) => {
@@ -40,7 +44,7 @@ export function AdoptionRequestListItem({ request }: AdoptionRequestListItemProp
     };
 
     return (
-        <Card className="p-4 flex items-center gap-4 transition-all duration-300 hover:shadow-md hover:border-primary/50">
+        <Card className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-all duration-300 hover:shadow-md hover:border-primary/50">
             <div className="relative h-20 w-20 flex-shrink-0">
                 <Image
                     src={imageUrl}
@@ -50,7 +54,7 @@ export function AdoptionRequestListItem({ request }: AdoptionRequestListItemProp
                     data-ai-hint={'pet'}
                 />
             </div>
-            <div className="flex-grow grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+            <div className="flex-grow grid grid-cols-1 md:grid-cols-3 items-center gap-4 w-full">
                 <div className="md:col-span-2">
                     <Link href={`/pets/${request.pet}`} className="hover:underline">
                         <h3 className="text-lg font-bold">{request.pet_name}</h3>
@@ -70,6 +74,20 @@ export function AdoptionRequestListItem({ request }: AdoptionRequestListItemProp
                         </div>
                     </Badge>
                 </div>
+            </div>
+             <div className="flex sm:flex-col md:flex-row gap-2 self-end sm:self-center">
+                <UpdateAdoptionRequestDialog request={request} onUpdate={onUpdate}>
+                    <Button size="icon" variant="outline" className="h-8 w-8">
+                        <Pen className="h-4 w-4" />
+                        <span className="sr-only">Edit Request</span>
+                    </Button>
+                </UpdateAdoptionRequestDialog>
+                 <DeleteAdoptionRequestDialog requestId={request.id} onDeleted={onUpdate}>
+                    <Button size="icon" variant="destructive" className="h-8 w-8">
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Delete Request</span>
+                    </Button>
+                </DeleteAdoptionRequestDialog>
             </div>
         </Card>
     )

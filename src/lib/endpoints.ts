@@ -18,6 +18,8 @@ const API_ENDPOINTS = {
 
   requestSubmit: '/api/pet-data/pet-request-form/',
   petRequestView: '/api/pet-data/pet-request-view/',
+
+  petAdoptions: '/api/pet-data/pet-adoptions/',
 };
 
 export const API_REQUEST_TIMEOUT = 10000; 

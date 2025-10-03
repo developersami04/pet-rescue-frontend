@@ -1,5 +1,4 @@
 
-
 'use server';
 
 import { z } from "zod";
@@ -463,7 +462,7 @@ export async function submitRequest(token: string, formData: FormData) {
     }
 }
 
-export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopt' | 'adoptable'): Promise<any[]> {
+export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopt' | 'my-adoption-requests'): Promise<any[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
@@ -590,5 +589,77 @@ export async function deletePetRequest(token: string, petId: string) {
            throw new Error(error.message);
         }
         throw new Error('An unknown error occurred while deleting the request.');
+    }
+}
+
+export async function createAdoptionRequest(token: string, petId: number, message: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.petAdoptions}`;
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'POST',
+            body: JSON.stringify({ pet: petId, message: message }),
+        }, token);
+        
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to create adoption request.');
+        }
+        return result;
+    } catch (error) {
+        console.error('Error creating adoption request:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred while creating the adoption request.');
+    }
+}
+
+export async function updateAdoptionRequest(token: string, requestId: number, message: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.petAdoptions}${requestId}/`;
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'PATCH',
+            body: JSON.stringify({ message: message }),
+        }, token);
+
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to update adoption request.');
+        }
+        return result;
+    } catch (error) {
+        console.error('Error updating adoption request:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred while updating the adoption request.');
+    }
+}
+
+
+export async function deleteAdoptionRequest(token: string, requestId: number) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.petAdoptions}${requestId}/`;
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'DELETE',
+        }, token);
+
+        if (!response.ok && response.status !== 204) {
+             const result = await response.json();
+            throw new Error(result.message || result.detail || 'Failed to delete adoption request.');
+        }
+        return { message: 'Adoption request deleted successfully.' };
+    } catch (error) {
+        console.error('Error deleting adoption request:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred while deleting the adoption request.');
     }
 }

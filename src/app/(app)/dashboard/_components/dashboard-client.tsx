@@ -115,7 +115,7 @@ export function DashboardClient() {
                         <AdoptablePetsSection adoptablePets={adoptablePets} />
                     </TabsContent>
                     <TabsContent value="my-requests">
-                        <MyRequestsSection requests={adoptionRequests} />
+                        <MyRequestsSection requests={adoptionRequests} onUpdate={fetchDashboardData} />
                     </TabsContent>
                 </>
             )}
