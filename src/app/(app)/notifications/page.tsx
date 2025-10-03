@@ -90,8 +90,7 @@ export default function NotificationsPage() {
             <SelectItem value="all">All Statuses</SelectItem>
             <SelectItem value="lost">Lost</SelectItem>
             <SelectItem value="found">Found</SelectItem>
-            <SelectItem value="adoptable">Adoptable</SelectItem>
-            <SelectItem value="adoption-request">Adoption Request</SelectItem>
+            <SelectItem value="adopt">Adoptable</SelectItem>
           </SelectContent>
         </Select>
 
