@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import { updateAdoptionRequest } from '@/lib/action_api';
+import { updateAdoptionRequest } from '@/lib/actions/pet.actions';
 import { useRouter } from 'next/navigation';
 import { MyAdoptionRequest } from '@/lib/data';
 import { Textarea } from '@/components/ui/textarea';

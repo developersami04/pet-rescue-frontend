@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useContext, createContext, useCallback } from 'react';
-import { getNotifications, readNotification as apiReadNotification, deleteNotification as apiDeleteNotification } from '@/lib/action_api';
+import { getNotifications, readNotification as apiReadNotification, deleteNotification as apiDeleteNotification } from '@/lib/actions/notification.actions';
 import { useAuth } from '@/lib/auth.tsx';
 import type { Notification } from '@/lib/data';
 

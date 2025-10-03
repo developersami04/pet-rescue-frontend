@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import { deleteAdoptionRequest } from '@/lib/action_api';
+import { deleteAdoptionRequest } from '@/lib/actions/pet.actions';
 import { useRouter } from 'next/navigation';
 
 type DeleteAdoptionRequestDialogProps = {

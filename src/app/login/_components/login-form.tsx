@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { loginUser } from '@/lib/action_api';
+import { loginUser } from '@/lib/actions/user.actions';
 import { useAuth } from '@/lib/auth.tsx';
 
 const loginSchema = z.object({

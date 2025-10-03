@@ -11,7 +11,7 @@ import { FoundPetsSection } from "./found-pets-section";
 import { AdoptablePetsSection } from "./adoptable-pets-section";
 import { MyRequestsSection } from "./my-requests-section";
 import { Pet, PetReport, MyAdoptionRequest } from "@/lib/data";
-import { getMyPets, getMyPetData } from "@/lib/action_api";
+import { getMyPets, getMyPetData } from "@/lib/actions/pet.actions";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { DashboardStats } from "./dashboard-stats";

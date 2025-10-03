@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { User } from '@/lib/data';
-import { getUserDetails } from '@/lib/action_api';
+import { getUserDetails } from '@/lib/actions/user.actions';
 import { useToast } from './use-toast';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth.tsx';

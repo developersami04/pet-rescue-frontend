@@ -5,7 +5,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { Pet } from '@/lib/data';
 import { PetCard } from './pet-card';
 import { PetFilters } from './pet-filters';
-import { getAllPets, getPetTypes } from '@/lib/action_api';
+import { getAllPets, getPetTypes } from '@/lib/actions/pet.actions';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';

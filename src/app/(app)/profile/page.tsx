@@ -6,7 +6,7 @@ import { FavoritePets } from "./_components/favorite-pets";
 import { MyPetsSection } from "../dashboard/_components/my-pets-section";
 import { useEffect, useState, useCallback } from "react";
 import type { Pet } from "@/lib/data";
-import { getMyPets } from "@/lib/action_api";
+import { getMyPets } from "@/lib/actions/pet.actions";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 

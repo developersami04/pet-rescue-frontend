@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Pet } from "@/lib/data";
 import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
-import { getAllPets } from "@/lib/action_api";
+import { getAllPets } from "@/lib/actions/pet.actions";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
