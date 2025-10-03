@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -32,7 +33,6 @@ import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { format, parseISO } from 'date-fns';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Calendar } from '@/components/ui/calendar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -90,8 +90,8 @@ function getChangedValues(initialValues: any, currentValues: any): Partial<any> 
 
         // Handle date comparison
         if (initialValue instanceof Date || currentValue instanceof Date) {
-            const initialDate = initialValue ? format(new Date(initialValue), 'yyyy-MM-dd') : null;
-            const currentDate = currentValue ? format(new Date(currentValue), 'yyyy-MM-dd') : null;
+            const initialDate = initialValue ? new Date(initialValue).toISOString().split('T')[0] : null;
+            const currentDate = currentValue ? new Date(currentValue).toISOString().split('T')[0] : null;
             if (initialDate !== currentDate) {
                 changedValues[key] = currentValue;
             }
@@ -175,7 +175,7 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
       const formData = {
         ...data,
         pet_status: pet_status,
-        last_vaccinated_date: data.last_vaccinated_date ? parseISO(data.last_vaccinated_date) : null,
+        last_vaccinated_date: data.last_vaccinated_date ? new Date(data.last_vaccinated_date) : null,
       };
       form.reset(formData);
       setInitialData(formData);
@@ -235,7 +235,7 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
       if (key === 'pet_status' && value === 'adopt') {
         formData.append(key, 'adopt');
       } else if (value instanceof Date) {
-        formData.append(key, format(value, 'yyyy-MM-dd'));
+        formData.append(key, value.toISOString().split('T')[0]);
       } else if (typeof value === 'boolean') {
         formData.append(key, String(value));
       } else if (value === null) {
@@ -376,13 +376,14 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
             <FormField control={form.control} name="vaccination_name" render={({ field }) => (<FormItem><FormLabel>Vaccine Name</FormLabel><FormControl><Input placeholder="e.g., Anti-Rabies Vaccine" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
             <FormField control={form.control} name="stage" render={({ field }) => (<FormItem><FormLabel>Stage</FormLabel><FormControl><Input placeholder="Enter stage" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
             <FormField control={form.control} name="no_of_years" render={({ field }) => (<FormItem><FormLabel>Years Since Vaccination</FormLabel><FormControl><Input type="number" placeholder="Enter years" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
+            {/*
             <FormField
                 control={form.control}
                 name="last_vaccinated_date"
                 render={({ field }) => (
                 <FormItem className="flex flex-col"><FormLabel>Last Vaccinated Date</FormLabel><Popover><PopoverTrigger asChild><FormControl>
                     <Button variant={'outline'} className={cn('w-full pl-3 text-left font-normal',!field.value && 'text-muted-foreground')}>
-                        {field.value ? (format(field.value, 'PPP')) : (<span>Pick a date</span>)}
+                        {field.value ? (new Date(field.value).toLocaleDateString()) : (<span>Pick a date</span>)}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
                 </FormControl></PopoverTrigger><PopoverContent className="w-auto p-0" align="start">
@@ -397,6 +398,7 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
                 </FormItem>
                 )}
             />
+            */}
         </div>
         <FormField control={form.control} name="note" render={({ field }) => (<FormItem><FormLabel>Note</FormLabel><FormControl><Textarea placeholder="Add any additional medical notes..." className="resize-none" rows={4} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
 

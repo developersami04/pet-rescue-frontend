@@ -3,7 +3,23 @@
 
 import { MedicalHistory } from "@/lib/data";
 import { FileText, Pill, Syringe } from "lucide-react";
-import { format, parseISO } from 'date-fns';
+
+function format(date: Date, formatStr: string) {
+    // Basic PPP format 'Month day, year'
+    if (formatStr === 'PPP') {
+        return new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }).format(date);
+    }
+    return date.toLocaleDateString();
+}
+
+function parseISO(dateString: string) {
+    return new Date(dateString);
+}
+
 
 type MedicalHistoryCardProps = {
     history: MedicalHistory | null;

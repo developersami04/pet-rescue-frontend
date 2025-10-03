@@ -1,20 +1,25 @@
+
 "use client"
 
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { DayPicker } from "react-day-picker"
+// import { DayPicker } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>
+export type CalendarProps = React.ComponentProps<"div"> // Changed from DayPicker
 
 function Calendar({
   className,
-  classNames,
-  showOutsideDays = true,
   ...props
 }: CalendarProps) {
+  return (
+    <div className={cn("p-3 border rounded-md", className)} {...props}>
+        <p className="text-sm text-muted-foreground text-center">Date picker is currently unavailable.</p>
+    </div>
+  )
+  /*
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -60,6 +65,7 @@ function Calendar({
       {...props}
     />
   )
+  */
 }
 Calendar.displayName = "Calendar"
 

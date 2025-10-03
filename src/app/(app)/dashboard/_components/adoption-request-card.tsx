@@ -5,12 +5,39 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { MyAdoptionRequest } from "@/lib/data";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Pen, Trash2 } from "lucide-react";
 import { UpdateAdoptionRequestDialog } from "./update-adoption-request-dialog";
 import { DeleteAdoptionRequestDialog } from "./delete-adoption-request-dialog";
+
+function timeAgo(dateString: string) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+    let interval = seconds / 31536000;
+    if (interval > 1) {
+      return Math.floor(interval) + " years ago";
+    }
+    interval = seconds / 2592000;
+    if (interval > 1) {
+      return Math.floor(interval) + " months ago";
+    }
+    interval = seconds / 86400;
+    if (interval > 1) {
+      return Math.floor(interval) + " days ago";
+    }
+    interval = seconds / 3600;
+    if (interval > 1) {
+      return Math.floor(interval) + " hours ago";
+    }
+    interval = seconds / 60;
+    if (interval > 1) {
+      return Math.floor(interval) + " minutes ago";
+    }
+    return Math.floor(seconds) + " seconds ago";
+}
 
 type AdoptionRequestCardProps = {
     request: MyAdoptionRequest;
@@ -58,7 +85,7 @@ export function AdoptionRequestCard({ request, onUpdate }: AdoptionRequestCardPr
                     </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground pt-1">
-                    Requested {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
+                    Requested {timeAgo(request.created_at)}
                 </p>
             </CardHeader>
             <CardFooter className="p-4 pt-0 flex gap-2">
