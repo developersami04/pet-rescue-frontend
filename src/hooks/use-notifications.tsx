@@ -32,22 +32,32 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     const token = localStorage.getItem('authToken');
     if (!token) return;
 
-    setIsLoading(true);
+    // We don't set loading to true for background fetches
     try {
-      // Fetch only unread notifications for the popover and badge count
       const unreadNotifications = await getNotifications(token, { read_status: 'unread' });
       setNotifications(unreadNotifications);
       setUnreadCount(unreadNotifications.length);
     } catch (error) {
       console.error("Failed to fetch unread notifications", error);
-    } finally {
-      setIsLoading(false);
     }
   }, [isAuthenticated]);
 
+  // Initial fetch
   useEffect(() => {
-    fetchUnreadNotifications();
-  }, [fetchUnreadNotifications]);
+    if(isAuthenticated) {
+      setIsLoading(true);
+      fetchUnreadNotifications().finally(() => setIsLoading(false));
+    }
+  }, [isAuthenticated, fetchUnreadNotifications]);
+
+  // Set up polling
+  useEffect(() => {
+    if (isAuthenticated) {
+      const intervalId = setInterval(fetchUnreadNotifications, 120000); // 2 minutes
+      return () => clearInterval(intervalId); // Cleanup on unmount
+    }
+  }, [isAuthenticated, fetchUnreadNotifications]);
+
 
   const markAsRead = async (id: number) => {
     const token = localStorage.getItem('authToken');
