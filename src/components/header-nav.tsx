@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -13,7 +13,6 @@ import {
   ChevronDown,
   User,
   Settings,
-  Inbox,
   LogOut,
   PlusCircle,
   Sun,
@@ -24,6 +23,7 @@ import {
   Shapes,
   AlertTriangle,
   Hand,
+  Bell,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useAuth } from '@/lib/auth.tsx';
 import { Skeleton } from "./ui/skeleton";
+import { NotificationPopover } from "./notification-popover";
 
 const navItems = {
   main: [
@@ -195,7 +196,7 @@ export function HeaderNav() {
           </nav>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <div className="relative hidden md:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -203,13 +204,16 @@ export function HeaderNav() {
               className="w-48 rounded-lg bg-background pl-10"
             />
           </div>
+          
+          <NotificationPopover />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
                {isLoading && !user ? (
                  <Skeleton className="h-9 w-9 rounded-full" />
                ) : (
                 <Avatar className="h-9 w-9 cursor-pointer">
-                    <AvatarImage src={user?.profile_image || `https://picsum.photos/seed/${avatarSeed}/100/100`} />
+                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${avatarSeed}/100/100`} />
                     <AvatarFallback>{avatarFallback}</AvatarFallback>
                 </Avatar>
                )}
@@ -233,9 +237,9 @@ export function HeaderNav() {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                 <Link href="#">
-                  <Inbox className="mr-2 h-4 w-4" />
-                  <span>Inbox</span>
+                 <Link href="/notifications">
+                  <Bell className="mr-2 h-4 w-4" />
+                  <span>Notifications</span>
                 </Link>
               </DropdownMenuItem>
                <DropdownMenuSeparator />
@@ -334,7 +338,7 @@ export function HeaderNav() {
                                 <Skeleton className="h-9 w-9 rounded-full" />
                              ) : (
                                 <Avatar className="h-9 w-9">
-                                    <AvatarImage src={user?.profile_image || `https://picsum.photos/seed/${avatarSeed}/100/100`} />
+                                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${avatarSeed}/100/100`} />
                                     <AvatarFallback>{avatarFallback}</AvatarFallback>
                                 </Avatar>
                              )}

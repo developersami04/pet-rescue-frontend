@@ -663,3 +663,84 @@ export async function deleteAdoptionRequest(token: string, requestId: number) {
         throw new Error('An unknown error occurred while deleting the adoption request.');
     }
 }
+
+export async function getNotifications(
+  token: string,
+  filters: { pet_status?: string; read_status?: string } = {}
+) {
+  if (!API_BASE_URL) {
+    throw new Error('API is not configured. Please contact support.');
+  }
+
+  const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.notifications}`);
+  if (filters.pet_status && filters.pet_status !== 'all') {
+    url.searchParams.append('pet_status', filters.pet_status);
+  }
+  if (filters.read_status && filters.read_status !== 'all') {
+    url.searchParams.append('read_status', filters.read_status);
+  }
+
+  try {
+    const response = await fetchWithAuth(url.toString(), {
+      method: 'GET',
+      cache: 'no-store',
+    }, token);
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || result.detail || 'Failed to fetch notifications.');
+    }
+
+    return result.data || [];
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      throw new Error('Request for notifications timed out.');
+    }
+    if (error.message?.includes('Session expired')) {
+      throw new Error('Session expired');
+    }
+    console.error('Error fetching notifications:', error);
+    throw new Error(error.message || 'An unknown error occurred while fetching notifications.');
+  }
+}
+
+export async function readNotification(token: string, notificationId: number) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.notifications}${notificationId}`;
+
+    try {
+        const response = await fetchWithAuth(url, { method: 'GET' }, token);
+        if (!response.ok) {
+            const result = await response.json();
+            throw new Error(result.message || 'Failed to read notification.');
+        }
+        // Backend automatically marks as read, GET returns the notification detail
+        return await response.json();
+    } catch (error) {
+        console.error('Error reading notification:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred.');
+    }
+}
+
+export async function deleteNotification(token: string, notificationId: number) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.notifications}${notificationId}`;
+
+    try {
+        const response = await fetchWithAuth(url, { method: 'DELETE' }, token);
+        if (!response.ok && response.status !== 204) {
+            const result = await response.json();
+            throw new Error(result.message || 'Failed to delete notification.');
+        }
+        return { message: 'Notification deleted successfully.' };
+    } catch (error) {
+        console.error('Error deleting notification:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred.');
+    }
+}

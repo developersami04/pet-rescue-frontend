@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Loading from './loading';
 import { BottomNavBar } from '@/components/bottom-nav-bar';
+import { NotificationProvider } from '@/hooks/use-notifications';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -22,9 +23,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <main className="flex-1 pb-20">{children}</main>
-      <BottomNavBar />
-    </div>
+    <NotificationProvider>
+        <div className="flex min-h-screen flex-col">
+          <main className="flex-1 pb-20">{children}</main>
+          <BottomNavBar />
+        </div>
+    </NotificationProvider>
   );
 }

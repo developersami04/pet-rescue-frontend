@@ -9,6 +9,7 @@ import { LandingHeader } from './_components/landing-header';
 import { HeaderNav } from '@/components/header-nav';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeProvider } from '@/components/theme-provider';
+import { NotificationProvider } from '@/hooks/use-notifications';
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -63,9 +64,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <AppLayout>
-              {children}
-            </AppLayout>
+            <NotificationProvider>
+              <AppLayout>
+                {children}
+              </AppLayout>
+            </NotificationProvider>
             <Toaster />
           </AuthProvider>
         </ThemeProvider>

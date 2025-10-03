@@ -20,6 +20,8 @@ const API_ENDPOINTS = {
   petRequestView: '/api/pet-data/pet-request-view/',
 
   petAdoptions: '/api/pet-data/pet-adoptions/',
+
+  notifications: '/api/pet-data/notifications/',
 };
 
 export const API_REQUEST_TIMEOUT = 10000; 

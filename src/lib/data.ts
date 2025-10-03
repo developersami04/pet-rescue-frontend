@@ -115,6 +115,17 @@ export type User = {
   is_staff: boolean;
 };
 
+export type Notification = {
+  id: number;
+  message: string;
+  created_at: string;
+  is_read: boolean;
+  pet_id: number;
+  pet_name: string;
+  pet_image: string | null;
+  pet_status: 'lost' | 'found' | 'adoptable' | 'adoption-request';
+};
+
 
 // This is now fetched from the API, but we keep it for reference or fallback.
 export const pets: Pet[] = [];
