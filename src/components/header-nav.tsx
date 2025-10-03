@@ -22,7 +22,8 @@ import {
   Info,
   Phone,
   Shapes,
-  Rss,
+  AlertTriangle,
+  Hand,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -54,7 +55,11 @@ const navItems = {
   pets: [
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },
     { href: "/pet-categories", icon: Shapes, label: "Pet Categories" },
-    { href: "/submit-request", icon: PlusCircle, label: "Pet Request Form" },
+  ],
+  reports: [
+    { href: "/pets?status=lost", icon: AlertTriangle, label: "Lost Pets" },
+    { href: "/pets?status=found", icon: Search, label: "Found Pets" },
+    { href: "/pets?status=adoptable", icon: Hand, label: "Adoptable Pets" },
   ],
   more: [
       { href: "/about-us", icon: Info, label: "About Us" },
@@ -179,7 +184,14 @@ export function HeaderNav() {
               </Button>
             )})}
             <DropdownNav label="Pets" items={navItems.pets} />
+            <DropdownNav label="Reports" items={navItems.reports} />
             <DropdownNav label="More" items={navItems.more} />
+             <Button asChild size="sm" className="ml-4">
+                <Link href="/submit-request">
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Pet Request
+                </Link>
+            </Button>
           </nav>
         </div>
 
@@ -292,7 +304,7 @@ export function HeaderNav() {
                     />
                   </div>
                   <nav className="flex flex-col gap-1">
-                    {[...navItems.main, ...navItems.pets, ...navItems.more].map(
+                    {[...navItems.main, ...navItems.pets, ...navItems.reports, ...navItems.more].map(
                       (item) => (
                         <NavLink
                           key={item.href}
@@ -305,6 +317,14 @@ export function HeaderNav() {
                         </NavLink>
                       )
                     )}
+                    <NavLink
+                        href="/submit-request"
+                        className="text-base mt-2 bg-primary/10 text-primary"
+                        closeMenu={closeMobileMenu}
+                        >
+                        <PlusCircle className="h-5 w-5" />
+                        Pet Request Form
+                    </NavLink>
                   </nav>
                 </div>
                  <div className="border-t p-4">
