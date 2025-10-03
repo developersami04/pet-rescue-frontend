@@ -718,18 +718,19 @@ export async function getNotifications(
 
 export async function readNotification(token: string, notificationId: number) {
     if (!API_BASE_URL) {
-        throw new Error('API is not configured.');
+        throw new Error('API is not configured. Please contact support.');
     }
     const url = `${API_BASE_URL}${API_ENDPOINTS.notifications}${notificationId}`;
 
     try {
         const response = await fetchWithAuth(url, { method: 'GET' }, token);
+        const result = await response.json();
+
         if (!response.ok) {
-            const result = await response.json();
             throw new Error(result.message || 'Failed to read notification.');
         }
         // Backend automatically marks as read, GET returns the notification detail
-        return await response.json();
+        return result.data;
     } catch (error) {
         console.error('Error reading notification:', error);
         if (error instanceof Error) throw error;
@@ -739,7 +740,7 @@ export async function readNotification(token: string, notificationId: number) {
 
 export async function deleteNotification(token: string, notificationId: number) {
     if (!API_BASE_URL) {
-        throw new Error('API is not configured.');
+        throw new Error('API is not configured. Please contact support.');
     }
     const url = `${API_BASE_URL}${API_ENDPOINTS.notifications}${notificationId}`;
 
