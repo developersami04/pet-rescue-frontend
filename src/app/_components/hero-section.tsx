@@ -18,7 +18,7 @@ export function HeroSection() {
           fill
           className="object-cover"
           data-ai-hint={heroImage.imageHint}
-          priority
+          priority={true}
         />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20" />
