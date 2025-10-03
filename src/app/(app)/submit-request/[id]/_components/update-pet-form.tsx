@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -387,7 +386,13 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
                 </FormControl></PopoverTrigger><PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={field.value ?? undefined} onSelect={field.onChange} disabled={(date) => date > new Date() || date < new Date('1900-01-01')} initialFocus />
+                    <Calendar
+                        mode="single"
+                        selected={field.value ?? undefined}
+                        onSelect={field.onChange}
+                        disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                        initialFocus
+                    />
                 </PopoverContent></Popover><FormMessage />
                 </FormItem>
                 )}
@@ -443,5 +448,3 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     </Form>
   );
 }
-
-    

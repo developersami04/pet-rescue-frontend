@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useContext, createContext, useCallback } from 'react';
-import { checkUserAuth } from './action_api';
+import { checkUserAuth } from './actions/user.actions';
 import { toast } from '@/hooks/use-toast';
 import { User } from './data';
 
