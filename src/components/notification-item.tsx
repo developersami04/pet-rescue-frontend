@@ -39,7 +39,7 @@ function timeAgo(dateString: string) {
       const minutes = Math.floor(interval);
       return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
     }
-    return `${Math.floor(seconds)} second${seconds !== 1 ? 's' : ''} ago`;
+    return `${Math.floor(seconds)} second${Math.floor(seconds) !== 1 ? 's' : ''} ago`;
 }
 
 type NotificationItemProps = {

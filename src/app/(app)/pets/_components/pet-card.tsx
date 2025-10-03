@@ -4,7 +4,6 @@ import Link from 'next/link';
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -57,7 +56,7 @@ export function PetCard({ pet }: PetCardProps) {
         </CardHeader>
         <CardContent className="flex-grow">
           <p className="text-sm text-muted-foreground">
-            {pet.breed || 'Unknown Breed'} &bull; {pet.age ?? 'Unknown'} {pet.age === 1 ? 'year' : 'years'} old
+            {pet.breed || 'Unknown Breed'} &bull; {pet.age ? `${pet.age} ${pet.age === 1 ? 'year' : 'years'} old` : 'Unknown age'}
           </p>
         </CardContent>
       </Card>
