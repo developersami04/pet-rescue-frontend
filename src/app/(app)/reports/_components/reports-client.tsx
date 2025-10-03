@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { getAllPets } from '@/lib/actions';
+import { getAllPets } from '@/lib/actions/pet.actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Pet } from '@/lib/data';

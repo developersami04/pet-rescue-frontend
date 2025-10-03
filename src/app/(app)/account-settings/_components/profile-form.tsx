@@ -22,7 +22,7 @@ import { useUserDetails } from '@/hooks/use-user-details';
 import { useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { updateUserDetails } from '@/lib/actions';
+import { updateUserDetails } from '@/lib/actions/user.actions';
 import { useRouter } from 'next/navigation';
 import { User } from '@/lib/data';
 import { ChangePasswordDialog } from './change-password-dialog';

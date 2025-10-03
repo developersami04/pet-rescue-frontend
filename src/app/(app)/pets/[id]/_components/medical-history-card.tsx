@@ -3,20 +3,7 @@
 
 import { MedicalHistory } from "@/lib/data";
 import { FileText, Pill, Syringe } from "lucide-react";
-
-function format(date: Date | string, formatStr: string) {
-    const d = new Date(date);
-    // Basic PPP format 'Month day, year'
-    if (formatStr === 'PPP') {
-        return new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        }).format(d);
-    }
-    return d.toLocaleDateString();
-}
-
+import { format, parseISO } from 'date-fns';
 
 type MedicalHistoryCardProps = {
     history: MedicalHistory | null;
@@ -42,7 +29,7 @@ export function MedicalHistoryContent({ history }: MedicalHistoryCardProps) {
         )
     }
 
-    const lastVaccinated = history.last_vaccinated_date ? format(history.last_vaccinated_date, 'PPP') : 'N/A';
+    const lastVaccinated = history.last_vaccinated_date ? format(parseISO(history.last_vaccinated_date), 'PPP') : 'N/A';
 
     const hasDiseaseInfo = history.disease_name || history.stage;
     const hasVaccineInfo = history.vaccination_name || history.last_vaccinated_date || history.no_of_years;

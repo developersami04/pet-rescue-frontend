@@ -32,8 +32,21 @@ export async function fetchWithAuth(url: string, options: RequestInit, token: st
     });
 
     if (response.status === 401) {
-        // Removed auto-refresh logic. Directly throw session expired error.
-        throw new Error('Session expired');
+        console.log("Access token expired, attempting to refresh...");
+        const newAccessToken = await refreshAccessToken();
+
+        if (newAccessToken) {
+            console.log("Token refreshed successfully, retrying the original request...");
+            (headers as Record<string, string>)['Authorization'] = `Bearer ${newAccessToken}`;
+            response = await fetchWithTimeout(url, {
+                ...options,
+                headers,
+            });
+        } else {
+            console.log("Failed to refresh token. User will be logged out.");
+             // This custom error will be caught by callers to handle logout
+            throw new Error('Session expired');
+        }
     }
 
     return response;

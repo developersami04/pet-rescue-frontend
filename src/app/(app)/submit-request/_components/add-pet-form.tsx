@@ -27,12 +27,13 @@ import { CalendarIcon, Loader2, Upload } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
-import { getPetTypes, submitRequest } from '@/lib/actions';
+import { getPetTypes, submitRequest } from '@/lib/actions/pet.actions';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Calendar } from '@/components/ui/calendar';
 
@@ -185,7 +186,7 @@ export function AddPetForm() {
                 formData.append(key, ''); // Send empty for null file
             }
         } else if (value instanceof Date) {
-            formData.append(key, value.toISOString().split('T')[0]);
+            formData.append(key, format(value, 'yyyy-MM-dd'));
         } else if (typeof value === 'boolean') {
             formData.append(key, String(value));
         } else if (value === null || value === undefined) {
@@ -312,7 +313,6 @@ export function AddPetForm() {
             <FormField control={form.control} name="vaccination_name" render={({ field }) => (<FormItem><FormLabel>Vaccine Name</FormLabel><FormControl><Input placeholder="e.g., Anti-Rabies Vaccine" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
             <FormField control={form.control} name="stage" render={({ field }) => (<FormItem><FormLabel>Stage</FormLabel><FormControl><Input placeholder="Enter stage" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
             <FormField control={form.control} name="no_of_years" render={({ field }) => (<FormItem><FormLabel>Years Since Vaccination</FormLabel><FormControl><Input type="number" placeholder="Enter years" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
-            {/*
             <FormField
                 control={form.control}
                 name="last_vaccinated_date"
@@ -330,7 +330,7 @@ export function AddPetForm() {
                             )}
                         >
                             {field.value ? (
-                            new Date(field.value).toLocaleDateString()
+                            format(field.value, 'PPP')
                             ) : (
                             <span>Pick a date</span>
                             )}
@@ -354,7 +354,6 @@ export function AddPetForm() {
                 </FormItem>
                 )}
             />
-            */}
         </div>
         <FormField control={form.control} name="note" render={({ field }) => (<FormItem><FormLabel>Note</FormLabel><FormControl><Textarea placeholder="Add any additional medical notes..." className="resize-none" rows={4} {...field} value={field.value ?? ''}/></FormControl><FormMessage /></FormItem>)} />
 
@@ -383,3 +382,5 @@ export function AddPetForm() {
     </Form>
   );
 }
+
+    

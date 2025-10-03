@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { Logo } from "@/components/logo";
+import { Logo } from "./icons";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useAuth } from '@/lib/auth.tsx';
@@ -163,8 +163,11 @@ export function HeaderNav() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-4">
-          <Link href="/" className="mr-4">
-            <Logo />
+          <Link href="/" className="flex items-center gap-2 mr-4">
+            <Logo className="h-7 w-7 text-primary" />
+            <span className="text-lg font-semibold tracking-wider font-headline">
+              Pet-Pal
+            </span>
           </Link>
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-2 nav-break:flex">
@@ -288,9 +291,13 @@ export function HeaderNav() {
                 </SheetTitle>
                 <Link
                   href="/"
+                  className="flex items-center gap-2"
                   onClick={closeMobileMenu}
                 >
-                  <Logo />
+                  <Logo className="h-7 w-7 text-primary" />
+                  <span className="text-lg font-semibold tracking-wider font-headline">
+                    Pet-Pal
+                  </span>
                 </Link>
               </SheetHeader>
               <div className="flex h-full flex-col">

@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { registerUser } from '@/lib/actions';
+import { registerUser } from '@/lib/actions/user.actions';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -87,7 +87,7 @@ export function CreateAccountForm() {
     <Card className="w-full max-w-lg mx-auto">
       <CardHeader className="text-center">
         <CardTitle>Create an Account</CardTitle>
-        <CardDescription>Join Petopia to find your new best friend.</CardDescription>
+        <CardDescription>Join Pet-Pal to find your new best friend.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>

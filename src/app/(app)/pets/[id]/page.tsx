@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getPetById } from '@/lib/actions';
+import { getPetById } from '@/lib/actions/pet.actions';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/lib/auth.tsx';
 import type { Pet } from '@/lib/data';

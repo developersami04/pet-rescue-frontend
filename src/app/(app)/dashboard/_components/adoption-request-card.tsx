@@ -5,44 +5,12 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { MyAdoptionRequest } from "@/lib/data";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
+import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Pen, Trash2 } from "lucide-react";
 import { UpdateAdoptionRequestDialog } from "./update-adoption-request-dialog";
 import { DeleteAdoptionRequestDialog } from "./delete-adoption-request-dialog";
-
-function timeAgo(dateString: string) {
-    const date = new Date(dateString);
-    const now = new Date();
-    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-  
-    let interval = seconds / 31536000;
-    if (interval > 1) {
-      const years = Math.floor(interval);
-      return `${years} year${years > 1 ? 's' : ''} ago`;
-    }
-    interval = seconds / 2592000;
-    if (interval > 1) {
-      const months = Math.floor(interval);
-      return `${months} month${months > 1 ? 's' : ''} ago`;
-    }
-    interval = seconds / 86400;
-    if (interval > 1) {
-      const days = Math.floor(interval);
-      return `${days} day${days > 1 ? 's' : ''} ago`;
-    }
-    interval = seconds / 3600;
-    if (interval > 1) {
-      const hours = Math.floor(interval);
-      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    }
-    interval = seconds / 60;
-    if (interval > 1) {
-      const minutes = Math.floor(interval);
-      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    }
-    return `${Math.floor(seconds)} second${Math.floor(seconds) !== 1 ? 's' : ''} ago`;
-}
 
 type AdoptionRequestCardProps = {
     request: MyAdoptionRequest;
@@ -90,7 +58,7 @@ export function AdoptionRequestCard({ request, onUpdate }: AdoptionRequestCardPr
                     </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground pt-1">
-                    Requested {timeAgo(request.created_at)}
+                    Requested {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
                 </p>
             </CardHeader>
             <CardFooter className="p-4 pt-0 flex gap-2">

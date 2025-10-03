@@ -3,44 +3,12 @@
 
 import type { Notification } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { Check, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-
-function timeAgo(dateString: string) {
-    const date = new Date(dateString);
-    const now = new Date();
-    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-  
-    let interval = seconds / 31536000;
-    if (interval > 1) {
-      const years = Math.floor(interval);
-      return `${years} year${years > 1 ? 's' : ''} ago`;
-    }
-    interval = seconds / 2592000;
-    if (interval > 1) {
-      const months = Math.floor(interval);
-      return `${months} month${months > 1 ? 's' : ''} ago`;
-    }
-    interval = seconds / 86400;
-    if (interval > 1) {
-      const days = Math.floor(interval);
-      return `${days} day${days > 1 ? 's' : ''} ago`;
-    }
-    interval = seconds / 3600;
-    if (interval > 1) {
-      const hours = Math.floor(interval);
-      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    }
-    interval = seconds / 60;
-    if (interval > 1) {
-      const minutes = Math.floor(interval);
-      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    }
-    return `${Math.floor(seconds)} second${Math.floor(seconds) !== 1 ? 's' : ''} ago`;
-}
 
 type NotificationItemProps = {
   notification: Notification;
@@ -99,7 +67,7 @@ export function NotificationItem({ notification, onMarkAsRead, onDelete, isLast 
       <div className="flex-1">
         <p className="text-sm leading-snug">{notification.message}</p>
         <p className="text-xs text-muted-foreground mt-1">
-          {timeAgo(notification.created_at)}
+          {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
         </p>
       </div>
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

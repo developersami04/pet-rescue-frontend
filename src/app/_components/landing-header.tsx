@@ -2,7 +2,7 @@
 'use client';
 
 import Link from "next/link";
-import { Sun, Moon, Laptop } from "lucide-react";
+import { PawPrint, Sun, Moon, Laptop } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import {
@@ -11,7 +11,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Logo } from "@/components/logo";
 
 
 export function LandingHeader() {
@@ -19,8 +18,11 @@ export function LandingHeader() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link href="/" prefetch={false}>
-          <Logo />
+        <Link href="/" className="flex items-center gap-2" prefetch={false}>
+          <PawPrint className="h-8 w-8 text-primary" />
+          <span className="text-xl font-bold tracking-wider text-foreground">
+            Petopia
+          </span>
         </Link>
         <nav className="flex items-center gap-2">
             <DropdownMenu>
