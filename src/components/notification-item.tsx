@@ -7,23 +7,23 @@ import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { Check, Trash2 } from 'lucide-react';
-import { useNotifications } from '@/hooks/use-notifications';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
 type NotificationItemProps = {
   notification: Notification;
+  onMarkAsRead: (id: number) => Promise<void>;
+  onDelete: (id: number) => Promise<void>;
   isLast?: boolean;
 };
 
-export function NotificationItem({ notification, isLast = false }: NotificationItemProps) {
-    const { markAsRead, deleteNotification } = useNotifications();
+export function NotificationItem({ notification, onMarkAsRead, onDelete, isLast = false }: NotificationItemProps) {
     const router = useRouter();
     const { toast } = useToast();
 
     const handleNavigate = async () => {
         if (!notification.is_read) {
-            await markAsRead(notification.id);
+            await onMarkAsRead(notification.id);
         }
         router.push(`/pets/${notification.pet_id}`);
     };
@@ -31,7 +31,7 @@ export function NotificationItem({ notification, isLast = false }: NotificationI
     const handleDelete = async (e: React.MouseEvent) => {
         e.stopPropagation();
         try {
-            await deleteNotification(notification.id);
+            await onDelete(notification.id);
             toast({ title: "Notification deleted" });
         } catch (error: any) {
             toast({ variant: "destructive", title: "Failed to delete", description: error.message });
@@ -41,7 +41,7 @@ export function NotificationItem({ notification, isLast = false }: NotificationI
     const handleMarkAsRead = async (e: React.MouseEvent) => {
         e.stopPropagation();
         try {
-            await markAsRead(notification.id);
+            await onMarkAsRead(notification.id);
             toast({ title: "Marked as read" });
         } catch (error: any) {
             toast({ variant: "destructive", title: "Failed to mark as read", description: error.message });

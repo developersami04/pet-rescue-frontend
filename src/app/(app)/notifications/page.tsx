@@ -20,7 +20,7 @@ import { useAuth } from '@/lib/auth.tsx';
 
 export default function NotificationsPage() {
   const { user } = useAuth();
-  const { fetchNotifications: refreshNotifications, unreadCount } = useNotifications();
+  const { unreadCount, markAsRead, deleteNotification } = useNotifications();
   const [allNotifications, setAllNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
@@ -50,8 +50,20 @@ export default function NotificationsPage() {
 
   const handleRefresh = () => {
     fetchAllNotifications();
-    refreshNotifications(); // Also refresh the global state
   };
+
+  const handleMarkAsReadInList = async (id: number) => {
+    await markAsRead(id);
+    setAllNotifications(prev =>
+        prev.map(n => (n.id === id ? { ...n, is_read: true } : n))
+      );
+  };
+  
+  const handleDeleteInList = async (id: number) => {
+      await deleteNotification(id);
+      setAllNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
@@ -102,7 +114,11 @@ export default function NotificationsPage() {
             <p className="mt-2">Loading notifications...</p>
           </div>
         ) : (
-          <NotificationList notifications={allNotifications} />
+          <NotificationList 
+            notifications={allNotifications}
+            onMarkAsRead={handleMarkAsReadInList}
+            onDelete={handleDeleteInList}
+          />
         )}
       </div>
     </div>

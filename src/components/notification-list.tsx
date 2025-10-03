@@ -8,9 +8,11 @@ import { Bell } from 'lucide-react';
 
 type NotificationListProps = {
   notifications: Notification[];
+  onMarkAsRead: (id: number) => Promise<void>;
+  onDelete: (id: number) => Promise<void>;
 };
 
-export function NotificationList({ notifications }: NotificationListProps) {
+export function NotificationList({ notifications, onMarkAsRead, onDelete }: NotificationListProps) {
   if (notifications.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground">
@@ -28,6 +30,8 @@ export function NotificationList({ notifications }: NotificationListProps) {
           <NotificationItem
             key={notification.id}
             notification={notification}
+            onMarkAsRead={onMarkAsRead}
+            onDelete={onDelete}
             isLast={index === notifications.length - 1}
           />
         ))}

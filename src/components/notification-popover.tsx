@@ -14,9 +14,8 @@ import { Card, CardHeader, CardTitle, CardFooter } from './ui/card';
 import Link from 'next/link';
 
 export function NotificationPopover() {
-  const { notifications, unreadCount } = useNotifications();
-  const unreadNotifications = notifications.filter(n => !n.is_read);
-
+  const { notifications, unreadCount, markAsRead, deleteNotification } = useNotifications();
+  
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -42,7 +41,11 @@ export function NotificationPopover() {
                  <span className="text-sm text-muted-foreground">{unreadCount} unread</span>
             )}
           </CardHeader>
-          <NotificationList notifications={unreadNotifications.slice(0, 5)} />
+          <NotificationList 
+            notifications={notifications.slice(0, 5)}
+            onMarkAsRead={markAsRead}
+            onDelete={deleteNotification}
+          />
           <CardFooter className="p-2 border-t">
              <Button variant="link" className="w-full" asChild>
                  <Link href="/notifications">View all notifications</Link>

@@ -10,7 +10,6 @@ type NotificationContextType = {
   notifications: Notification[];
   unreadCount: number;
   isLoading: boolean;
-  fetchNotifications: () => void;
   markAsRead: (id: number) => Promise<void>;
   deleteNotification: (id: number) => Promise<void>;
 };
@@ -23,7 +22,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchNotifications = useCallback(async () => {
+  const fetchUnreadNotifications = useCallback(async () => {
     if (!isAuthenticated) {
       setNotifications([]);
       setUnreadCount(0);
@@ -35,35 +34,37 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     setIsLoading(true);
     try {
-      const allNotifications = await getNotifications(token);
-      setNotifications(allNotifications);
-      const unread = allNotifications.filter((n: Notification) => !n.is_read).length;
-      setUnreadCount(unread);
+      // Fetch only unread notifications for the popover and badge count
+      const unreadNotifications = await getNotifications(token, { read_status: 'unread' });
+      setNotifications(unreadNotifications);
+      setUnreadCount(unreadNotifications.length);
     } catch (error) {
-      console.error("Failed to fetch notifications", error);
+      console.error("Failed to fetch unread notifications", error);
     } finally {
       setIsLoading(false);
     }
   }, [isAuthenticated]);
 
   useEffect(() => {
-    fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000); // Poll every minute
+    fetchUnreadNotifications();
+    const interval = setInterval(fetchUnreadNotifications, 60000); // Poll every minute
     return () => clearInterval(interval);
-  }, [fetchNotifications]);
+  }, [fetchUnreadNotifications]);
 
   const markAsRead = async (id: number) => {
     const token = localStorage.getItem('authToken');
     if (!token) return;
 
+    const notification = notifications.find(n => n.id === id);
+    if (!notification || notification.is_read) return;
+
     try {
       await apiReadNotification(token, id);
-      setNotifications(prev =>
-        prev.map(n => (n.id === id ? { ...n, is_read: true } : n))
-      );
+      setNotifications(prev => prev.filter(n => n.id !== id));
       setUnreadCount(prev => (prev > 0 ? prev - 1 : 0));
     } catch (error) {
       console.error(`Failed to mark notification ${id} as read`, error);
+      throw error;
     }
   };
 
@@ -81,11 +82,12 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       }
     } catch (error) {
       console.error(`Failed to delete notification ${id}`, error);
+      throw error;
     }
   };
 
   return (
-    <NotificationContext.Provider value={{ notifications, unreadCount, isLoading, fetchNotifications, markAsRead, deleteNotification }}>
+    <NotificationContext.Provider value={{ notifications, unreadCount, isLoading, markAsRead, deleteNotification }}>
       {children}
     </NotificationContext.Provider>
   );
