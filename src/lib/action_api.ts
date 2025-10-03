@@ -3,7 +3,7 @@
 
 import { z } from "zod";
 import API_ENDPOINTS, { API_REQUEST_TIMEOUT } from "./endpoints";
-import { Pet } from "./data";
+import { Pet, Notification } from "./data";
 import { format } from "date-fns";
 
 type PetType = {
@@ -667,7 +667,7 @@ export async function deleteAdoptionRequest(token: string, requestId: number) {
 export async function getNotifications(
   token: string,
   filters: { pet_status?: string; read_status?: string } = {}
-) {
+): Promise<Notification[]> {
   if (!API_BASE_URL) {
     throw new Error('API is not configured. Please contact support.');
   }
@@ -690,8 +690,20 @@ export async function getNotifications(
     if (!response.ok) {
       throw new Error(result.message || result.detail || 'Failed to fetch notifications.');
     }
+    
+    // Transform the nested data into the flat Notification structure
+    const transformedData = result.data.map((item: any): Notification => ({
+        id: item.id,
+        message: item.content, // Map content to message
+        created_at: item.created_at,
+        is_read: item.is_read,
+        pet_id: item.pet,
+        pet_name: item.pet_name,
+        pet_image: item.pet_data?.pet_image || null,
+        pet_status: item.pet_data?.pet_status || 'adoptable',
+    }));
 
-    return result.data || [];
+    return transformedData || [];
   } catch (error: any) {
     if (error.name === 'AbortError') {
       throw new Error('Request for notifications timed out.');
