@@ -5,7 +5,6 @@ import { useState, useEffect, useContext, createContext, useCallback } from 'rea
 import { checkUserAuth } from './actions';
 import { toast } from '@/hooks/use-toast';
 import { User } from './data';
-import { useRouter } from 'next/navigation';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -21,7 +20,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const router = useRouter();
   
   const logout = useCallback(() => {
     localStorage.removeItem('authToken');
@@ -56,15 +54,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           toast({ title: "Login Successful", description: message });
       }
     } else {
-      setIsAuthenticated(false);
-      setUser(null);
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('username');
-      // The console.error was removed from here as it's a normal flow for an expired token.
+      logout();
     }
     setIsLoading(false);
-  }, [router, toast, logout, user]);
+  }, [logout, user]);
 
   useEffect(() => {
     verifyAuth();
@@ -81,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []); // Changed dependency to [] to run only once on mount
+  }, [verifyAuth]);
 
   const login = (token: string, refreshToken: string) => {
     localStorage.setItem('authToken', token);
