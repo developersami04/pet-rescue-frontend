@@ -24,6 +24,7 @@ import {
   AlertTriangle,
   Hand,
   Bell,
+  FileText,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -58,6 +59,7 @@ const navItems = {
     { href: "/pet-categories", icon: Shapes, label: "Pet Categories" },
   ],
   reports: [
+    { href: "/reports", icon: FileText, label: "All Reports" },
     { href: "/pets?status=lost", icon: AlertTriangle, label: "Lost Pets" },
     { href: "/pets?status=found", icon: Search, label: "Found Pets" },
     { href: "/pets?status=adoptable", icon: Hand, label: "Adoptable Pets" },

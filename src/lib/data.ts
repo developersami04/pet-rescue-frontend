@@ -1,5 +1,4 @@
 
-
 export type MedicalHistory = {
     id: number;
     pet: number;
@@ -76,7 +75,7 @@ export type Pet = {
   medical_history: MedicalHistory | null;
   adoption_requests: AdoptionRequest[] | null;
   pet_report: PetReport | null;
-  pet_status?: 'lost' | 'found' | null;
+  pet_status?: 'lost' | 'found' | 'adopt' | null;
   available_for_adopt?: boolean;
 };
 
