@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { MyPetsSection } from "./my-pets-section";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { LostPetsSection } from "./lost-pets-section";
 import { FoundPetsSection } from "./found-pets-section";
 import { AdoptablePetsSection } from "./adoptable-pets-section";
@@ -15,6 +15,7 @@ import { getMyPets, getMyPetData } from "@/lib/action_api";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { DashboardStats } from "./dashboard-stats";
+import { DashboardTabs } from "./dashboard-tabs";
 
 export function DashboardClient() {
   const [myPets, setMyPets] = useState<Pet[]>([]);
@@ -23,6 +24,7 @@ export function DashboardClient() {
   const [adoptablePets, setAdoptablePets] = useState<PetReport[]>([]);
   const [adoptionRequests, setAdoptionRequests] = useState<MyAdoptionRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("my-pets");
   const { toast } = useToast();
   const router = useRouter();
   
@@ -76,6 +78,14 @@ export function DashboardClient() {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
+  const tabs = [
+      { value: "my-pets", content: <MyPetsSection myPets={myPets} /> },
+      { value: "lost-pets", content: <LostPetsSection lostPets={lostPets} /> },
+      { value: "found-pets", content: <FoundPetsSection foundPets={foundPets} /> },
+      { value: "adoptable-pets", content: <AdoptablePetsSection adoptablePets={adoptablePets} /> },
+      { value: "my-requests", content: <MyRequestsSection requests={adoptionRequests} onUpdate={fetchDashboardData} /> },
+  ];
+
   return (
     <>
       <DashboardStats 
@@ -88,37 +98,22 @@ export function DashboardClient() {
       />
       <Separator className="my-8" />
       
-        <Tabs defaultValue="my-pets" className="mt-8">
-            <TabsList className="mb-6 h-auto flex-wrap justify-start">
-                <TabsTrigger value="my-pets">My Pets</TabsTrigger>
-                <TabsTrigger value="lost-pets">Lost Pets</TabsTrigger>
-                <TabsTrigger value="found-pets">Found Pets</TabsTrigger>
-                <TabsTrigger value="adoptable-pets">Adoptable Pets</TabsTrigger>
-                <TabsTrigger value="my-requests">My Adopt Requests</TabsTrigger>
-            </TabsList>
-            {isLoading ? (
-                <div className="flex items-center justify-center p-8 h-64">
-                    <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                </div>
-            ) : (
-                <>
-                    <TabsContent value="my-pets">
-                        <MyPetsSection myPets={myPets} />
-                    </TabsContent>
-                    <TabsContent value="lost-pets">
-                        <LostPetsSection lostPets={lostPets} />
-                    </TabsContent>
-                    <TabsContent value="found-pets">
-                        <FoundPetsSection foundPets={foundPets} />
-                    </TabsContent>
-                    <TabsContent value="adoptable-pets">
-                        <AdoptablePetsSection adoptablePets={adoptablePets} />
-                    </TabsContent>
-                    <TabsContent value="my-requests">
-                        <MyRequestsSection requests={adoptionRequests} onUpdate={fetchDashboardData} />
-                    </TabsContent>
-                </>
-            )}
+        <Tabs defaultValue="my-pets" value={activeTab} onValueChange={setActiveTab} className="mt-8">
+            <DashboardTabs activeTab={activeTab} onTabChange={setActiveTab} />
+            
+            <div className="mt-6">
+                {isLoading ? (
+                    <div className="flex items-center justify-center p-8 h-64">
+                        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                    </div>
+                ) : (
+                    tabs.map(tab => (
+                        <TabsContent key={tab.value} value={tab.value}>
+                            {tab.content}
+                        </TabsContent>
+                    ))
+                )}
+            </div>
         </Tabs>
     </>
   );
