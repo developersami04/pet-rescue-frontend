@@ -36,6 +36,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Calendar } from '@/components/ui/calendar';
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 const basePetSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -93,6 +94,8 @@ export function AddPetForm() {
   const [petImagePreview, setPetImagePreview] = useState<string | null>(null);
   const [reportImagePreview, setReportImagePreview] = useState<string | null>(null);
   const [petTypes, setPetTypes] = useState<PetType[]>([]);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [lastSubmittedPet, setLastSubmittedPet] = useState<{name: string, message: string} | null>(null);
   
   const form = useForm<z.infer<typeof addPetSchema>>({
     resolver: zodResolver(addPetSchema),
@@ -147,6 +150,12 @@ export function AddPetForm() {
     fetchPetTypes();
   }, [toast]);
 
+  const resetForm = () => {
+    form.reset();
+    setPetImagePreview(null);
+    setReportImagePreview(null);
+  }
+
   async function onSubmit(values: z.infer<typeof addPetSchema>) {
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -198,13 +207,8 @@ export function AddPetForm() {
 
     try {
         const result = await submitRequest(token, formData);
-        toast({
-            title: 'Request Submitted!',
-            description: result.message || `${values.name} has been submitted.`,
-        });
-        form.reset();
-        setPetImagePreview(null);
-        setReportImagePreview(null);
+        setLastSubmittedPet({ name: values.name, message: result.message || 'Pet has been submitted.'});
+        setShowSuccessDialog(true);
     } catch (error: any) {
         if (error.message.includes('Session expired')) {
             toast({
@@ -226,6 +230,25 @@ export function AddPetForm() {
     }
   }
 
+  const handleAnotherRequest = () => {
+    resetForm();
+    setShowSuccessDialog(false);
+    toast({
+        title: 'Form Reset',
+        description: 'You can now submit another pet request.',
+    });
+  }
+
+  const handleGoToDashboard = () => {
+    setShowSuccessDialog(false);
+    toast({
+        title: 'Request Submitted!',
+        description: lastSubmittedPet?.message || `${lastSubmittedPet?.name} has been submitted.`,
+    });
+    router.push('/dashboard');
+  }
+
+
   const handlePetImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -245,6 +268,7 @@ export function AddPetForm() {
   };
 
   return (
+    <>
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         
@@ -380,7 +404,24 @@ export function AddPetForm() {
         </Button>
       </form>
     </Form>
+    <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+            <AlertDialogTitle>Request Submitted Successfully!</AlertDialogTitle>
+            <AlertDialogDescription>
+                Your pet request for {lastSubmittedPet?.name} has been processed. What would you like to do next?
+            </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+                <Button variant="outline" onClick={handleAnotherRequest}>Submit Another Request</Button>
+                <Button onClick={handleGoToDashboard}>Go to Dashboard</Button>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }
+
+    
 
     
