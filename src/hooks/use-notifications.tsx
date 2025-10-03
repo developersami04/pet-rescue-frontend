@@ -47,8 +47,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     fetchUnreadNotifications();
-    const interval = setInterval(fetchUnreadNotifications, 60000); // Poll every minute
-    return () => clearInterval(interval);
   }, [fetchUnreadNotifications]);
 
   const markAsRead = async (id: number) => {
