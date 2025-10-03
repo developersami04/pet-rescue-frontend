@@ -720,7 +720,7 @@ export async function readNotification(token: string, notificationId: number) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
-    const url = `${API_BASE_URL}${API_ENDPOINTS.notifications}${notificationId}`;
+    const url = `${API_BASE_URL}${API_ENDPOINTS.notifications}${notificationId}/`;
 
     try {
         const response = await fetchWithAuth(url, { method: 'GET' }, token);
@@ -729,7 +729,6 @@ export async function readNotification(token: string, notificationId: number) {
         if (!response.ok) {
             throw new Error(result.message || 'Failed to read notification.');
         }
-        // Backend automatically marks as read, GET returns the notification detail
         return result.data;
     } catch (error) {
         console.error('Error reading notification:', error);
@@ -742,7 +741,7 @@ export async function deleteNotification(token: string, notificationId: number) 
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
-    const url = `${API_BASE_URL}${API_ENDPOINTS.notifications}${notificationId}`;
+    const url = `${API_BASE_URL}${API_ENDPOINTS.notifications}${notificationId}/`;
 
     try {
         const response = await fetchWithAuth(url, { method: 'DELETE' }, token);
