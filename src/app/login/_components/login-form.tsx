@@ -52,7 +52,12 @@ export function LoginForm() {
         localStorage.setItem('username', result.user.username);
       }
       
-      router.push('/dashboard');
+      if (result.user?.is_admin) {
+        router.push('/admin/dashboard');
+      } else {
+        router.push('/dashboard');
+      }
+
     } catch (error: any) {
       toast({
         variant: 'destructive',
