@@ -25,7 +25,6 @@ import {
   Hand,
   Bell,
   FileText,
-  Shield,
   ShieldCheck,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -53,18 +52,15 @@ import { Skeleton } from "./ui/skeleton";
 import { NotificationPopover } from "./notification-popover";
 
 const navItems = {
-  main: [
-      { href: "/admin/dashboard", icon: LayoutGrid, label: "Admin Dashboard", shortLabel: "Admin" },
-      { href: "/admin/approve-reports", icon: ShieldCheck, label: "Approve Reports", shortLabel: "Approvals"},
-    ],
+  admin: [
+    { href: "/admin/dashboard", icon: LayoutGrid, label: "Admin Dashboard" },
+    { href: "/admin/approve-reports", icon: ShieldCheck, label: "Approve Reports" },
+  ],
   general: [
     { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },
     { href: "/pet-categories", icon: Shapes, label: "Pet Categories" },
     { href: "/reports", icon: FileText, label: "All Reports" },
-    { href: "/pets?status=lost", icon: AlertTriangle, label: "Lost Pets" },
-    { href: "/pets?status=found", icon: Search, label: "Found Pets" },
-    { href: "/pets?status=adoptable", icon: Hand, label: "Adoptable Pets" },
   ],
   more: [
       { href: "/about-us", icon: Info, label: "About Us" },
@@ -173,7 +169,7 @@ export function AdminHeader() {
           </Link>
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-2 nav-break:flex">
-            {navItems.main.map((item) => {
+            {navItems.admin.map((item) => {
               const isActive = pathname === item.href;
               return(
               <Button
@@ -183,7 +179,6 @@ export function AdminHeader() {
                 className={cn("text-sm font-medium relative", isActive ? "text-primary" : "text-foreground")}
               >
                 <Link href={item.href}>
-                  <item.icon className="mr-2 h-4 w-4" />
                   {item.label}
                   {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-1 bg-primary rounded-full" />}
                   </Link>
@@ -312,7 +307,7 @@ export function AdminHeader() {
                     />
                   </div>
                   <nav className="flex flex-col gap-1">
-                    {[...navItems.main, ...navItems.general, ...navItems.more].map(
+                    {[...navItems.admin, ...navItems.general, ...navItems.more].map(
                       (item) => (
                         <NavLink
                           key={item.href}
@@ -374,5 +369,3 @@ export function AdminHeader() {
     </header>
   );
 }
-
-    
