@@ -10,12 +10,13 @@ import { LostPetsSection } from "./lost-pets-section";
 import { FoundPetsSection } from "./found-pets-section";
 import { AdoptablePetsSection } from "./adoptable-pets-section";
 import { MyRequestsSection } from "./my-requests-section";
-import { Pet, PetReport, MyAdoptionRequest } from "@/lib/data";
+import { Pet, PetReport, MyAdoptionRequest, AdoptionRequest } from "@/lib/data";
 import { getMyPets, getMyPetData } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { DashboardStats } from "./dashboard-stats";
 import { DashboardTabs } from "./dashboard-tabs";
+import { AdoptionRequestsReceivedSection } from "./adoption-requests-received-section";
 
 export function DashboardClient() {
   const [myPets, setMyPets] = useState<Pet[]>([]);
@@ -23,6 +24,7 @@ export function DashboardClient() {
   const [foundPets, setFoundPets] = useState<PetReport[]>([]);
   const [adoptablePets, setAdoptablePets] = useState<PetReport[]>([]);
   const [adoptionRequests, setAdoptionRequests] = useState<MyAdoptionRequest[]>([]);
+  const [adoptionRequestsReceived, setAdoptionRequestsReceived] = useState<AdoptionRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("my-pets");
   const { toast } = useToast();
@@ -36,12 +38,13 @@ export function DashboardClient() {
     }
     setIsLoading(true);
     try {
-        const [myPetsData, lostPetsData, foundPetsData, adoptablePetsData, adoptionRequestsData] = await Promise.all([
+        const [myPetsData, lostPetsData, foundPetsData, adoptablePetsData, adoptionRequestsData, adoptionRequestsReceivedData] = await Promise.all([
             getMyPets(token),
             getMyPetData(token, 'lost'),
             getMyPetData(token, 'found'),
             getMyPetData(token, 'adopt'),
-            getMyPetData(token, 'my-adoption-requests')
+            getMyPetData(token, 'my-adoption-requests'),
+            getMyPetData(token, 'adoption-requests-received')
         ]);
 
         setMyPets(myPetsData);
@@ -49,6 +52,7 @@ export function DashboardClient() {
         setFoundPets(foundPetsData as PetReport[]);
         setAdoptablePets(adoptablePetsData as PetReport[]);
         setAdoptionRequests(adoptionRequestsData as MyAdoptionRequest[]);
+        setAdoptionRequestsReceived(adoptionRequestsReceivedData as AdoptionRequest[]);
 
     } catch (error: any) {
          if (error.message.includes('Session expired')) {
@@ -84,6 +88,7 @@ export function DashboardClient() {
       { value: "found-pets", content: <FoundPetsSection foundPets={foundPets} /> },
       { value: "adoptable-pets", content: <AdoptablePetsSection adoptablePets={adoptablePets} /> },
       { value: "my-requests", content: <MyRequestsSection requests={adoptionRequests} onUpdate={fetchDashboardData} /> },
+      { value: "adoption-requests-received", content: <AdoptionRequestsReceivedSection requests={adoptionRequestsReceived} onUpdate={fetchDashboardData} /> },
   ];
 
   return (
@@ -94,6 +99,7 @@ export function DashboardClient() {
         foundPetsCount={foundPets.length}
         adoptablePetsCount={adoptablePets.length}
         myRequestsCount={adoptionRequests.length}
+        adoptionRequestsReceivedCount={adoptionRequestsReceived.length}
         isLoading={isLoading}
       />
       <Separator className="my-8" />

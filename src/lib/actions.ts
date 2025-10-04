@@ -375,7 +375,7 @@ export async function submitRequest(token: string, formData: FormData) {
     }
 }
 
-export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopt' | 'my-adoption-requests'): Promise<any[]> {
+export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopt' | 'my-adoption-requests' | 'adoption-requests-received'): Promise<any[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }

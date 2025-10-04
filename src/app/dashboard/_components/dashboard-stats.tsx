@@ -2,7 +2,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PawPrint, AlertTriangle, Search, FileText, Hand } from "lucide-react";
+import { PawPrint, AlertTriangle, Search, FileText, Hand, Inbox } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type DashboardStatsProps = {
@@ -11,6 +11,7 @@ type DashboardStatsProps = {
     foundPetsCount: number;
     adoptablePetsCount: number;
     myRequestsCount: number;
+    adoptionRequestsReceivedCount: number;
     isLoading: boolean;
 }
 
@@ -48,6 +49,7 @@ export function DashboardStats({
     foundPetsCount,
     adoptablePetsCount,
     myRequestsCount,
+    adoptionRequestsReceivedCount,
     isLoading 
 }: DashboardStatsProps) {
 
@@ -57,10 +59,11 @@ export function DashboardStats({
         { title: "Found Pets", value: foundPetsCount, icon: <Search className="h-4 w-4" /> },
         { title: "Adoptable Pets", value: adoptablePetsCount, icon: <Hand className="h-4 w-4" /> },
         { title: "My Requests", value: myRequestsCount, icon: <FileText className="h-4 w-4" /> },
+        { title: "Requests Received", value: adoptionRequestsReceivedCount, icon: <Inbox className="h-4 w-4" /> },
     ];
 
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
             {stats.map(stat => (
                  <StatCard 
                     key={stat.title}

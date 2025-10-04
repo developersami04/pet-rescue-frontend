@@ -2,7 +2,7 @@
 'use client';
 
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PawPrint, AlertTriangle, Search, Hand, FileText } from "lucide-react";
+import { PawPrint, AlertTriangle, Search, Hand, FileText, Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -12,6 +12,7 @@ const tabInfo = [
     { value: "found-pets", label: "Found Pets", icon: Search },
     { value: "adoptable-pets", label: "Adoptable", icon: Hand },
     { value: "my-requests", label: "My Requests", icon: FileText },
+    { value: "adoption-requests-received", label: "Requests Received", icon: Inbox },
 ]
 
 type DashboardTabTriggerProps = {
