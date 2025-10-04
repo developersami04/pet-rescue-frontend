@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
 import { getAllPets } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Pet } from '@/lib/data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -31,13 +31,25 @@ function ReportsSkeleton() {
     );
 }
 
-export function ReportsClient() {
+function ReportsClientContent() {
     const [pets, setPets] = useState<Pet[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<'lost' | 'found' | 'adopt'>('lost');
-    const { toast } = useToast();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const tabFromUrl = searchParams.get('tab');
+
+    const [activeTab, setActiveTab] = useState<'lost' | 'found' | 'adopt'>(
+        tabFromUrl === 'found' || tabFromUrl === 'adopt' ? tabFromUrl : 'lost'
+    );
+    const { toast } = useToast();
+
+    useEffect(() => {
+        const newTab = searchParams.get('tab');
+        if (newTab === 'lost' || newTab === 'found' || newTab === 'adopt') {
+            setActiveTab(newTab);
+        }
+    }, [searchParams]);
 
     const fetchPets = useCallback(async () => {
         setIsLoading(true);
@@ -70,12 +82,22 @@ export function ReportsClient() {
 
     const filteredPets = useMemo(() => {
         return pets.filter(pet => {
+            const petStatus = pet.pet_report?.pet_status;
+            const isResolved = pet.pet_report?.is_resolved;
+
+            if (isResolved) return false;
+
             if (activeTab === 'adopt') {
                 return pet.available_for_adopt;
             }
-            return pet.pet_status === activeTab;
+            return petStatus === activeTab;
         });
     }, [pets, activeTab]);
+
+    const handleTabChange = (tab: 'lost' | 'found' | 'adopt') => {
+        setActiveTab(tab);
+        router.push(`/reports?tab=${tab}`, { scroll: false });
+    };
 
     if (isLoading) {
         return <ReportsSkeleton />;
@@ -91,8 +113,8 @@ export function ReportsClient() {
     }
 
     return (
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="w-full">
-            <ReportTabs activeTab={activeTab} onTabChange={(tab) => setActiveTab(tab as any)} />
+        <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as any)} className="w-full">
+            <ReportTabs activeTab={activeTab} onTabChange={handleTabChange} />
             <div className="mt-6">
                 <TabsContent value="lost">
                     <ReportPetList pets={filteredPets} status="lost" />
@@ -106,4 +128,12 @@ export function ReportsClient() {
             </div>
         </Tabs>
     );
+}
+
+export function ReportsClient() {
+    return (
+        <Suspense fallback={<ReportsSkeleton />}>
+            <ReportsClientContent />
+        </Suspense>
+    )
 }

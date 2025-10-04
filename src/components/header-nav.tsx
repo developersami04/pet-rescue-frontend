@@ -60,9 +60,9 @@ const navItems = {
   ],
   reports: [
     { href: "/reports", icon: FileText, label: "All Reports" },
-    { href: "/pets?status=lost", icon: AlertTriangle, label: "Lost Pets" },
-    { href: "/pets?status=found", icon: Search, label: "Found Pets" },
-    { href: "/pets?status=adoptable", icon: Hand, label: "Adoptable Pets" },
+    { href: "/reports?tab=lost", icon: AlertTriangle, label: "Lost Pets" },
+    { href: "/reports?tab=found", icon: Search, label: "Found Pets" },
+    { href: "/reports?tab=adopt", icon: Hand, label: "Adoptable Pets" },
   ],
   more: [
       { href: "/about-us", icon: Info, label: "About Us" },
@@ -110,7 +110,7 @@ function DropdownNav({
   items: { href: string; icon: React.ElementType; label: string }[];
 }) {
   const pathname = usePathname();
-  const isActive = items.some((item) => pathname.startsWith(item.href));
+  const isActive = items.some((item) => pathname.startsWith(item.href.split('?')[0]));
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
