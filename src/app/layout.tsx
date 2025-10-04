@@ -5,7 +5,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { useAuth, AuthProvider } from '@/lib/auth.tsx';
-import { LandingHeader } from './landing/_components/landing-header';
+import { UnauthenticatedHeader } from './landing/_components/unauthenticated-header';
 import { HeaderNav } from '@/components/header-nav';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -34,7 +34,7 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
 
   const isAuthPage = isAuthenticated && pathname !== '/';
 
-  let HeaderComponent = <LandingHeader />;
+  let HeaderComponent = <UnauthenticatedHeader />;
   if (isAuthPage) {
     if (user?.is_admin) {
       HeaderComponent = <AdminHeader />;
