@@ -12,9 +12,10 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { NotificationProvider } from '@/hooks/use-notifications';
 import { BottomNavBar } from '@/components/bottom-nav-bar';
 import { usePathname } from 'next/navigation';
+import { AdminHeader } from '@/components/admin-header';
 
 function AppLayoutClient({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const pathname = usePathname();
   
   if (isLoading) {
@@ -31,24 +32,25 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
       )
   }
 
-  // Determine if the user is on a page that should show the authenticated layout
   const isAuthPage = isAuthenticated && pathname !== '/';
 
+  let HeaderComponent = <LandingHeader />;
   if (isAuthPage) {
-    return (
-      <div className="flex min-h-screen flex-col">
-          <HeaderNav />
-          <main className="flex-1 pb-20">{children}</main>
-          <BottomNavBar />
-      </div>
-    );
+    if (user?.is_admin) {
+      HeaderComponent = <AdminHeader />;
+    } else {
+      HeaderComponent = <HeaderNav />;
+    }
+  } else if (isAuthenticated) {
+    // Authenticated user on the landing page
+    HeaderComponent = user?.is_admin ? <AdminHeader /> : <HeaderNav />;
   }
 
-  // This covers unauthenticated users OR authenticated users on the landing page
+
   return (
     <div className="flex min-h-screen flex-col">
-      {isAuthenticated ? <HeaderNav /> : <LandingHeader />}
-      <main className="flex-1">{children}</main>
+      {HeaderComponent}
+      <main className="flex-1 pb-20">{children}</main>
       {isAuthenticated && <BottomNavBar />}
     </div>
   )

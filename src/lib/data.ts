@@ -112,6 +112,7 @@ export type User = {
   city: string | null;
   state: string | null;
   is_staff: boolean;
+  is_admin: boolean;
 };
 
 export type Notification = {
