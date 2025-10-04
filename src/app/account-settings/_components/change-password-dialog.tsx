@@ -29,6 +29,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { updateUserDetails } from '@/lib/actions/user.actions';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth.tsx';
 
 const passwordFormSchema = z.object({
   current_password: z.string().min(1, 'Current password is required.'),
@@ -45,6 +46,7 @@ const passwordFormSchema = z.object({
 export function ChangePasswordDialog() {
   const { toast } = useToast();
   const router = useRouter();
+  const { logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   const form = useForm<z.infer<typeof passwordFormSchema>>({
@@ -87,9 +89,7 @@ export function ChangePasswordDialog() {
                 title: 'Session Expired',
                 description: 'Please log in again to continue.',
             });
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('refreshToken');
-            window.dispatchEvent(new Event('storage'));
+            logout();
             router.push('/login');
         } else {
             toast({
