@@ -17,7 +17,7 @@ type NotificationContextType = {
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,10 +37,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       const unreadNotifications = await getNotifications(token, { read_status: 'unread' });
       setNotifications(unreadNotifications);
       setUnreadCount(unreadNotifications.length);
-    } catch (error) {
-      console.error("Failed to fetch unread notifications", error);
+    } catch (error: any) {
+        if (error.message.includes('Session expired')) {
+            logout();
+        } else {
+          console.error("Failed to fetch unread notifications", error);
+        }
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, logout]);
 
   // Initial fetch
   useEffect(() => {
@@ -48,7 +52,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       setIsLoading(true);
       fetchUnreadNotifications().finally(() => setIsLoading(false));
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, fetchUnreadNotifications]);
 
   // Set up polling
   useEffect(() => {

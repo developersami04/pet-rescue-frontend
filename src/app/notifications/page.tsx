@@ -19,7 +19,7 @@ import { getNotifications } from '@/lib/actions';
 import { useAuth } from '@/lib/auth.tsx';
 
 export default function NotificationsPage() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { unreadCount, markAsRead, deleteNotification } = useNotifications();
   const [allNotifications, setAllNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,12 +37,16 @@ export default function NotificationsPage() {
         read_status: readFilter,
       });
       setAllNotifications(data);
-    } catch (error) {
-      console.error('Failed to fetch all notifications', error);
+    } catch (error: any) {
+        if (error.message.includes('Session expired')) {
+            logout();
+        } else {
+            console.error('Failed to fetch all notifications', error);
+        }
     } finally {
       setIsLoading(false);
     }
-  }, [statusFilter, readFilter]);
+  }, [statusFilter, readFilter, logout]);
 
   useEffect(() => {
     fetchAllNotifications();

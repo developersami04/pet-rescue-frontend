@@ -83,7 +83,7 @@ export function PetList() {
 
   useEffect(() => {
     fetchPets(type);
-  }, [type]);
+  }, [type, fetchPets]);
 
   useEffect(() => {
     async function fetchPetTypes() {

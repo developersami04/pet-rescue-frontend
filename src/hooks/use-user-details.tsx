@@ -59,7 +59,7 @@ export function useUserDetails() {
 
   useEffect(() => {
     fetchUserDetails();
-  }, []);
+  }, [fetchUserDetails]);
 
   return { user, isLoading, error, refreshUserDetails: fetchUserDetails };
 }

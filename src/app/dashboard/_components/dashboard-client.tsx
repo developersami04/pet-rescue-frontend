@@ -76,7 +76,7 @@ export function DashboardClient() {
 
   useEffect(() => {
     fetchDashboardData();
-  }, [router, toast]);
+  }, [fetchDashboardData]);
 
   const tabs = [
       { value: "my-pets", content: <MyPetsSection myPets={myPets} /> },
