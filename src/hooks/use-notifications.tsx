@@ -48,7 +48,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       setIsLoading(true);
       fetchUnreadNotifications().finally(() => setIsLoading(false));
     }
-  }, [isAuthenticated, fetchUnreadNotifications]);
+  }, [isAuthenticated]);
 
   // Set up polling
   useEffect(() => {

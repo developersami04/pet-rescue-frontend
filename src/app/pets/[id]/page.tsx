@@ -52,7 +52,7 @@ export default function PetProfilePage() {
 
   useEffect(() => {
     fetchPetDetails();
-  }, [fetchPetDetails]);
+  }, []);
 
   if (isLoading) {
     return <Loading />;
