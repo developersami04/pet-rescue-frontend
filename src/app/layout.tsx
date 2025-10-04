@@ -5,15 +5,17 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { useAuth, AuthProvider } from '@/lib/auth.tsx';
-import { LandingHeader } from './_components/landing-header';
+import { LandingHeader } from './landing/_components/landing-header';
 import { HeaderNav } from '@/components/header-nav';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeProvider } from '@/components/theme-provider';
 import { NotificationProvider } from '@/hooks/use-notifications';
 import { BottomNavBar } from '@/components/bottom-nav-bar';
+import { usePathname } from 'next/navigation';
 
 function AppLayoutClient({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
+  const pathname = usePathname();
   
   if (isLoading) {
       return (
@@ -29,7 +31,10 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
       )
   }
 
-  if (isAuthenticated) {
+  // Determine if the user is on a page that should show the authenticated layout
+  const isAuthPage = isAuthenticated && pathname !== '/';
+
+  if (isAuthPage) {
     return (
       <div className="flex min-h-screen flex-col">
           <HeaderNav />
@@ -39,10 +44,12 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
     );
   }
 
+  // This covers unauthenticated users OR authenticated users on the landing page
   return (
     <div className="flex min-h-screen flex-col">
-      <LandingHeader />
+      {isAuthenticated ? <HeaderNav /> : <LandingHeader />}
       <main className="flex-1">{children}</main>
+      {isAuthenticated && <BottomNavBar />}
     </div>
   )
 }
