@@ -4,24 +4,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PawPrint, AlertTriangle, Search, FileText, Hand, Inbox } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getMyPets, getMyPetData } from "@/lib/actions";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Pet, PetReport, MyAdoptionRequest, AdoptionRequest } from "@/lib/data";
 
-type DashboardStatsProps = {
-    myPetsCount: number;
-    lostPetsCount: number;
-    foundPetsCount: number;
-    adoptablePetsCount: number;
-    myRequestsCount: number;
-    adoptionRequestsReceivedCount: number;
-    isLoading: boolean;
-}
 
-function StatCard({ title, value, icon, isLoading }: { title: string, value: number, icon: React.ReactNode, isLoading: boolean }) {
-    if (isLoading) {
+function StatCard({ title, value, icon, isLoading }: { title: string, value: number | null, icon: React.ReactNode, isLoading: boolean }) {
+    if (isLoading || value === null) {
         return (
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                        <Skeleton className="h-4 w-3/4" />
+                       {title}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -43,23 +39,83 @@ function StatCard({ title, value, icon, isLoading }: { title: string, value: num
     )
 }
 
-export function DashboardStats({ 
-    myPetsCount,
-    lostPetsCount,
-    foundPetsCount,
-    adoptablePetsCount,
-    myRequestsCount,
-    adoptionRequestsReceivedCount,
-    isLoading 
-}: DashboardStatsProps) {
+export function DashboardStats() {
+    const { toast } = useToast();
+    const router = useRouter();
+
+    const [counts, setCounts] = useState({
+        myPetsCount: null as number | null,
+        lostPetsCount: null as number | null,
+        foundPetsCount: null as number | null,
+        adoptablePetsCount: null as number | null,
+        myRequestsCount: null as number | null,
+        adoptionRequestsReceivedCount: null as number | null,
+    });
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchAllCounts = async () => {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                setIsLoading(false);
+                return;
+            }
+
+            const fetchers = {
+                myPetsCount: () => getMyPets(token),
+                lostPetsCount: () => getMyPetData(token, 'lost'),
+                foundPetsCount: () => getMyPetData(token, 'found'),
+                adoptablePetsCount: () => getMyPetData(token, 'adopt'),
+                myRequestsCount: () => getMyPetData(token, 'my-adoption-requests'),
+                adoptionRequestsReceivedCount: () => getMyPetData(token, 'adoption-requests-received'),
+            };
+
+            const newCounts = { ...counts };
+
+            for (const [key, fetcher] of Object.entries(fetchers)) {
+                try {
+                    const result = await fetcher();
+                    if(result) {
+                        newCounts[key as keyof typeof newCounts] = result.length;
+                    } else {
+                        newCounts[key as keyof typeof newCounts] = 0; // Default to 0 on failure or null response
+                    }
+                    setCounts({ ...newCounts });
+                } catch (error: any) {
+                    if (error.message.includes('Session expired')) {
+                        toast({
+                            variant: 'destructive',
+                            title: 'Session Expired',
+                            description: 'Please log in again to continue.',
+                        });
+                        localStorage.removeItem('authToken');
+                        localStorage.removeItem('refreshToken');
+                        window.dispatchEvent(new Event('storage'));
+                        router.push('/login');
+                        return; // Stop fetching if session is expired
+                    } else {
+                        console.error(`Failed to fetch count for ${key}:`, error);
+                        toast({ variant: 'destructive', title: 'Error', description: `Could not fetch data for ${key}.` });
+                        newCounts[key as keyof typeof newCounts] = 0; // Still update state on error
+                        setCounts({ ...newCounts });
+                    }
+                }
+            }
+
+            setIsLoading(false);
+        };
+
+        fetchAllCounts();
+    }, [router, toast]);
+
 
     const stats = [
-        { title: "My Pets", value: myPetsCount, icon: <PawPrint className="h-4 w-4" /> },
-        { title: "Lost Pets", value: lostPetsCount, icon: <AlertTriangle className="h-4 w-4" /> },
-        { title: "Found Pets", value: foundPetsCount, icon: <Search className="h-4 w-4" /> },
-        { title: "Adoptable Pets", value: adoptablePetsCount, icon: <Hand className="h-4 w-4" /> },
-        { title: "My Requests", value: myRequestsCount, icon: <FileText className="h-4 w-4" /> },
-        { title: "Requests Received", value: adoptionRequestsReceivedCount, icon: <Inbox className="h-4 w-4" /> },
+        { title: "My Pets", value: counts.myPetsCount, icon: <PawPrint className="h-4 w-4" /> },
+        { title: "Lost Pets", value: counts.lostPetsCount, icon: <AlertTriangle className="h-4 w-4" /> },
+        { title: "Found Pets", value: counts.foundPetsCount, icon: <Search className="h-4 w-4" /> },
+        { title: "Adoptable Pets", value: counts.adoptablePetsCount, icon: <Hand className="h-4 w-4" /> },
+        { title: "My Requests", value: counts.myRequestsCount, icon: <FileText className="h-4 w-4" /> },
+        { title: "Requests Received", value: counts.adoptionRequestsReceivedCount, icon: <Inbox className="h-4 w-4" /> },
     ];
 
     return (
@@ -70,7 +126,7 @@ export function DashboardStats({
                     title={stat.title}
                     value={stat.value}
                     icon={stat.icon}
-                    isLoading={isLoading}
+                    isLoading={isLoading && stat.value === null}
                  />
             ))}
         </div>
