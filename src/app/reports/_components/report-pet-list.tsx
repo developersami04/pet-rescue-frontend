@@ -1,7 +1,7 @@
 
 'use client';
 
-import { PetCard } from "@/app/(app)/pets/_components/pet-card";
+import { PetCard } from "@/app/pets/_components/pet-card";
 import { Pet } from "@/lib/data";
 import { PawPrint } from "lucide-react";
 

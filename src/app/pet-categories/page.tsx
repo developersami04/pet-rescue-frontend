@@ -15,6 +15,8 @@ type PetType = {
   name: string;
 };
 
+export const dynamic = 'force-dynamic';
+
 // A simple hash function to get a color index from the pet type name
 function getHash(input: string) {
   let hash = 0;

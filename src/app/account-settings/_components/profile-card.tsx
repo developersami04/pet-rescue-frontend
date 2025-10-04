@@ -39,7 +39,12 @@ export function ProfileCard() {
         return null;
     }
 
-    const displayName = user.full_name || `${user.first_name} ${user.last_name}`;
+    const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username;
+    const firstInitial = user.first_name ? user.first_name.charAt(0) : '';
+    const lastInitial = user.last_name ? user.last_name.charAt(0) : '';
+    const usernameInitial = user.username ? user.username.charAt(0).toUpperCase() : '';
+    const avatarFallback = `${firstInitial}${lastInitial}` || usernameInitial || 'U';
+
 
     return (
         <Card>
@@ -48,8 +53,8 @@ export function ProfileCard() {
                     <ChangeProfilePictureDialog user={user} onUpdate={refreshUserDetails}>
                         <div className="group relative">
                              <Avatar className="h-24 w-24">
-                                <AvatarImage src={user.profile_image ?? `https://picsum.photos/seed/${user.username}/200/200`} alt={user.username} />
-                                <AvatarFallback>{user.first_name.charAt(0)}</AvatarFallback>
+                                <AvatarImage src={user.profile_image || `https://picsum.photos/seed/${user.username}/200/200`} alt={user.username} />
+                                <AvatarFallback>{avatarFallback}</AvatarFallback>
                             </Avatar>
                             <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                                 <Pen className="h-6 w-6 text-white" />
@@ -57,11 +62,9 @@ export function ProfileCard() {
                         </div>
                     </ChangeProfilePictureDialog>
                 </div>
-                <h2 className="text-xl font-bold">{displayName}</h2>
+                <h2 className="text-xl font-bold">{fullName}</h2>
                 <p className="text-muted-foreground">{user.email}</p>
             </CardContent>
         </Card>
     );
 }
-
-    
