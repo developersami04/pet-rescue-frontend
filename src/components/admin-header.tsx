@@ -26,6 +26,7 @@ import {
   Bell,
   FileText,
   Shield,
+  ShieldCheck,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -53,14 +54,13 @@ import { NotificationPopover } from "./notification-popover";
 
 const navItems = {
   main: [
-      { href: "/admin/dashboard", icon: LayoutGrid, label: "Admin Dashboard" },
+      { href: "/admin/dashboard", icon: LayoutGrid, label: "Admin Dashboard", shortLabel: "Admin" },
+      { href: "/admin/approve-reports", icon: ShieldCheck, label: "Approve Reports", shortLabel: "Approvals"},
     ],
   general: [
     { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },
     { href: "/pet-categories", icon: Shapes, label: "Pet Categories" },
-  ],
-  reports: [
     { href: "/reports", icon: FileText, label: "All Reports" },
     { href: "/pets?status=lost", icon: AlertTriangle, label: "Lost Pets" },
     { href: "/pets?status=found", icon: Search, label: "Found Pets" },
@@ -183,14 +183,13 @@ export function AdminHeader() {
                 className={cn("text-sm font-medium relative", isActive ? "text-primary" : "text-foreground")}
               >
                 <Link href={item.href}>
-                  <Shield className="mr-2 h-4 w-4" />
+                  <item.icon className="mr-2 h-4 w-4" />
                   {item.label}
                   {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-1 bg-primary rounded-full" />}
                   </Link>
               </Button>
             )})}
             <DropdownNav label="General" items={navItems.general} />
-            <DropdownNav label="Reports" items={navItems.reports} />
             <DropdownNav label="More" items={navItems.more} />
              <Button asChild size="sm" className="ml-4">
                 <Link href="/submit-request">
@@ -313,7 +312,7 @@ export function AdminHeader() {
                     />
                   </div>
                   <nav className="flex flex-col gap-1">
-                    {[...navItems.main, ...navItems.general, ...navItems.reports, ...navItems.more].map(
+                    {[...navItems.main, ...navItems.general, ...navItems.more].map(
                       (item) => (
                         <NavLink
                           key={item.href}
@@ -375,3 +374,5 @@ export function AdminHeader() {
     </header>
   );
 }
+
+    
