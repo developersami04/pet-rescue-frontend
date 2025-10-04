@@ -24,10 +24,10 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20" />
 
       <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-primary-foreground px-4">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl font-headline shadow-2xl">
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl font-headline [text-shadow:0_0_8px_hsl(var(--primary)/0.8)]">
           Find Your Forever Friend
         </h1>
-        <p className="mt-4 max-w-2xl text-lg md:text-xl shadow-2xl">
+        <p className="mt-4 max-w-2xl text-lg md:text-xl [text-shadow:0_0_8px_hsl(var(--primary)/0.7)]">
           Connecting loving homes with adorable pets in need. Start your
           journey to find the perfect companion today.
         </p>
