@@ -71,6 +71,7 @@ export function DashboardStats() {
             };
 
             const newCounts = { ...counts };
+            let hasError = false;
 
             for (const [key, fetcher] of Object.entries(fetchers)) {
                 try {
@@ -95,18 +96,23 @@ export function DashboardStats() {
                         return; // Stop fetching if session is expired
                     } else {
                         console.error(`Failed to fetch count for ${key}:`, error);
-                        toast({ variant: 'destructive', title: 'Error', description: `Could not fetch data for ${key}.` });
+                        hasError = true;
                         newCounts[key as keyof typeof newCounts] = 0; // Still update state on error
                         setCounts({ ...newCounts });
                     }
                 }
+            }
+            
+            if (hasError) {
+                toast({ variant: 'destructive', title: 'Error', description: `Could not fetch some dashboard data.` });
             }
 
             setIsLoading(false);
         };
 
         fetchAllCounts();
-    }, [router, toast]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
 
     const stats = [

@@ -46,6 +46,14 @@ function TabSkeleton() {
   )
 }
 
+const tabApiMap: { [key: string]: 'lost' | 'found' | 'adopt' | 'my-adoption-requests' | 'adoption-requests-received' } = {
+    'lost-pets': 'lost',
+    'found-pets': 'found',
+    'adoptable-pets': 'adopt',
+    'my-requests': 'my-adoption-requests',
+    'adoption-requests-received': 'adoption-requests-received',
+};
+
 export function DashboardClient() {
   const [activeTab, setActiveTab] = useState("my-pets");
   const { toast } = useToast();
@@ -98,8 +106,8 @@ export function DashboardClient() {
         let result;
         if (tab === 'my-pets') {
             result = await getMyPets(token);
-        } else if (tab === 'lost-pets' || tab === 'found-pets' || tab === 'adoptable-pets' || tab === 'my-requests' || tab === 'adoption-requests-received') {
-            result = await getMyPetData(token, tab);
+        } else if (tabApiMap[tab]) {
+            result = await getMyPetData(token, tabApiMap[tab]);
         }
 
         setTabData(prev => ({ ...prev, [tab]: result || [] }));
