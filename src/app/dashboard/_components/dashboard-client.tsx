@@ -68,7 +68,7 @@ export function DashboardClient() {
             setFoundPets(foundPetsResult.value as PetReport[]);
         } else if (foundPetsResult.status === 'rejected') {
             console.error("Failed to fetch found pets:", foundPetsResult.reason);
-            toast({ variant: 'destructive', title- 'Error', description: 'Could not fetch found pets reports.' });
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch found pets reports.' });
         }
 
         if (adoptablePetsResult.status === 'fulfilled' && adoptablePetsResult.value) {
