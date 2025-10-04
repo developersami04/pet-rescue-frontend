@@ -23,7 +23,6 @@ import {
   Waves,
   Sheep,
   Horse,
-  Cow,
 } from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 
@@ -72,7 +71,7 @@ export const petIcons: { [key: string]: React.FC<LucideProps> } = {
   MiniPig: PiggyBank,
   Horse: Horse,
   Donkey: Horse,
-  Cow: Cow,
+  Cow: PawPrint, // Fallback
   Alpaca: Sheep,
   Llama: Sheep,
   Parakeet: Bird,
