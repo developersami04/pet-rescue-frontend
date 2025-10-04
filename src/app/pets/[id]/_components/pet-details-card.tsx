@@ -2,8 +2,8 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Pet } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
-import { PawPrint, Weight, Palette, MapPin, Cake, Cat, Dog, Bird, Fish, PersonStanding } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { PawPrint, Weight, Palette, MapPin, Cake, PersonStanding } from "lucide-react";
+import { PetTypeIcon } from "@/components/pet-icons";
 
 
 type PetDetailsCardProps = {
@@ -21,16 +21,6 @@ const DetailRow = ({ icon, label, value, isBadge }: { icon: React.ReactNode, lab
     )
 }
 
-function PetTypeIcon({ typeName }: { typeName: string }) {
-    switch(typeName.toLowerCase()) {
-        case 'cat': return <Cat className="h-4 w-4" />;
-        case 'dog': return <Dog className="h-4 w-4" />;
-        case 'bird': return <Bird className="h-4 w-4" />;
-        case 'fish': return <Fish className="h-4 w-4" />;
-        default: return <PawPrint className="h-4 w-4" />;
-    }
-}
-
 
 export function PetDetailsCard({ pet }: PetDetailsCardProps) {
 
@@ -44,7 +34,7 @@ export function PetDetailsCard({ pet }: PetDetailsCardProps) {
             </CardHeader>
             <CardContent className="space-y-4">
                  <DetailRow 
-                    icon={<PetTypeIcon typeName={pet.type_name} />}
+                    icon={<PetTypeIcon typeName={pet.type_name} className="h-4 w-4" />}
                     label="Type / Breed"
                     value={`${pet.type_name}${pet.breed ? ` / ${pet.breed}` : ''}`}
                 />
@@ -89,4 +79,3 @@ export function PetDetailsCard({ pet }: PetDetailsCardProps) {
         </Card>
     );
 }
-

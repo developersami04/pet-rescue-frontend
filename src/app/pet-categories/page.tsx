@@ -7,8 +7,8 @@ import {
   Card,
   CardContent,
 } from "@/components/ui/card";
-import { PawPrint } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PetTypeIcon } from "@/components/pet-icons";
 
 type PetType = {
   id: number;
@@ -47,7 +47,7 @@ function CategoryCard({ petType }: { petType: PetType }) {
     <Link href={`/pets?type=${petType.name}`} className="group">
         <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full flex flex-col", colorClasses)}>
             <CardContent className="p-6 flex flex-col items-center justify-center text-center flex-grow">
-                <PawPrint className="h-12 w-12 mb-4 opacity-70 group-hover:opacity-100 transition-opacity" />
+                <PetTypeIcon typeName={petType.name} className="h-12 w-12 mb-4 opacity-70 group-hover:opacity-100 transition-opacity" />
                 <h3 className="text-xl font-bold">{petType.name}</h3>
                 <p className="text-sm mt-1">View All</p>
             </CardContent>
