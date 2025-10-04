@@ -52,14 +52,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           toast({ title: "Login Successful", description: message });
       }
     } else {
-      setIsAuthenticated(false);
-      setUser(null);
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('username');
+      // If verification fails, it means the token is invalid or expired.
+      logout();
+      if (!isLoginEvent) { // Don't show toast on a failed login attempt, only on session expiry
+        toast({
+            variant: "destructive",
+            title: "Session Expired",
+            description: "Please log in again to continue.",
+        });
+      }
     }
     setIsLoading(false);
-  }, []);
+  }, [logout]);
 
   useEffect(() => {
     verifyAuth();
