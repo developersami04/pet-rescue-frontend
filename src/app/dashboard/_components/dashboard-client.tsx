@@ -36,12 +36,12 @@ export function DashboardClient() {
     }
     setIsLoading(true);
     try {
-        const [myPetsData, lostPetsData, foundPetsData, adoptionRequestsData, adoptablePetsData] = await Promise.all([
+        const [myPetsData, lostPetsData, foundPetsData, adoptablePetsData, adoptionRequestsData] = await Promise.all([
             getMyPets(token),
             getMyPetData(token, 'lost'),
             getMyPetData(token, 'found'),
-            getMyPetData(token, 'my-adoption-requests'),
-            getMyPetData(token, 'adopt')
+            getMyPetData(token, 'adopt'),
+            getMyPetData(token, 'my-adoption-requests')
         ]);
 
         setMyPets(myPetsData);
