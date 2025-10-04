@@ -37,8 +37,9 @@ export function DashboardClient() {
         return;
     }
     setIsLoading(true);
+
     try {
-        const [myPetsData, lostPetsData, foundPetsData, adoptablePetsData, adoptionRequestsData, adoptionRequestsReceivedData] = await Promise.all([
+        const results = await Promise.allSettled([
             getMyPets(token),
             getMyPetData(token, 'lost'),
             getMyPetData(token, 'found'),
@@ -47,13 +48,50 @@ export function DashboardClient() {
             getMyPetData(token, 'adoption-requests-received')
         ]);
 
-        setMyPets(myPetsData);
-        setLostPets(lostPetsData as PetReport[]);
-        setFoundPets(foundPetsData as PetReport[]);
-        setAdoptablePets(adoptablePetsData as PetReport[]);
-        setAdoptionRequests(adoptionRequestsData as MyAdoptionRequest[]);
-        setAdoptionRequestsReceived(adoptionRequestsReceivedData as AdoptionRequest[]);
+        const [myPetsResult, lostPetsResult, foundPetsResult, adoptablePetsResult, adoptionRequestsResult, adoptionRequestsReceivedResult] = results;
 
+        if (myPetsResult.status === 'fulfilled' && myPetsResult.value) {
+            setMyPets(myPetsResult.value);
+        } else if (myPetsResult.status === 'rejected') {
+            console.error("Failed to fetch my pets:", myPetsResult.reason);
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch your pets.' });
+        }
+
+        if (lostPetsResult.status === 'fulfilled' && lostPetsResult.value) {
+            setLostPets(lostPetsResult.value as PetReport[]);
+        } else if (lostPetsResult.status === 'rejected') {
+            console.error("Failed to fetch lost pets:", lostPetsResult.reason);
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch lost pets reports.' });
+        }
+
+        if (foundPetsResult.status === 'fulfilled' && foundPetsResult.value) {
+            setFoundPets(foundPetsResult.value as PetReport[]);
+        } else if (foundPetsResult.status === 'rejected') {
+            console.error("Failed to fetch found pets:", foundPetsResult.reason);
+            toast({ variant: 'destructive', title- 'Error', description: 'Could not fetch found pets reports.' });
+        }
+
+        if (adoptablePetsResult.status === 'fulfilled' && adoptablePetsResult.value) {
+            setAdoptablePets(adoptablePetsResult.value as PetReport[]);
+        } else if (adoptablePetsResult.status === 'rejected') {
+            console.error("Failed to fetch adoptable pets:", adoptablePetsResult.reason);
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch adoptable pets.' });
+        }
+        
+        if (adoptionRequestsResult.status === 'fulfilled' && adoptionRequestsResult.value) {
+            setAdoptionRequests(adoptionRequestsResult.value as MyAdoptionRequest[]);
+        } else if (adoptionRequestsResult.status === 'rejected') {
+            console.error("Failed to fetch adoption requests:", adoptionRequestsResult.reason);
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch your sent adoption requests.' });
+        }
+
+        if (adoptionRequestsReceivedResult.status === 'fulfilled' && adoptionRequestsReceivedResult.value) {
+            setAdoptionRequestsReceived(adoptionRequestsReceivedResult.value as AdoptionRequest[]);
+        } else if (adoptionRequestsReceivedResult.status === 'rejected') {
+            console.error("Failed to fetch received adoption requests:", adoptionRequestsReceivedResult.reason);
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch your received adoption requests.' });
+        }
+        
     } catch (error: any) {
          if (error.message.includes('Session expired')) {
             toast({
@@ -66,11 +104,11 @@ export function DashboardClient() {
             window.dispatchEvent(new Event('storage'));
             router.push('/login');
         } else {
-            console.error("Failed to fetch dashboard data:", error);
+            console.error("An unexpected error occurred fetching dashboard data:", error);
             toast({
                 variant: 'destructive',
                 title: 'Error',
-                description: 'Could not fetch dashboard data.',
+                description: 'An unexpected error occurred while fetching dashboard data.',
             });
         }
     } finally {

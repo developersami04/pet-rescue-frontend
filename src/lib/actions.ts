@@ -307,7 +307,7 @@ export async function getPetById(token: string, petId: string): Promise<Pet> {
     }
 }
 
-export async function getMyPets(token: string): Promise<Pet[]> {
+export async function getMyPets(token: string): Promise<Pet[] | null> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
@@ -326,14 +326,11 @@ export async function getMyPets(token: string): Promise<Pet[]> {
 
         return result.data || [];
     } catch (error) {
-        if ((error as any).name === 'AbortError') {
-            throw new Error('Request to fetch your pets timed out.');
+        if ((error as any).name === 'AbortError' || error instanceof Error && error.message.includes('Session expired')) {
+            throw error;
         }
         console.error('Error fetching your pets:', error);
-        if (error instanceof Error) {
-           throw new Error(error.message);
-        }
-        throw new Error('An unknown error occurred while fetching your pets.');
+        return null;
     }
 }
 
@@ -375,7 +372,7 @@ export async function submitRequest(token: string, formData: FormData) {
     }
 }
 
-export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopt' | 'my-adoption-requests' | 'adoption-requests-received'): Promise<any[]> {
+export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopt' | 'my-adoption-requests' | 'adoption-requests-received'): Promise<any[] | null> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
@@ -397,15 +394,11 @@ export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopt
 
         return result.data || [];
     } catch (error: any) {
-        if (error.name === 'AbortError') {
-            throw new Error(`Request to fetch ${tab} data timed out.`);
-        }
-        // Handle session expiration specifically
-        if (error.message?.includes('Session expired')) {
-            throw new Error('Session expired');
+        if (error.name === 'AbortError' || error.message?.includes('Session expired')) {
+            throw error;
         }
         console.error(`Error fetching ${tab} data:`, error);
-        throw new Error(error.message || `An unknown error occurred while fetching ${tab} data.`);
+        return null;
     }
 }
 
