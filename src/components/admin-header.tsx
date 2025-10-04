@@ -55,7 +55,8 @@ const navItems = {
   main: [
       { href: "/admin/dashboard", icon: LayoutGrid, label: "Admin Dashboard" },
     ],
-  pets: [
+  general: [
+    { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
     { href: "/pets", icon: PawPrint, label: "Find a Pet" },
     { href: "/pet-categories", icon: Shapes, label: "Pet Categories" },
   ],
@@ -188,7 +189,7 @@ export function AdminHeader() {
                   </Link>
               </Button>
             )})}
-            <DropdownNav label="Pets" items={navItems.pets} />
+            <DropdownNav label="General" items={navItems.general} />
             <DropdownNav label="Reports" items={navItems.reports} />
             <DropdownNav label="More" items={navItems.more} />
              <Button asChild size="sm" className="ml-4">
@@ -312,7 +313,7 @@ export function AdminHeader() {
                     />
                   </div>
                   <nav className="flex flex-col gap-1">
-                    {[...navItems.main, ...navItems.pets, ...navItems.reports, ...navItems.more].map(
+                    {[...navItems.main, ...navItems.general, ...navItems.reports, ...navItems.more].map(
                       (item) => (
                         <NavLink
                           key={item.href}
