@@ -27,7 +27,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, UploadCloud } from 'lucide-react';
-import { updateUserDetails } from '@/lib/actions/user.actions';
+import { updateUserDetails } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
 import { User } from '@/lib/data';
 import Image from 'next/image';

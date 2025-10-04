@@ -27,7 +27,7 @@ import { CalendarIcon, Loader2, Trash2, Upload } from 'lucide-react';
 import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
-import { getPetTypes, getPetRequestFormData, updatePetRequest, deletePetRequest } from '@/lib/actions/pet.actions';
+import { getPetTypes, getPetRequestFormData, updatePetRequest, deletePetRequest } from '@/lib/actions';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
