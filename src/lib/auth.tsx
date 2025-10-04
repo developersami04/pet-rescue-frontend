@@ -41,11 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     
-    // Avoid showing loading state on every tab switch/re-focus
-    // We check user state directly here before setting loading
-    if (!user) {
-      setIsLoading(true);
-    }
+    setIsLoading(true);
     
     const { isAuthenticated: authStatus, user: userData, error, message } = await checkUserAuth(token);
     
@@ -61,17 +57,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem('authToken');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('username');
-      // The console.error was removed from here as it's a normal flow for an expired token.
     }
     setIsLoading(false);
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     verifyAuth();
 
     const handleStorageChange = (e: StorageEvent) => {
-      // When storage changes, re-verify auth
-      // This handles login/logout in other tabs
       if(e.key === 'authToken' || e.key === null) {
         verifyAuth();
       }
