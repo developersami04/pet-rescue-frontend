@@ -8,6 +8,7 @@ const API_ENDPOINTS = {
   userDetails: '/api/user-auth/user-details',
   updateUserDetails: '/api/user-auth/update-account',
   changePassword: '/api/user-auth/change-password',
+  sendVerificationEmail: '/api/user-auth/send-verification-mail',
   
   petTypes: '/api/pet-data/pet-types/',
   allPets: '/api/pet-data/pets/',

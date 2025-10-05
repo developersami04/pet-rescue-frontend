@@ -211,6 +211,35 @@ export async function updateUserDetails(token: string, userData: Record<string, 
     }
 }
 
+export async function sendVerificationEmail(token: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.sendVerificationEmail}`, {
+            method: 'GET',
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || 'Failed to send verification email.');
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request to send verification email timed out.');
+        }
+        console.error('Error sending verification email:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while sending the verification email.');
+    }
+}
+
 // From pet.actions.ts
 
 type PetType = {

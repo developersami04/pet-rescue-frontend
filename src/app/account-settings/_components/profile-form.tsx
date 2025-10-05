@@ -28,6 +28,7 @@ import { User } from '@/lib/data';
 import { ChangePasswordDialog } from './change-password-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { VerifyEmailDialog } from './verify-email-dialog';
 
 const profileFormSchema = z.object({
     first_name: z.string().min(1, 'First name is required.'),
@@ -265,7 +266,9 @@ export function ProfileForm() {
                                             <Input type="email" {...field} />
                                         </FormControl>
                                         {user && !user.is_verified && (
-                                            <Button type="button" variant="secondary" size="sm">Verify</Button>
+                                            <VerifyEmailDialog>
+                                                <Button type="button" variant="secondary" size="sm">Verify</Button>
+                                            </VerifyEmailDialog>
                                         )}
                                     </div>
                                     {user && !user.is_verified && (
