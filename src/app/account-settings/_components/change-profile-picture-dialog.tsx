@@ -31,6 +31,7 @@ import { updateUserDetails } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
 import { User } from '@/lib/data';
 import Image from 'next/image';
+import { useAuth } from '@/lib/auth.tsx';
 
 const profilePictureSchema = z.object({
   profile_image: z
@@ -52,6 +53,7 @@ type ChangeProfilePictureDialogProps = {
 export function ChangeProfilePictureDialog({ children, user, onUpdate }: ChangeProfilePictureDialogProps) {
   const { toast } = useToast();
   const router = useRouter();
+  const { logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -92,9 +94,7 @@ export function ChangeProfilePictureDialog({ children, user, onUpdate }: ChangeP
                 title: 'Session Expired',
                 description: 'Please log in again to continue.',
             });
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('refreshToken');
-            window.dispatchEvent(new Event('storage'));
+            logout();
             router.push('/login');
         } else {
             toast({
@@ -194,6 +194,3 @@ export function ChangeProfilePictureDialog({ children, user, onUpdate }: ChangeP
     </Dialog>
   );
 }
-
-
-    

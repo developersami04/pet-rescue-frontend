@@ -43,25 +43,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     setIsLoading(true);
     
-    const { isAuthenticated: authStatus, user: userData, error, message } = await checkUserAuth(token);
-    
-    if (authStatus && userData) {
-      setIsAuthenticated(true);
-      setUser(userData);
-      if (isLoginEvent) {
-          toast({ title: "Login Successful", description: message });
-      }
-    } else {
-      // If verification fails, it means the token is invalid or expired.
-      logout();
-      if (!isLoginEvent) { // Don't show toast on a failed login attempt, only on session expiry
-        toast({
-            variant: "destructive",
-            title: "Session Expired",
-            description: "Please log in again to continue.",
-        });
-      }
+    try {
+        const { isAuthenticated: authStatus, user: userData, error, message } = await checkUserAuth(token);
+        if (authStatus && userData) {
+            setIsAuthenticated(true);
+            setUser(userData);
+            if (isLoginEvent) {
+                toast({ title: "Login Successful", description: message });
+            }
+        } else {
+            logout();
+        }
+    } catch (e: any) {
+        logout();
+        if (!isLoginEvent) { // Don't show toast on a failed login attempt, only on session expiry
+            toast({
+                variant: "destructive",
+                title: "Session Expired",
+                description: "Please log in again to continue.",
+            });
+        }
     }
+
     setIsLoading(false);
   }, [logout]);
 
