@@ -8,17 +8,23 @@ import { useEffect, useState, useCallback } from "react";
 import { getAllPets } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export function FavoritePets() {
     const [favoritePets, setFavoritePets] = useState<Pet[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const { toast } = useToast();
     const router = useRouter();
 
     const fetchPets = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
         const token = localStorage.getItem('authToken');
         if (!token) {
             setIsLoading(false);
+            // It's okay to not have a token, just don't show favorites
             return;
         }
         try {
@@ -37,6 +43,7 @@ export function FavoritePets() {
                 window.dispatchEvent(new Event('storage'));
                 router.push('/login');
             } else {
+                setError("Could not load favorite pets.");
                 console.error("Failed to fetch favorite pets:", error);
             }
         } finally {
@@ -56,7 +63,19 @@ export function FavoritePets() {
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {isLoading ? (
-                    <p>Loading favorites...</p>
+                    Array.from({ length: 3 }).map((_, index) => (
+                        <div key={index} className="space-y-2">
+                             <Skeleton className="aspect-square w-full" />
+                             <Skeleton className="h-5 w-3/4" />
+                        </div>
+                    ))
+                ) : error ? (
+                    <div className="col-span-full">
+                        <Alert variant="destructive">
+                            <AlertTitle>Error</AlertTitle>
+                            <AlertDescription>{error}</AlertDescription>
+                        </Alert>
+                    </div>
                 ) : favoritePets.length > 0 ? (
                     favoritePets.map(pet => {
                         const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/300/300`;

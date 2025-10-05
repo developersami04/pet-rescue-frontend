@@ -17,11 +17,9 @@ export function useUserDetails() {
   const router = useRouter();
 
   const fetchUserDetails = useCallback(async () => {
-    // If we already have the user from the global context, no need to fetch again initially
     if (authUser) {
       setUser(authUser);
       setIsLoading(false);
-      // We still might want to fetch fresh details, so we don't return here.
     }
     
     const token = localStorage.getItem('authToken');
@@ -45,11 +43,12 @@ export function useUserDetails() {
         logout();
         router.push('/login');
       } else {
-        setError(e.message || 'Failed to fetch user details.');
+        const errorMessage = e.message || 'Failed to fetch user details.';
+        setError(errorMessage);
         toast({
           variant: 'destructive',
           title: 'Failed to fetch user details',
-          description: e.message || 'An unexpected error occurred. Please try refreshing the page.',
+          description: 'An unexpected error occurred. Please try refreshing the page.',
         });
       }
     } finally {

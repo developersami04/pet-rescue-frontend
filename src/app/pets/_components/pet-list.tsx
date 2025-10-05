@@ -47,6 +47,7 @@ export function PetList() {
 
   const fetchPets = useCallback(async (selectedType: string) => {
     setIsLoading(true);
+    setError(null);
     const token = localStorage.getItem('authToken');
     if (!token) {
       setError('You must be logged in to view pets.');
@@ -69,11 +70,12 @@ export function PetList() {
         window.dispatchEvent(new Event('storage'));
         router.push('/login');
       } else {
-        setError(e.message || 'Failed to fetch pets.');
+        const errorMessage = e.message || 'Failed to fetch pets.';
+        setError(errorMessage);
         toast({
           variant: 'destructive',
           title: 'Failed to fetch pets',
-          description: e.message || 'An unexpected error occurred. Please try again.',
+          description: errorMessage,
         });
       }
     } finally {
@@ -92,12 +94,17 @@ export function PetList() {
             if (types) {
                 setPetTypes(types.map(t => t.name));
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to fetch pet types for filter", error);
+            toast({
+                variant: 'destructive',
+                title: 'Error fetching pet types',
+                description: error.message || 'Could not load pet type filters.'
+            })
         }
     }
     fetchPetTypes();
-  }, []);
+  }, [toast]);
 
   const filteredPets = useMemo(() => {
     return pets.filter((pet) => {

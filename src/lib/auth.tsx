@@ -53,19 +53,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
         } else {
             logout();
+             if (error) {
+                console.error("Auth check failed:", error);
+            }
         }
     } catch (e: any) {
+        console.error("Error during auth verification:", e);
         logout();
-        if (!isLoginEvent) { // Don't show toast on a failed login attempt, only on session expiry
+        if (!isLoginEvent) { 
             toast({
                 variant: "destructive",
                 title: "Session Expired",
                 description: "Please log in again to continue.",
             });
         }
+    } finally {
+        setIsLoading(false);
     }
-
-    setIsLoading(false);
   }, [logout]);
 
   useEffect(() => {
@@ -86,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = (token: string, refreshToken: string) => {
     localStorage.setItem('authToken', token);
     localStorage.setItem('refreshToken', refreshToken);
-    verifyAuth(true); // Re-verify auth after login, indicating it's a login event
+    verifyAuth(true);
   }
 
   return (
