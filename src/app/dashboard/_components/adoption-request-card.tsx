@@ -18,7 +18,7 @@ type AdoptionRequestCardProps = {
 }
 
 export function AdoptionRequestCard({ request, onUpdate }: AdoptionRequestCardProps) {
-    const imageUrl = `https://picsum.photos/seed/${request.pet}/300/300`;
+    const imageUrl = request.pet_image || `https://picsum.photos/seed/${request.pet}/300/300`;
 
     const getStatusVariant = (status: string) => {
         switch (status.toLowerCase()) {

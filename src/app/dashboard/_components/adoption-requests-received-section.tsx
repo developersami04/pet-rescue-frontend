@@ -35,7 +35,7 @@ function RequestItem({ request, onUpdate }: { request: AdoptionRequest, onUpdate
                 <Link href={`/pets/${request.pet}`}>
                     <div className="relative h-20 w-20">
                          <Image
-                            src={`https://picsum.photos/seed/${request.pet}/100/100`}
+                            src={request.pet_image || `https://picsum.photos/seed/${request.pet}/100/100`}
                             alt={request.pet_name}
                             fill
                             className="object-cover rounded-md"

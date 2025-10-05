@@ -18,7 +18,7 @@ type AdoptionRequestListItemProps = {
 }
 
 export function AdoptionRequestListItem({ request, onUpdate }: AdoptionRequestListItemProps) {
-    const imageUrl = `https://picsum.photos/seed/${request.pet}/100/100`;
+    const imageUrl = request.pet_image || `https://picsum.photos/seed/${request.pet}/100/100`;
 
     const getStatusVariant = (status: string) => {
         switch (status.toLowerCase()) {

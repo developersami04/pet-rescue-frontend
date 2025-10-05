@@ -23,6 +23,7 @@ export type AdoptionRequest = {
     created_at: string;
     message: string;
     status: 'pending' | 'approved' | 'rejected';
+    pet_image?: string | null;
 };
 
 export type MyAdoptionRequest = {
@@ -35,6 +36,7 @@ export type MyAdoptionRequest = {
     created_at: string;
     message: string;
     status: 'pending' | 'approved' | 'rejected';
+    pet_image?: string | null;
 }
 
 
