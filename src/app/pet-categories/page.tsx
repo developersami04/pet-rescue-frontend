@@ -58,9 +58,17 @@ function CategoryCard({ petType }: { petType: PetType }) {
 
 
 export default async function PetCategoriesPage() {
-  const petTypes: PetType[] | null = await getPetTypes();
+  let petTypes: PetType[] | null = null;
+  let error: string | null = null;
 
-  if (!petTypes || petTypes.length === 0) {
+  try {
+    petTypes = await getPetTypes();
+  } catch (e: any) {
+    error = e.message || "An unknown error occurred.";
+  }
+
+
+  if (error || !petTypes || petTypes.length === 0) {
     return (
         <div className="container mx-auto py-8 px-4 md:px-6">
              <PageHeader
@@ -69,7 +77,7 @@ export default async function PetCategoriesPage() {
             />
              <Alert variant="destructive">
                 <AlertTitle>Error</AlertTitle>
-                <AlertDescription>Could not fetch pet categories. Please try again later.</AlertDescription>
+                <AlertDescription>{error || "Could not fetch pet categories. Please try again later."}</AlertDescription>
             </Alert>
         </div>
     )
