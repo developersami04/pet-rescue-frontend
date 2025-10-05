@@ -240,6 +240,36 @@ export async function sendVerificationEmail(token: string) {
     }
 }
 
+export async function verifyOtp(token: string, otp: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.verifyEmail}`, {
+            method: 'POST',
+            body: JSON.stringify({ otp: otp }),
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || 'Failed to verify OTP.');
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request to verify OTP timed out.');
+        }
+        console.error('Error verifying OTP:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred during OTP verification.');
+    }
+}
+
 // From pet.actions.ts
 
 type PetType = {
