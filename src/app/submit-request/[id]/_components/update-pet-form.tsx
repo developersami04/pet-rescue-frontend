@@ -51,7 +51,6 @@ const updatePetSchema = z.object({
   pet_image: z.any().optional(),
   is_vaccinated: z.boolean().default(false),
   is_diseased: z.boolean().default(false),
-  is_founded: z.boolean().default(false),
   address: z.string().optional(),
   city: z.string().optional(),
   pincode: z.coerce.number().optional().nullable(),
@@ -133,7 +132,6 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
       description: '',
       is_vaccinated: false,
       is_diseased: false,
-      is_founded: false,
       address: '',
       city: '',
       state: '',
@@ -364,7 +362,6 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
             <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea placeholder="Tell us about the pet..." className="resize-none" rows={5} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
         )} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <FormField control={form.control} name="is_founded" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Is this a Found Pet?</FormLabel></div></FormItem>)} />
             <FormField control={form.control} name="is_vaccinated" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Vaccinated?</FormLabel></div></FormItem>)} />
             <FormField control={form.control} name="is_diseased" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Any Diseases?</FormLabel></div></FormItem>)} />
         </div>
