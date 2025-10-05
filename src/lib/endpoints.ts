@@ -4,12 +4,13 @@ const API_ENDPOINTS = {
   login: '/api/user-auth/login',
   refreshToken: '/api/user-auth/token-refresh',
   
-  userCheck: '/api/user-auth/user-check',
+  userCheck: '/api/home/user-check',
+
   userDetails: '/api/user-auth/user-details',
   updateUserDetails: '/api/user-auth/update-account',
   changePassword: '/api/user-auth/change-password',
-  sendVerificationEmail: '/api/user-auth/send-verification-mail',
-  verifyEmail: '/api/user-auth/verify-email',
+  sendVerificationEmail: '/api/user-auth/verify-email',    // GET
+  verifyEmail: '/api/user-auth/verify-email',              // POST
   
   petTypes: '/api/pet-data/pet-types/',
   allPets: '/api/pet-data/pets/',
