@@ -78,7 +78,7 @@ export function FavoritePets() {
                     </div>
                 ) : favoritePets.length > 0 ? (
                     favoritePets.map(pet => {
-                        const imageUrl = pet.pet_image ?? `https://picsum.photos/seed/${pet.id}/300/300`;
+                        const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/300/300`;
                         return (
                             <Card key={pet.id} className="overflow-hidden">
                                 <div className="relative aspect-square w-full">

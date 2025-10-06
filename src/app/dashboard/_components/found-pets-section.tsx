@@ -54,7 +54,7 @@ export function FoundPetsSection({ foundPets }: FoundPetsSectionProps) {
             {view === 'grid' ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {foundPets.map(report => {
-                        const imageUrl = report.report_image ?? `https://picsum.photos/seed/${report.pet}/300/300`;
+                        const imageUrl = report.report_image || `https://picsum.photos/seed/${report.pet}/300/300`;
                         return (
                             <Card key={report.id} className="overflow-hidden flex flex-col">
                                 <Link href={`/pets/${report.pet}`} className="group">

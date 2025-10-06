@@ -15,7 +15,7 @@ type PetReportListItemProps = {
 }
 
 export function PetReportListItem({ report }: PetReportListItemProps) {
-    const imageUrl = report.report_image ?? `https://picsum.photos/seed/${report.pet}/100/100`;
+    const imageUrl = report.report_image || `https://picsum.photos/seed/${report.pet}/100/100`;
 
     const getStatusInfo = (status: 'lost' | 'found' | 'adoptable') => {
         switch (status) {

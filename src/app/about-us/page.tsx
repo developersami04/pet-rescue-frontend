@@ -31,7 +31,7 @@ export default function AboutUsPage() {
           <CardContent className="space-y-6">
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16">
-                <AvatarImage src="https://picsum.photos/seed/team1/200/200" alt="Team member" />
+                <AvatarImage src={"https://picsum.photos/seed/team1/200/200"} alt="Team member" />
                 <AvatarFallback>JD</AvatarFallback>
               </Avatar>
               <div>
@@ -41,7 +41,7 @@ export default function AboutUsPage() {
             </div>
              <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16">
-                <AvatarImage src="https://picsum.photos/seed/team2/200/200" alt="Team member" />
+                <AvatarImage src={"https://picsum.photos/seed/team2/200/200"} alt="Team member" />
                 <AvatarFallback>JS</AvatarFallback>
               </Avatar>
               <div>

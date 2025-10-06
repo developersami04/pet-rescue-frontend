@@ -61,7 +61,7 @@ export function NotificationItem({ notification, onMarkAsRead, onDelete, isLast 
         <span className="absolute left-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-primary" />
       )}
       <Avatar className="h-10 w-10">
-        <AvatarImage src={notification.pet_image ?? `https://picsum.photos/seed/${notification.pet_id}/100`} />
+        <AvatarImage src={notification.pet_image || `https://picsum.photos/seed/${notification.pet_id}/100`} />
         <AvatarFallback>{notification.pet_name.charAt(0)}</AvatarFallback>
       </Avatar>
       <div className="flex-1">
