@@ -181,18 +181,12 @@ export function AddPetForm() {
     }
 
     allKeys.forEach(key => {
-        // Skip keys that have been handled manually
-        if (key === 'pet_status' || key === 'message') return;
+        // Skip keys that have been handled manually or are image files
+        if (key === 'pet_status' || key === 'message' || key === 'pet_image' || key === 'report_image') return;
 
         const value = values[key as keyof typeof values];
 
-        if (key === 'pet_image' || key === 'report_image') {
-            if (value instanceof FileList && value.length > 0) {
-                formData.append(key, value[0]);
-            } else {
-                formData.append(key, ''); // Send empty for null file
-            }
-        } else if (value instanceof Date) {
+        if (value instanceof Date) {
             formData.append(key, format(value, 'yyyy-MM-dd'));
         } else if (typeof value === 'boolean') {
             formData.append(key, String(value));
@@ -202,6 +196,14 @@ export function AddPetForm() {
             formData.append(key, String(value));
         }
     });
+
+    if (values.pet_image instanceof FileList && values.pet_image.length > 0) {
+        formData.append('pet_image', values.pet_image[0]);
+    }
+
+    if (values.report_image instanceof FileList && values.report_image.length > 0) {
+        formData.append('report_image', values.report_image[0]);
+    }
 
     try {
         const result = await submitRequest(token, formData);
