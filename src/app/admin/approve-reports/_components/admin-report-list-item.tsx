@@ -2,7 +2,7 @@
 'use client';
 
 import { Card } from "@/components/ui/card";
-import { Pet } from "@/lib/data";
+import { AdminPetReport } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,15 +18,14 @@ import {
 import { Check, MoreVertical, ShieldCheck, ThumbsDown, X } from 'lucide-react';
 
 type AdminReportListItemProps = {
-    pet: Pet;
+    report: AdminPetReport;
 }
 
-export function AdminReportListItem({ pet }: AdminReportListItemProps) {
-    const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/100/100`;
-    const petStatus = pet.pet_report?.pet_status;
-    const isResolved = pet.pet_report?.is_resolved;
+export function AdminReportListItem({ report }: AdminReportListItemProps) {
+    const imageUrl = report.image || `https://picsum.photos/seed/${report.pet_id}/100/100`;
+    const petStatus = report.pet_status;
 
-    const reportedDate = pet.created_at ? new Date(pet.created_at) : null;
+    const reportedDate = report.created_at ? new Date(report.created_at) : null;
     const isValidDate = reportedDate && !isNaN(reportedDate.getTime());
 
     return (
@@ -34,18 +33,18 @@ export function AdminReportListItem({ pet }: AdminReportListItemProps) {
             <div className="relative h-20 w-20 flex-shrink-0">
                 <Image
                     src={imageUrl}
-                    alt={pet.name}
+                    alt={report.pet_name}
                     fill
                     className="object-cover rounded-md"
-                    data-ai-hint={pet.breed ?? pet.type_name}
+                    data-ai-hint={report.pet_type_name}
                 />
             </div>
             <div className="flex-grow grid grid-cols-1 sm:grid-cols-5 items-center gap-4">
                 <div className="col-span-2">
-                    <Link href={`/pets/${pet.id}`} className="hover:underline">
-                        <h3 className="text-lg font-bold">{pet.name}</h3>
+                    <Link href={`/pets/${report.pet_id}`} className="hover:underline">
+                        <h3 className="text-lg font-bold">{report.pet_name}</h3>
                     </Link>
-                    <p className="text-sm text-muted-foreground">{pet.type_name} / {pet.breed || 'N/A'}</p>
+                    <p className="text-sm text-muted-foreground">{report.pet_type_name}</p>
                      <p className="text-xs text-muted-foreground mt-1">
                         {isValidDate
                             ? `Reported ${formatDistanceToNow(reportedDate, { addSuffix: true })}`
@@ -53,7 +52,7 @@ export function AdminReportListItem({ pet }: AdminReportListItemProps) {
                     </p>
                 </div>
                  <div>
-                     {petStatus && !isResolved && (
+                     {petStatus && (
                         <Badge 
                             className={cn("capitalize", 
                                 petStatus === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 
@@ -66,7 +65,7 @@ export function AdminReportListItem({ pet }: AdminReportListItemProps) {
                     )}
                 </div>
                 <div>
-                    <p className="text-sm font-medium">{pet.pet_report?.reporter_name || 'N/A'}</p>
+                    <p className="text-sm font-medium">{report.created_by_username || 'N/A'}</p>
                     <p className="text-xs text-muted-foreground">Reporter</p>
                 </div>
                  <div className="flex justify-end items-center gap-2">

@@ -2,10 +2,10 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
-import { getAllPets } from '@/lib/actions';
+import { getPetReports } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Pet } from '@/lib/data';
+import { AdminPetReport } from '@/lib/data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
@@ -44,7 +44,7 @@ function ReportsSkeleton() {
 }
 
 function AdminReportsClientContent() {
-    const [pets, setPets] = useState<Pet[]>([]);
+    const [reports, setReports] = useState<AdminPetReport[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -64,7 +64,7 @@ function AdminReportsClientContent() {
         }
     }, [searchParams]);
 
-    const fetchPets = useCallback(async () => {
+    const fetchReports = useCallback(async (tab: TabValue) => {
         const token = localStorage.getItem('authToken');
         if (!token) {
             setError('You must be logged in to view reports.');
@@ -73,9 +73,16 @@ function AdminReportsClientContent() {
         }
 
         try {
-            // Using getAllPets as a temporary endpoint
-            const petsData = await getAllPets(token);
-            setPets(petsData);
+            let status: 'pending' | 'approved' | 'rejected' | 'all' = 'pending';
+             if (tab === 'rejected') status = 'rejected';
+             // The API doesn't seem to support 'last50' or 'approved' directly,
+             // so we'll fetch all and filter for now.
+             // This can be optimized if the API adds more filtering capabilities.
+             if (tab === 'last50') status = 'all';
+
+
+            const reportsData = await getPetReports(token, status);
+            setReports(reportsData);
         } catch (e: any) {
             if (e.message.includes('Session expired')) {
                 toast({ variant: 'destructive', title: 'Session Expired' });
@@ -89,29 +96,25 @@ function AdminReportsClientContent() {
 
     const handleRefresh = async () => {
         setIsRefreshing(true);
-        await fetchPets();
+        await fetchReports(activeTab);
         setIsRefreshing(false);
     }
 
     useEffect(() => {
         setIsLoading(true);
-        fetchPets().finally(() => setIsLoading(false));
-    }, [fetchPets]);
+        fetchReports(activeTab).finally(() => setIsLoading(false));
+    }, [activeTab, fetchReports]);
 
-    const filteredPets = useMemo(() => {
-        // Placeholder filtering logic
-        switch(activeTab) {
-            case 'pending':
-                return pets.filter(p => p.pet_report && !p.pet_report.is_resolved);
-            case 'last50':
-                return pets.slice(0, 50);
-            case 'rejected':
-                 // This is a placeholder, actual logic would depend on a 'rejected' status
-                return pets.filter(p => p.id % 5 === 0);
-            default:
-                return pets;
+    const filteredReports = useMemo(() => {
+        // The API is already filtering by status for 'pending' and 'rejected'.
+        // For 'last50', we sort by date and take the first 50.
+        if (activeTab === 'last50') {
+            return reports
+                .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                .slice(0, 50);
         }
-    }, [pets, activeTab]);
+        return reports;
+    }, [reports, activeTab]);
 
     const handleTabChange = (tab: TabValue) => {
         setActiveTab(tab);
@@ -148,13 +151,13 @@ function AdminReportsClientContent() {
                 <AdminReportTabs activeTab={activeTab} onTabChange={handleTabChange} />
                 <div className="mt-6">
                     <TabsContent value="pending">
-                        <AdminReportList pets={filteredPets} />
+                        <AdminReportList reports={filteredReports} />
                     </TabsContent>
                     <TabsContent value="last50">
-                        <AdminReportList pets={filteredPets} />
+                        <AdminReportList reports={filteredReports} />
                     </TabsContent>
                     <TabsContent value="rejected">
-                        <AdminReportList pets={filteredPets} />
+                        <AdminReportList reports={filteredReports} />
                     </TabsContent>
                 </div>
             </Tabs>

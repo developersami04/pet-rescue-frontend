@@ -42,7 +42,6 @@ export type MyAdoptionRequest = {
 
 export type PetReport = {
     id: number;
-    pet: number;
     report_image: string | null;
     pet_name: string;
     pet_status: 'lost' | 'found' | 'adoptable';
@@ -50,6 +49,18 @@ export type PetReport = {
     reporter_name: string;
     report_status: string;
     is_resolved: boolean;
+};
+
+export type AdminPetReport = {
+    id: number;
+    image: string | null;
+    pet_name: string;
+    pet_id: number;
+    pet_type_name: string;
+    pet_status: 'lost' | 'found' | 'adopt';
+    created_by_username: string;
+    created_at: string;
+    report_status: 'pending' | 'approved' | 'rejected';
 };
 
 export type Pet = {
@@ -128,6 +139,17 @@ export type RegisteredUser = {
   is_active: boolean;
   is_staff: boolean;
   date_joined: string;
+};
+
+
+export type UnverifiedUser = {
+    id: number;
+    profile_image: string | null;
+    username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    date_joined: string;
 };
 
 

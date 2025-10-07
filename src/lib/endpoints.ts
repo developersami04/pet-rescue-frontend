@@ -28,6 +28,7 @@ const API_ENDPOINTS = {
 
   adminDashboardMetrics: '/api/admin-panel/dashboard-metrics/',
   registeredUsers: '/api/admin-panel/registered-users/',
+  petReports: '/api/admin-panel/pet-reports/',
 };
 
 export const API_REQUEST_TIMEOUT = 25000; 

@@ -5,7 +5,7 @@
 import { z } from "zod";
 import API_ENDPOINTS from "./endpoints";
 import { fetchWithAuth, fetchWithTimeout } from "./api";
-import type { Pet, Notification, RegisteredUser, UnverifiedUser } from "./data";
+import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport } from "./data";
 
 // From user.actions.ts
 
@@ -182,8 +182,7 @@ export async function updateUserDetails(token: string, userData: Record<string, 
     const endpoint = isPasswordChange ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
     const method = isPasswordChange ? 'POST' : 'PATCH';
     const body = isFormData ? userData : JSON.stringify(userData);
-    const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
-
+    
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${endpoint}`, {
             method: method,
@@ -790,33 +789,46 @@ export async function getRegisteredUsers(token: string): Promise<RegisteredUser[
 }
 
 export async function getUnverifiedUsers(token: string): Promise<UnverifiedUser[]> {
-    if (!API_BASE_URL) {
-        throw new Error('API is not configured. Please contact support.');
+  if (!API_BASE_URL) {
+    throw new Error('API is not configured. Please contact support.');
+  }
+
+  try {
+    const response = await fetchWithAuth(
+      `${API_BASE_URL}${API_ENDPOINTS.registeredUsers}`,
+      {
+        method: 'GET',
+        cache: 'no-store',
+      },
+      token
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.message || result.detail || 'Failed to fetch unverified users.'
+      );
     }
 
-    try {
-        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.unverifiedUsers}`, {
-            method: 'GET',
-            cache: 'no-store'
-        }, token);
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.message || result.detail || 'Failed to fetch unverified users.');
-        }
-
-        return result.data || [];
-    } catch (error) {
-        if ((error as any).name === 'AbortError') {
-            throw new Error('Request for unverified users timed out.');
-        }
-        console.error('Error fetching unverified users:', error);
-        if (error instanceof Error) {
-           throw new Error(error.message);
-        }
-        throw new Error('An unknown error occurred while fetching unverified users.');
+    const allUsers: RegisteredUser[] = result.data || [];
+    const unverifiedUsers: UnverifiedUser[] = allUsers
+        .filter(user => !user.is_verified)
+        .map(({ id, profile_image, username, email, first_name, last_name, date_joined }) => ({
+             id, profile_image, username, email, first_name, last_name, date_joined
+        }));
+    
+    return unverifiedUsers;
+  } catch (error) {
+    if ((error as any).name === 'AbortError') {
+      throw new Error('Request for unverified users timed out.');
     }
+    console.error('Error fetching unverified users:', error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error('An unknown error occurred while fetching unverified users.');
+  }
 }
 
 export async function updateUserStatus(token: string, userId: number, field: 'is_verified' | 'is_active' | 'is_staff', value: boolean) {
@@ -846,5 +858,39 @@ export async function updateUserStatus(token: string, userId: number, field: 'is
            throw new Error(error.message);
         }
         throw new Error('An unknown error occurred while updating user status.');
+    }
+}
+
+export async function getPetReports(token: string, status?: 'pending' | 'approved' | 'rejected' | 'all'): Promise<AdminPetReport[]> {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.petReports}`);
+    if (status && status !== 'all') {
+        url.searchParams.append('status', status);
+    }
+
+    try {
+        const response = await fetchWithAuth(url.toString(), {
+            method: 'GET',
+            cache: 'no-store'
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || 'Failed to fetch pet reports.');
+        }
+
+        return result.data || [];
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request for pet reports timed out.');
+        }
+        console.error('Error fetching pet reports:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching pet reports.');
     }
 }

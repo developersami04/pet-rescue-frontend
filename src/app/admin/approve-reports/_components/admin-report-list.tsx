@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Pet } from "@/lib/data";
+import { AdminPetReport } from "@/lib/data";
 import { PawPrint, LayoutGrid, List } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -9,13 +9,13 @@ import { AdminReportCard } from "./admin-report-card";
 import { AdminReportListItem } from "./admin-report-list-item";
 
 type AdminReportListProps = {
-    pets: Pet[];
+    reports: AdminPetReport[];
 };
 
-export function AdminReportList({ pets }: AdminReportListProps) {
+export function AdminReportList({ reports }: AdminReportListProps) {
     const [view, setView] = useState('grid');
     
-    if (pets.length === 0) {
+    if (reports.length === 0) {
         return (
             <div className="text-center py-16 col-span-full border-2 border-dashed rounded-lg">
                  <PawPrint className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
@@ -51,14 +51,14 @@ export function AdminReportList({ pets }: AdminReportListProps) {
             </div>
             {view === 'grid' ? (
                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {pets.map((pet) => (
-                        <AdminReportCard key={pet.id} pet={pet} />
+                    {reports.map((report) => (
+                        <AdminReportCard key={report.id} report={report} />
                     ))}
                 </div>
             ) : (
                 <div className="space-y-4">
-                    {pets.map((pet) => (
-                        <AdminReportListItem key={pet.id} pet={pet} />
+                    {reports.map((report) => (
+                        <AdminReportListItem key={report.id} report={report} />
                     ))}
                 </div>
             )}

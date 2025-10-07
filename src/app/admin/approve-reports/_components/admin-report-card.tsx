@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import type { Pet } from '@/lib/data';
+import type { AdminPetReport } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
@@ -23,29 +23,29 @@ import {
 import { Check, MoreVertical, ShieldCheck, ThumbsDown, X } from 'lucide-react';
 
 type AdminReportCardProps = {
-  pet: Pet;
+  report: AdminPetReport;
 };
 
-export function AdminReportCard({ pet }: AdminReportCardProps) {
-  const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/400/300`;
-  const petStatus = pet.pet_report?.pet_status;
-  const isResolved = pet.pet_report?.is_resolved;
+export function AdminReportCard({ report }: AdminReportCardProps) {
+  const imageUrl = report.image || `https://picsum.photos/seed/${report.pet_id}/400/300`;
+  const petStatus = report.pet_status;
 
   return (
     <Card className="flex flex-col h-full overflow-hidden transition-shadow duration-300 hover:shadow-xl">
-        <Link href={`/pets/${pet.id}`} className="group">
+        <Link href={`/pets/${report.pet_id}`} className="group">
             <div className="relative h-56 w-full">
             <Image
                 src={imageUrl}
-                alt={pet.name}
+                alt={report.pet_name}
                 fill
                 className="object-cover"
-                data-ai-hint={pet.breed ?? pet.type_name}
+                data-ai-hint={report.pet_type_name}
             />
-            {petStatus && !isResolved && (
+            {petStatus && (
                 <Badge 
                 className={cn("absolute top-2 left-2 capitalize", 
-                    petStatus === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
+                    petStatus === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 
+                    petStatus === 'found' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'
                 )}
                 >
                     {petStatus}
@@ -56,8 +56,8 @@ export function AdminReportCard({ pet }: AdminReportCardProps) {
       <CardHeader>
         <div className="flex justify-between items-start">
             <CardTitle className="font-headline tracking-wide flex items-center gap-2">
-                <Link href={`/pets/${pet.id}`} className="hover:underline">
-                    {pet.name}
+                <Link href={`/pets/${report.pet_id}`} className="hover:underline">
+                    {report.pet_name}
                 </Link>
             </CardTitle>
              <DropdownMenu>
@@ -85,10 +85,10 @@ export function AdminReportCard({ pet }: AdminReportCardProps) {
       </CardHeader>
       <CardContent className="flex-grow">
         <p className="text-sm text-muted-foreground">
-          {pet.breed || 'Unknown Breed'} &bull; {pet.age ?? 'Unknown'} {pet.age === 1 ? 'year' : 'years'} old
+          {report.pet_type_name}
         </p>
          <p className="text-sm text-muted-foreground mt-1">
-          Reported by: {pet.pet_report?.reporter_name || 'N/A'}
+          Reported by: {report.created_by_username || 'N/A'}
         </p>
       </CardContent>
       <CardFooter className="flex flex-col gap-2 !p-4">
