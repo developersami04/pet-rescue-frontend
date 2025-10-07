@@ -21,12 +21,21 @@ export async function fetchWithTimeout(url: string, options: RequestInit, timeou
 }
 
 export async function fetchWithAuth(url: string, options: RequestInit, token: string) {
-    const headers = { ...options.headers };
-    if (!(options.body instanceof FormData)) {
-        (headers as Record<string, string>)['Content-Type'] = 'application/json';
-    }
-    (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+    const headers: Record<string, string> = {};
 
+    // Copy existing headers
+    if (options.headers) {
+        for (const [key, value] of Object.entries(options.headers)) {
+            headers[key] = value;
+        }
+    }
+
+    // Set Content-Type only if it's not FormData and not already set
+    if (!(options.body instanceof FormData) && !headers['Content-Type']) {
+        headers['Content-Type'] = 'application/json';
+    }
+    
+    headers['Authorization'] = `Bearer ${token}`;
 
     let response = await fetchWithTimeout(url, {
         ...options,
@@ -39,7 +48,7 @@ export async function fetchWithAuth(url: string, options: RequestInit, token: st
 
         if (newAccessToken) {
             console.log("Token refreshed successfully, retrying the original request...");
-            (headers as Record<string, string>)['Authorization'] = `Bearer ${newAccessToken}`;
+            headers['Authorization'] = `Bearer ${newAccessToken}`;
             response = await fetchWithTimeout(url, {
                 ...options,
                 headers,

@@ -6,6 +6,7 @@ import { z } from "zod";
 import API_ENDPOINTS from "./endpoints";
 import { fetchWithAuth, fetchWithTimeout } from "./api";
 import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport } from "./data";
+import { format } from "date-fns";
 
 // From user.actions.ts
 
@@ -24,6 +25,19 @@ const registerUserSchema = z.object({
 });
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+function getErrorMessage(result: any, defaultMessage: string): string {
+    if (result) {
+        if (result.message && typeof result.message === 'string') return result.message;
+        if (result.detail && typeof result.detail === 'string') return result.detail;
+        if (typeof result === 'object' && result !== null) {
+            const messages = Object.values(result).flat();
+            if (messages.length > 0) return messages.join(' ');
+        }
+    }
+    return defaultMessage;
+}
+
 
 export async function registerUser(userData: z.infer<typeof registerUserSchema>) {
     if (!API_BASE_URL) {
@@ -57,10 +71,7 @@ export async function registerUser(userData: z.infer<typeof registerUserSchema>)
         const result = await response.json();
 
         if (!response.ok) {
-            if (result.message && Array.isArray(result.message) && result.message.length > 0) {
-                 throw new Error(result.message.join(' '));
-            }
-            throw new Error(result.detail || 'Failed to register user.');
+            throw new Error(getErrorMessage(result, 'Failed to register user.'));
         }
 
         return result;
@@ -98,7 +109,7 @@ export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
         const result = await response.json();
         
         if (!response.ok) {
-            throw new Error(result.message || result.detail || 'Failed to log in.');
+            throw new Error(getErrorMessage(result, 'Failed to log in.'));
         }
 
         return result;
@@ -129,7 +140,7 @@ export async function checkUserAuth(token: string) {
         const result = await response.json();
         
         if (!response.ok) {
-            return { isAuthenticated: false, user: null, error: result.detail || 'Token validation failed.' };
+            return { isAuthenticated: false, user: null, error: getErrorMessage(result, 'Token validation failed.') };
         }
 
         return { isAuthenticated: true, user: result.user, message: result.message, error: null };
@@ -153,7 +164,7 @@ export async function getUserDetails(token: string) {
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || 'Failed to fetch user details.');
+            throw new Error(getErrorMessage(result, 'Failed to fetch user details.'));
         }
 
         return result;
@@ -195,13 +206,7 @@ export async function updateUserDetails(token: string, userData: Record<string, 
         const result = await response.json();
 
         if (!response.ok) {
-            if (typeof result === 'object' && result !== null) {
-                const errorMessages = Object.values(result).flat().join(' ');
-                if (errorMessages) {
-                    throw new Error(errorMessages);
-                }
-            }
-            throw new Error(result.message || result.detail || 'Failed to update user details.');
+            throw new Error(getErrorMessage(result, 'Failed to update user details.'));
         }
 
         return result;
@@ -230,7 +235,7 @@ export async function sendVerificationEmail(token: string) {
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || 'Failed to send verification email.');
+            throw new Error(getErrorMessage(result, 'Failed to send verification email.'));
         }
 
         return result;
@@ -260,7 +265,7 @@ export async function verifyOtp(token: string, otp: string) {
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || 'Failed to verify OTP.');
+            throw new Error(getErrorMessage(result, 'Failed to verify OTP.'));
         }
 
         return result;
@@ -326,7 +331,7 @@ export async function getAllPets(token: string, type?: string) {
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || 'Failed to fetch pets.');
+            throw new Error(getErrorMessage(result, 'Failed to fetch pets.'));
         }
 
         return result.data || [];
@@ -356,7 +361,7 @@ export async function getPetById(token: string, petId: string): Promise<Pet> {
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || 'Failed to fetch pet details.');
+            throw new Error(getErrorMessage(result, 'Failed to fetch pet details.'));
         }
 
         return result.data;
@@ -386,7 +391,7 @@ export async function getMyPets(token: string): Promise<Pet[] | null> {
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || 'Failed to fetch your pets.');
+            throw new Error(getErrorMessage(result, 'Failed to fetch your pets.'));
         }
 
         return result.data || [];
@@ -414,14 +419,7 @@ export async function submitRequest(token: string, formData: FormData) {
         const result = await response.json();
 
         if (!response.ok) {
-            // Handle nested error messages
-            const errorMessages = Object.entries(result).map(([key, value]) => {
-                if (Array.isArray(value)) {
-                    return `${key}: ${value.join(', ')}`;
-                }
-                return `${key}: ${value}`;
-            }).join('; ');
-            throw new Error(errorMessages || `Failed to submit request.`);
+            throw new Error(getErrorMessage(result, 'Failed to submit request.'));
         }
 
         return result;
@@ -454,7 +452,7 @@ export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopt
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || `Failed to fetch ${tab} data.`);
+            throw new Error(getErrorMessage(result, `Failed to fetch ${tab} data.`));
         }
 
         return result.data || [];
@@ -482,7 +480,7 @@ export async function getPetRequestFormData(token: string, petId: string): Promi
     const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(result.message || result.detail || 'Failed to fetch pet request form data.');
+      throw new Error(getErrorMessage(result, 'Failed to fetch pet request form data.'));
     }
     return result.data;
   } catch (error) {
@@ -501,7 +499,7 @@ export async function updatePetRequest(token: string, petId: string, formData: F
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
-    const url = `${API_BASE_URL}${API_ENDPOINTS.petRequestView}${petId}`;
+    const url = `${API_BASE_URL}${API_ENDPOINTS.petRequestView}${petId}/`;
 
     try {
         const response = await fetchWithAuth(url, {
@@ -512,13 +510,7 @@ export async function updatePetRequest(token: string, petId: string, formData: F
         const result = await response.json();
 
         if (!response.ok) {
-            const errorMessages = Object.entries(result).map(([key, value]) => {
-                if (Array.isArray(value)) {
-                    return `${key}: ${value.join(', ')}`;
-                }
-                return `${key}: ${value}`;
-            }).join('; ');
-            throw new Error(errorMessages || `Failed to update request.`);
+            throw new Error(getErrorMessage(result, 'Failed to update request.'));
         }
 
         return result;
@@ -538,7 +530,7 @@ export async function deletePetRequest(token: string, petId: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
-    const url = `${API_BASE_URL}${API_ENDPOINTS.petRequestView}${petId}`;
+    const url = `${API_BASE_URL}${API_ENDPOINTS.petRequestView}${petId}/`;
 
     try {
         const response = await fetchWithAuth(url, {
@@ -547,7 +539,7 @@ export async function deletePetRequest(token: string, petId: string) {
 
         if (!response.ok && response.status !== 204) {
             const result = await response.json();
-            throw new Error(result.message || result.detail || 'Failed to delete pet request.');
+            throw new Error(getErrorMessage(result, 'Failed to delete pet request.'));
         }
 
         return { message: 'Pet request deleted successfully.' };
@@ -577,7 +569,7 @@ export async function createAdoptionRequest(token: string, petId: number, messag
         
         const result = await response.json();
         if (!response.ok) {
-            throw new Error(result.message || 'Failed to create adoption request.');
+            throw new Error(getErrorMessage(result, 'Failed to create adoption request.'));
         }
         return result;
     } catch (error) {
@@ -601,7 +593,7 @@ export async function updateAdoptionRequest(token: string, requestId: number, me
 
         const result = await response.json();
         if (!response.ok) {
-            throw new Error(result.message || 'Failed to update adoption request.');
+            throw new Error(getErrorMessage(result, 'Failed to update adoption request.'));
         }
         return result;
     } catch (error) {
@@ -625,7 +617,7 @@ export async function deleteAdoptionRequest(token: string, requestId: number) {
 
         if (!response.ok && response.status !== 204) {
              const result = await response.json();
-            throw new Error(result.message || result.detail || 'Failed to delete adoption request.');
+            throw new Error(getErrorMessage(result, 'Failed to delete adoption request.'));
         }
         return { message: 'Adoption request deleted successfully.' };
     } catch (error) {
@@ -661,7 +653,7 @@ export async function getNotifications(
 
     const result = await response.json();
     if (!response.ok) {
-      throw new Error(result.message || result.detail || 'Failed to fetch notifications.');
+      throw new Error(getErrorMessage(result, 'Failed to fetch notifications.'));
     }
     
     // Transform the nested data into the flat Notification structure
@@ -700,7 +692,7 @@ export async function readNotification(token: string, notificationId: number) {
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || 'Failed to read notification.');
+            throw new Error(getErrorMessage(result, 'Failed to read notification.'));
         }
         return result.data;
     } catch (error) {
@@ -720,7 +712,7 @@ export async function deleteNotification(token: string, notificationId: number) 
         const response = await fetchWithAuth(url, { method: 'DELETE' }, token);
         if (!response.ok && response.status !== 204) {
             const result = await response.json();
-            throw new Error(result.message || 'Failed to delete notification.');
+            throw new Error(getErrorMessage(result, 'Failed to delete notification.'));
         }
         return { message: 'Notification deleted successfully.' };
     } catch (error) {
@@ -745,7 +737,7 @@ export async function getAdminDashboardMetrics(token: string) {
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || 'Failed to fetch admin dashboard metrics.');
+            throw new Error(getErrorMessage(result, 'Failed to fetch admin dashboard metrics.'));
         }
 
         return result.data;
@@ -775,7 +767,7 @@ export async function getRegisteredUsers(token: string): Promise<RegisteredUser[
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || 'Failed to fetch registered users.');
+            throw new Error(getErrorMessage(result, 'Failed to fetch registered users.'));
         }
 
         return result.data || [];
@@ -810,7 +802,7 @@ export async function getUnverifiedUsers(token: string): Promise<UnverifiedUser[
 
     if (!response.ok) {
       throw new Error(
-        result.message || result.detail || 'Failed to fetch unverified users.'
+        getErrorMessage(result, 'Failed to fetch unverified users.')
       );
     }
 
@@ -848,7 +840,7 @@ export async function updateUserStatus(token: string, userId: number, field: 'is
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || 'Failed to update user status.');
+            throw new Error(getErrorMessage(result, 'Failed to update user status.'));
         }
 
         return result;
@@ -882,7 +874,7 @@ export async function getPetReports(token: string, status?: 'pending' | 'approve
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || 'Failed to fetch pet reports.');
+            throw new Error(getErrorMessage(result, 'Failed to fetch pet reports.'));
         }
 
         return result.data || [];
@@ -913,7 +905,7 @@ export async function updatePetReportStatus(token: string, reportId: number, sta
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(result.message || result.detail || `Failed to update report to ${status}.`);
+            throw new Error(getErrorMessage(result, `Failed to update report to ${status}.`));
         }
 
         return result;
@@ -928,4 +920,5 @@ export async function updatePetReportStatus(token: string, reportId: number, sta
         throw new Error(`An unknown error occurred while updating the report status.`);
     }
 }
+
 

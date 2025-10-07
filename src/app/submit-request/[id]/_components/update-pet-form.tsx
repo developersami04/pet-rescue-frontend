@@ -33,7 +33,7 @@ import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { format, parseISO, isValid } from 'date-fns';
+import { format, parseISO, isValid, isEqual } from 'date-fns';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Calendar } from '@/components/ui/calendar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -85,20 +85,22 @@ function getChangedValues(initialValues: any, currentValues: any): Partial<any> 
     for (const key of allKeys) {
         if (key === 'pet_image' || key === 'report_image') continue;
 
-        const initialValue = initialValues[key];
-        const currentValue = currentValues[key];
+        let initialValue = initialValues[key];
+        let currentValue = currentValues[key];
 
-        // Treat null, undefined, and '' as the same for comparison purposes
-        const initialNormalized = initialValue ?? '';
-        const currentNormalized = currentValue ?? '';
+        // Normalize undefined, null, and empty strings to a single value for comparison
+        initialValue = (initialValue === undefined || initialValue === null || initialValue === '') ? null : initialValue;
+        currentValue = (currentValue === undefined || currentValue === null || currentValue === '') ? null : currentValue;
 
         if (key === 'last_vaccinated_date') {
-            const initialDate = initialValue && isValid(new Date(initialValue)) ? format(new Date(initialValue), 'yyyy-MM-dd') : null;
-            const currentDate = currentValue && isValid(new Date(currentValue)) ? format(new Date(currentValue), 'yyyy-MM-dd') : null;
-            if (initialDate !== currentDate) {
+             const initialDate = initialValue && isValid(new Date(initialValue)) ? new Date(initialValue) : null;
+             const currentDate = currentValue && isValid(new Date(currentValue)) ? new Date(currentValue) : null;
+
+             if (!initialDate && !currentDate) continue;
+             if ((initialDate && !currentDate) || (!initialDate && currentDate) || (initialDate && currentDate && !isEqual(initialDate, currentDate))) {
                 changedValues[key] = currentValue;
-            }
-        } else if (String(initialNormalized) !== String(currentNormalized)) {
+             }
+        } else if (String(initialValue) !== String(currentValue)) {
             changedValues[key] = currentValue;
         }
     }
@@ -166,7 +168,7 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     try {
       setIsLoading(true);
       const data = await getPetRequestFormData(token, petId);
-      const pet_status = data.available_for_adopt ? 'adopt' : data.pet_status || '';
+      const pet_status = data.available_for_adopt ? 'adopt' : data.pet_status || undefined;
       const formData = {
         ...data,
         pet_status: pet_status,
@@ -209,13 +211,6 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     
     const changedValues = getChangedValues(initialData, values);
 
-    // Set available_for_adopt based on pet_status
-    if (changedValues.hasOwnProperty('pet_status')) {
-        const availableForAdopt = changedValues.pet_status === 'adopt';
-        changedValues['available_for_adopt'] = availableForAdopt;
-    }
-
-
     const petImageFile = values.pet_image instanceof FileList && values.pet_image.length > 0 ? values.pet_image[0] : null;
     const reportImageFile = values.report_image instanceof FileList && values.report_image.length > 0 ? values.report_image[0] : null;
 
@@ -223,22 +218,27 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
       toast({ title: 'No Changes Detected', description: 'You have not made any changes.' });
       return;
     }
-
+    
     const formData = new FormData();
 
-    Object.entries(changedValues).forEach(([key, value]) => {
-      if (key === 'pet_status' && value === 'adopt') {
-        formData.append(key, 'adopt');
-      } else if (value instanceof Date) {
-        formData.append(key, format(value, 'yyyy-MM-dd'));
-      } else if (typeof value === 'boolean') {
-        formData.append(key, String(value));
-      } else if (value === null) {
-        formData.append(key, '');
-      } else if (value !== undefined) {
-        formData.append(key, String(value));
-      }
-    });
+    // Set available_for_adopt based on pet_status if it has changed
+    if (changedValues.hasOwnProperty('pet_status')) {
+        const availableForAdopt = changedValues.pet_status === 'adopt';
+        formData.append('available_for_adopt', String(availableForAdopt));
+        formData.append('pet_status', changedValues.pet_status);
+    }
+
+    for (const [key, value] of Object.entries(changedValues)) {
+        if (key === 'available_for_adopt' || key === 'pet_status') continue;
+        
+        if (value instanceof Date) {
+            formData.append(key, format(value, 'yyyy-MM-dd'));
+        } else if (value === null) {
+            formData.append(key, '');
+        } else if (value !== undefined) {
+            formData.append(key, String(value));
+        }
+    }
 
     if (petImageFile) {
         formData.append('pet_image', petImageFile);
@@ -427,7 +427,10 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
+                    <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
+                        {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Continue
+                    </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
