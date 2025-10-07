@@ -743,7 +743,7 @@ export async function getAdminDashboardMetrics(token: string) {
             throw new Error(result.message || result.detail || 'Failed to fetch admin dashboard metrics.');
         }
 
-        return result;
+        return result.data;
     } catch (error) {
         if ((error as any).name === 'AbortError') {
             throw new Error('Request for admin dashboard metrics timed out.');

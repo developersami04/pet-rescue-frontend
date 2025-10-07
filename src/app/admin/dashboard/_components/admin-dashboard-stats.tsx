@@ -11,10 +11,10 @@ import { getAdminDashboardMetrics } from "@/lib/actions";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 type Metrics = {
-    total_users: number;
-    total_pets: number;
-    pending_reports: number;
-    total_adoption_requests: number;
+    no_of_users: number;
+    no_of_current_pets: number;
+    no_of_pending_reports: number;
+    no_of_adoption_requests: number;
 };
 
 function StatCard({ title, value, icon, isLoading }: { title: string, value: number, icon: React.ReactNode, isLoading: boolean }) {
@@ -81,10 +81,10 @@ export function AdminDashboardStats() {
     }, [fetchMetrics]);
 
     const stats = [
-        { title: "Total Users", value: metrics?.total_users, icon: <Users className="h-4 w-4" /> },
-        { title: "Total Pets", value: metrics?.total_pets, icon: <PawPrint className="h-4 w-4" /> },
-        { title: "Pending Reports", value: metrics?.pending_reports, icon: <FileText className="h-4 w-4" /> },
-        { title: "Adoption Requests", value: metrics?.total_adoption_requests, icon: <CheckCircle className="h-4 w-4" /> },
+        { title: "Total Users", value: metrics?.no_of_users, icon: <Users className="h-4 w-4" /> },
+        { title: "Total Pets", value: metrics?.no_of_current_pets, icon: <PawPrint className="h-4 w-4" /> },
+        { title: "Pending Reports", value: metrics?.no_of_pending_reports, icon: <FileText className="h-4 w-4" /> },
+        { title: "Adoption Requests", value: metrics?.no_of_adoption_requests, icon: <CheckCircle className="h-4 w-4" /> },
     ];
     
     if (error) {
