@@ -11,12 +11,22 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { AdminReportTabs } from './admin-report-tabs';
 import { AdminReportList } from './admin-report-list';
+import { PageHeader } from '@/components/page-header';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 
 type TabValue = 'pending' | 'last50' | 'rejected';
 
 function ReportsSkeleton() {
     return (
         <div className="space-y-8">
+            <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                    <Skeleton className="h-8 w-64" />
+                    <Skeleton className="h-4 w-96" />
+                </div>
+                <Skeleton className="h-10 w-24" />
+            </div>
             <Skeleton className="h-12 w-full" />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {[...Array(8)].map((_, i) => (
@@ -36,6 +46,7 @@ function ReportsSkeleton() {
 function AdminReportsClientContent() {
     const [pets, setPets] = useState<Pet[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -54,7 +65,6 @@ function AdminReportsClientContent() {
     }, [searchParams]);
 
     const fetchPets = useCallback(async () => {
-        setIsLoading(true);
         const token = localStorage.getItem('authToken');
         if (!token) {
             setError('You must be logged in to view reports.');
@@ -74,13 +84,18 @@ function AdminReportsClientContent() {
                 setError(e.message || 'Failed to fetch pet reports.');
                 toast({ variant: 'destructive', title: 'Failed to fetch reports' });
             }
-        } finally {
-            setIsLoading(false);
         }
     }, [toast, router]);
 
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        await fetchPets();
+        setIsRefreshing(false);
+    }
+
     useEffect(() => {
-        fetchPets();
+        setIsLoading(true);
+        fetchPets().finally(() => setIsLoading(false));
     }, [fetchPets]);
 
     const filteredPets = useMemo(() => {
@@ -117,20 +132,33 @@ function AdminReportsClientContent() {
     }
 
     return (
-        <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as any)} className="w-full mt-6">
-            <AdminReportTabs activeTab={activeTab} onTabChange={handleTabChange} />
-            <div className="mt-6">
-                <TabsContent value="pending">
-                    <AdminReportList pets={filteredPets} />
-                </TabsContent>
-                <TabsContent value="last50">
-                    <AdminReportList pets={filteredPets} />
-                </TabsContent>
-                <TabsContent value="rejected">
-                    <AdminReportList pets={filteredPets} />
-                </TabsContent>
+        <>
+            <div className="flex items-center justify-between mb-6">
+                <PageHeader
+                    title="Approve Reports"
+                    description="Review and approve pet reports from users."
+                    className="pb-0"
+                />
+                <Button onClick={handleRefresh} disabled={isRefreshing}>
+                    {isRefreshing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Refresh
+                </Button>
             </div>
-        </Tabs>
+            <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as any)} className="w-full">
+                <AdminReportTabs activeTab={activeTab} onTabChange={handleTabChange} />
+                <div className="mt-6">
+                    <TabsContent value="pending">
+                        <AdminReportList pets={filteredPets} />
+                    </TabsContent>
+                    <TabsContent value="last50">
+                        <AdminReportList pets={filteredPets} />
+                    </TabsContent>
+                    <TabsContent value="rejected">
+                        <AdminReportList pets={filteredPets} />
+                    </TabsContent>
+                </div>
+            </Tabs>
+        </>
     );
 }
 
