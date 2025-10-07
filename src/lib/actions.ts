@@ -176,7 +176,7 @@ export async function updateUserDetails(token: string, userData: Record<string, 
     
     const isPasswordChange = userData instanceof FormData ? false : userData.hasOwnProperty('current_password');
     const endpoint = isPasswordChange ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
-    const method = isPasswordChange ? 'POST' : 'PATCH';
+    const method = userData instanceof FormData ? 'PATCH' : (isPasswordChange ? 'POST' : 'PATCH');
     
     const body = userData instanceof FormData ? userData : JSON.stringify(userData);
 
