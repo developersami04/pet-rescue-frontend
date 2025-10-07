@@ -212,7 +212,7 @@ export function AdminHeader() {
                  <Skeleton className="h-9 w-9 rounded-full" />
                ) : (
                 <Avatar className="h-9 w-9 cursor-pointer">
-                    <AvatarImage src={user?.profile_image ?? undefined} />
+                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${avatarSeed}/100`} />
                     <AvatarFallback>{avatarFallback}</AvatarFallback>
                 </Avatar>
                )}
@@ -337,7 +337,7 @@ export function AdminHeader() {
                                 <Skeleton className="h-9 w-9 rounded-full" />
                              ) : (
                                 <Avatar className="h-9 w-9">
-                                    <AvatarImage src={user?.profile_image ?? undefined} />
+                                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${avatarSeed}/100`} />
                                     <AvatarFallback>{avatarFallback}</AvatarFallback>
                                 </Avatar>
                              )}
