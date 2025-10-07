@@ -133,9 +133,9 @@ export async function checkUserAuth(token: string) {
         }
 
         return { isAuthenticated: true, user: result.user, message: result.message, error: null };
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error checking auth:', error);
-        return { isAuthenticated: false, user: null, error: 'An unknown error occurred.' };
+        return { isAuthenticated: false, user: null, error: error.message || 'An unknown error occurred.' };
     }
 }
 
@@ -173,13 +173,16 @@ export async function updateUserDetails(token: string, userData: Record<string, 
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
-    
-    const isPasswordChange = !(userData instanceof FormData) && userData.hasOwnProperty('current_password');
+
+    const isFormData = userData instanceof FormData;
+
+    // Determine if this is a password change
+    const isPasswordChange = !isFormData && userData.hasOwnProperty('current_password');
 
     const endpoint = isPasswordChange ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
     const method = isPasswordChange ? 'POST' : 'PATCH';
-    const body = userData instanceof FormData ? userData : JSON.stringify(userData);
-     const headers = userData instanceof FormData ? {} : { 'Content-Type': 'application/json' };
+    const body = isFormData ? userData : JSON.stringify(userData);
+    const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
 
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${endpoint}`, {
