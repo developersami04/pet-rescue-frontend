@@ -9,15 +9,21 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { getAdminDashboardMetrics } from "@/lib/actions";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { AdminStatDetailsDialog } from "./admin-stat-details-dialog";
 
 type Metrics = {
     no_of_users: number;
     no_of_current_pets: number;
+    no_of_unverified_pets: number;
+    no_of_verified_pets: number;
+    no_of_lost_reports: number;
+    no_of_found_reports: number;
     no_of_pending_reports: number;
     no_of_adoption_requests: number;
+    no_of_successful_adoptions: number;
 };
 
-function StatCard({ title, value, icon, isLoading }: { title: string, value: number, icon: React.ReactNode, isLoading: boolean }) {
+function StatCard({ title, value, icon, isLoading, details, detailsTitle }: { title: string, value: number, icon: React.ReactNode, isLoading: boolean, details?: Record<string, number>, detailsTitle?: string }) {
     if (isLoading) {
         return (
             <Card>
@@ -31,8 +37,9 @@ function StatCard({ title, value, icon, isLoading }: { title: string, value: num
             </Card>
         )
     }
-    return (
-        <Card>
+
+    const cardContent = (
+         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{title}</CardTitle>
                 <div className="text-muted-foreground">{icon}</div>
@@ -41,7 +48,19 @@ function StatCard({ title, value, icon, isLoading }: { title: string, value: num
                 <div className="text-2xl font-bold">{value}</div>
             </CardContent>
         </Card>
-    )
+    );
+
+    if (details) {
+        return (
+            <AdminStatDetailsDialog
+                trigger={cardContent}
+                title={detailsTitle || `Details for ${title}`}
+                data={details}
+            />
+        )
+    }
+
+    return cardContent;
 }
 
 export function AdminDashboardStats() {
@@ -79,13 +98,6 @@ export function AdminDashboardStats() {
     useEffect(() => {
         fetchMetrics();
     }, [fetchMetrics]);
-
-    const stats = [
-        { title: "Total Users", value: metrics?.no_of_users, icon: <Users className="h-4 w-4" /> },
-        { title: "Total Pets", value: metrics?.no_of_current_pets, icon: <PawPrint className="h-4 w-4" /> },
-        { title: "Pending Reports", value: metrics?.no_of_pending_reports, icon: <FileText className="h-4 w-4" /> },
-        { title: "Adoption Requests", value: metrics?.no_of_adoption_requests, icon: <CheckCircle className="h-4 w-4" /> },
-    ];
     
     if (error) {
         return <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>
@@ -93,15 +105,45 @@ export function AdminDashboardStats() {
 
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {stats.map(stat => (
-                 <StatCard 
-                    key={stat.title}
-                    title={stat.title}
-                    value={stat.value ?? 0}
-                    icon={stat.icon}
-                    isLoading={isLoading}
-                 />
-            ))}
+             <StatCard 
+                title="Total Users" 
+                value={metrics?.no_of_users ?? 0}
+                icon={<Users className="h-4 w-4" />}
+                isLoading={isLoading}
+             />
+             <StatCard 
+                title="Total Pets" 
+                value={metrics?.no_of_current_pets ?? 0}
+                icon={<PawPrint className="h-4 w-4" />}
+                isLoading={isLoading}
+                detailsTitle="Pet Verification Breakdown"
+                details={{
+                    "Verified Pets": metrics?.no_of_verified_pets ?? 0,
+                    "Unverified Pets": metrics?.no_of_unverified_pets ?? 0,
+                }}
+             />
+             <StatCard 
+                title="Pending Reports" 
+                value={metrics?.no_of_pending_reports ?? 0}
+                icon={<FileText className="h-4 w-4" />}
+                isLoading={isLoading}
+                detailsTitle="Pending Report Types"
+                details={{
+                    "Lost Reports": metrics?.no_of_lost_reports ?? 0,
+                    "Found Reports": metrics?.no_of_found_reports ?? 0,
+                }}
+             />
+             <StatCard 
+                title="Adoption Requests" 
+                value={metrics?.no_of_adoption_requests ?? 0}
+                icon={<CheckCircle className="h-4 w-4" />}
+                isLoading={isLoading}
+                detailsTitle="Adoption Funnel"
+                details={{
+                    "Pending Requests": metrics?.no_of_adoption_requests ?? 0,
+                    "Successful Adoptions": metrics?.no_of_successful_adoptions ?? 0,
+                }}
+             />
         </div>
     );
 }
