@@ -111,12 +111,12 @@ export function AddPetForm() {
       city: '',
       state: '',
       color: '',
-      disease_name: '',
-      stage: '',
+      disease_name: null,
+      stage: null,
       no_of_years: null,
       last_vaccinated_date: null,
-      vaccination_name: '',
-      note: '',
+      vaccination_name: null,
+      note: null,
       message: '',
     },
   });
@@ -166,40 +166,44 @@ export function AddPetForm() {
     }
     
     const formData = new FormData();
-    const allKeys = Object.keys(values);
+    const schemaKeys = Object.keys(basePetSchema.shape);
     
-    const availableForAdopt = values.pet_status === 'adopt';
-    formData.append('available_for_adopt', String(availableForAdopt));
+    // Explicitly handle booleans and special cases
+    formData.append('available_for_adopt', String(values.pet_status === 'adopt'));
 
-    allKeys.forEach(key => {
-        if (key === 'pet_image' || key === 'report_image') return;
-
+    for (const key of schemaKeys) {
         const value = values[key as keyof typeof values];
 
+        if (key === 'pet_image') {
+            if (value instanceof FileList && value.length > 0) {
+                formData.append(key, value[0]);
+            }
+            continue;
+        }
+        if (key === 'report_image') {
+            if (value instanceof FileList && value.length > 0) {
+                formData.append(key, value[0]);
+            }
+            continue;
+        }
         if (key === 'message') {
             if (values.pet_status === 'adopt') {
+                // For 'adopt', message can be description or empty, but must exist
                 formData.append('message', values.description || '');
             } else {
+                // For 'lost'/'found', message is required
                 formData.append('message', values.message || '');
             }
-            return;
+            continue;
         }
 
         if (value instanceof Date) {
             formData.append(key, format(value, 'yyyy-MM-dd'));
         } else if (value === null || value === undefined) {
-             formData.append(key, '');
+             formData.append(key, ''); // Send empty string for null/undefined
         } else {
             formData.append(key, String(value));
         }
-    });
-
-    if (values.pet_image instanceof FileList && values.pet_image.length > 0) {
-        formData.append('pet_image', values.pet_image[0]);
-    }
-
-    if (values.report_image instanceof FileList && values.report_image.length > 0) {
-        formData.append('report_image', values.report_image[0]);
     }
 
     try {
@@ -280,7 +284,7 @@ export function AddPetForm() {
                     <FormItem><FormLabel>Type</FormLabel><Select onValueChange={field.onChange} value={String(field.value ?? '')} disabled={petTypes.length === 0}><FormControl><SelectTrigger><SelectValue placeholder="Select pet type" /></SelectTrigger></FormControl><SelectContent>{petTypes.map(petType => (<SelectItem key={petType.id} value={String(petType.id)}>{petType.name}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="breed" render={({ field }) => (
-                    <FormItem><FormLabel>Breed</FormLabel><FormControl><Input placeholder="Enter breed" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Breed</FormLabel><FormControl><Input placeholder="Enter breed" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="age" render={({ field }) => (
                     <FormItem><FormLabel>Age (in years)</FormLabel><FormControl><Input type="number" placeholder="Enter age" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
@@ -295,13 +299,13 @@ export function AddPetForm() {
                     <FormItem><FormLabel>Color</FormLabel><FormControl><Input placeholder="Enter color" {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                  <FormField control={form.control} name="address" render={({ field }) => (
-                    <FormItem><FormLabel>Address</FormLabel><FormControl><Input placeholder="Enter address" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Address</FormLabel><FormControl><Input placeholder="Enter address" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="city" render={({ field }) => (
-                    <FormItem><FormLabel>City</FormLabel><FormControl><Input placeholder="Enter city" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>City</FormLabel><FormControl><Input placeholder="Enter city" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                  <FormField control={form.control} name="state" render={({ field }) => (
-                    <FormItem><FormLabel>State</FormLabel><FormControl><Input placeholder="Enter state" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>State</FormLabel><FormControl><Input placeholder="Enter state" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                  <FormField control={form.control} name="pincode" render={({ field }) => (
                     <FormItem><FormLabel>Pincode</FormLabel><FormControl><Input type="number" placeholder="Enter pincode" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
@@ -317,7 +321,7 @@ export function AddPetForm() {
             </div>
         </div>
         <FormField control={form.control} name="description" render={({ field }) => (
-            <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea placeholder="Tell us about the pet..." className="resize-none" rows={5} {...field} /></FormControl><FormMessage /></FormItem>
+            <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea placeholder="Tell us about the pet..." className="resize-none" rows={5} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
         )} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <FormField control={form.control} name="is_vaccinated" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Vaccinated?</FormLabel></div></FormItem>)} />
@@ -386,7 +390,7 @@ export function AddPetForm() {
         )} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-2">
-                <FormField control={form.control} name="message" render={({ field }) => (<FormItem><FormLabel>Report Message</FormLabel><FormControl><Textarea placeholder="Describe where the pet was lost or found..." className="resize-none" rows={10} {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={form.control} name="message" render={({ field }) => (<FormItem><FormLabel>Report Message</FormLabel><FormControl><Textarea placeholder="Describe where the pet was lost or found..." className="resize-none" rows={10} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
             </div>
             <div className="space-y-4">
                 <FormField control={form.control} name="report_image" render={({ field: { onChange, value, ...rest } }) => (<FormItem><FormLabel>Report Image (Optional)</FormLabel><FormControl><Input type="file" accept="image/png, image/jpeg, image/webp" onChange={(e) => { onChange(e.target.files); handleReportImageChange(e); }} {...rest} /></FormControl><FormMessage /></FormItem>)} />
@@ -417,5 +421,7 @@ export function AddPetForm() {
     </>
   );
 }
+
+    
 
     
