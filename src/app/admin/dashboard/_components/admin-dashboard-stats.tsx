@@ -4,15 +4,10 @@
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Users, PawPrint, FileText, CheckCircle, Eye } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
-import { getAdminDashboardMetrics } from "@/lib/actions";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AdminStatDetailsDialog } from "./admin-stat-details-dialog";
 import { Button } from "@/components/ui/button";
 
-type Metrics = {
+export type Metrics = {
     no_of_users: number;
     no_of_current_pets: number;
     no_of_unverified_pets: number;
@@ -23,6 +18,12 @@ type Metrics = {
     no_of_adoption_requests: number;
     no_of_successful_adoptions: number;
 };
+
+type AdminDashboardStatsProps = {
+    metrics: Metrics | null;
+    isLoading: boolean;
+};
+
 
 function StatCard({ title, value, icon, isLoading, details, detailsTitle }: { title: string, value: number, icon: React.ReactNode, isLoading: boolean, details?: Record<string, number>, detailsTitle?: string }) {
     if (isLoading) {
@@ -68,46 +69,7 @@ function StatCard({ title, value, icon, isLoading, details, detailsTitle }: { ti
     return cardContent;
 }
 
-export function AdminDashboardStats() {
-    const { toast } = useToast();
-    const router = useRouter();
-
-    const [metrics, setMetrics] = useState<Metrics | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    const fetchMetrics = useCallback(async () => {
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            setError("Authentication required.");
-            setIsLoading(false);
-            return;
-        }
-        setIsLoading(true);
-        try {
-            const data = await getAdminDashboardMetrics(token);
-            setMetrics(data);
-        } catch (error: any) {
-            if (error.message.includes('Session expired')) {
-                toast({ variant: 'destructive', title: 'Session Expired' });
-                router.push('/login');
-            } else {
-                setError(error.message || "Failed to load dashboard metrics.");
-                toast({ variant: 'destructive', title: 'Error', description: error.message });
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    }, [router, toast]);
-
-    useEffect(() => {
-        fetchMetrics();
-    }, [fetchMetrics]);
-    
-    if (error) {
-        return <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>
-    }
-
+export function AdminDashboardStats({ metrics, isLoading }: AdminDashboardStatsProps) {
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
              <StatCard 
