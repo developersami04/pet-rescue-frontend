@@ -55,7 +55,7 @@ export function AdminReportListItem({ report, onUpdate, isUpdating }: AdminRepor
                             : "Date not available"}
                     </p>
                 </div>
-                 <div>
+                 <div className="flex flex-col items-start gap-1">
                      {petStatus && (
                         <Badge 
                             className={cn("capitalize", 
@@ -67,6 +67,14 @@ export function AdminReportListItem({ report, onUpdate, isUpdating }: AdminRepor
                                 {petStatus}
                         </Badge>
                     )}
+                     <Badge 
+                        className={cn("capitalize", 
+                            report.report_status === 'pending' ? 'bg-amber-500 text-white' : 
+                            report.report_status === 'approved' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                        )}
+                        >
+                            {report.report_status}
+                        </Badge>
                 </div>
                 <div>
                     <p className="text-sm font-medium">{report.created_by_username || 'N/A'}</p>
