@@ -117,6 +117,20 @@ export type User = {
   is_admin: boolean;
 };
 
+export type RegisteredUser = {
+  id: number;
+  profile_image: string | null;
+  username: string;
+  email: string;
+  is_verified: boolean;
+  first_name: string;
+  last_name: string;
+  is_active: boolean;
+  is_staff: boolean;
+  date_joined: string;
+};
+
+
 export type Notification = {
   id: number;
   message: string;

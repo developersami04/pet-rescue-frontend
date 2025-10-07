@@ -5,7 +5,7 @@
 import { z } from "zod";
 import API_ENDPOINTS from "./endpoints";
 import { fetchWithAuth, fetchWithTimeout } from "./api";
-import type { Pet, Notification } from "./data";
+import type { Pet, Notification, RegisteredUser } from "./data";
 
 // From user.actions.ts
 
@@ -753,5 +753,35 @@ export async function getAdminDashboardMetrics(token: string) {
            throw new Error(error.message);
         }
         throw new Error('An unknown error occurred while fetching admin dashboard metrics.');
+    }
+}
+
+export async function getRegisteredUsers(token: string): Promise<RegisteredUser[]> {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.registeredUsers}`, {
+            method: 'GET',
+            cache: 'no-store'
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || 'Failed to fetch registered users.');
+        }
+
+        return result.data || [];
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request for registered users timed out.');
+        }
+        console.error('Error fetching registered users:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching registered users.');
     }
 }

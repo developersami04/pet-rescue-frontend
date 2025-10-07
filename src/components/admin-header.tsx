@@ -21,12 +21,8 @@ import {
   Info,
   Phone,
   Shapes,
-  AlertTriangle,
-  Hand,
-  Bell,
-  FileText,
   ShieldCheck,
-  UserCheck,
+  Users,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -56,15 +52,15 @@ const navItems = {
   admin: [
     { href: "/admin/dashboard", icon: LayoutGrid, label: "Admin Dashboard" },
   ],
-  approveRecords: [
+  records: [
     { href: "/admin/approve-reports", icon: ShieldCheck, label: "Approve Reports" },
-    { href: "/admin/approve-reports?tab=verify-users", icon: UserCheck, label: "Verify Users" },
+    { href: "/admin/manage-users", icon: Users, label: "Manage Users" },
   ],
   general: [
     { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
     { href: "/pets", icon: PawPrint, label: "All Pets" },
     { href: "/pet-categories", icon: Shapes, label: "Categories" },
-    { href: "/reports", icon: FileText, label: "All Reports" },
+    { href: "/reports", icon: PawPrint, label: "All Reports" },
   ],
   more: [
       { href: "/about-us", icon: Info, label: "About Us" },
@@ -206,7 +202,7 @@ export function AdminHeader() {
                   </Link>
               </Button>
             )})}
-            <DropdownNav label="Approve Records" items={navItems.approveRecords} />
+            <DropdownNav label="Records" items={navItems.records} />
             <DropdownNav label="General" items={navItems.general} />
             <DropdownNav label="More" items={navItems.more} />
              <Button asChild size="sm" className="ml-4">
@@ -330,7 +326,7 @@ export function AdminHeader() {
                     />
                   </div>
                   <nav className="flex flex-col gap-1">
-                    {[...navItems.admin, ...navItems.approveRecords, ...navItems.general, ...navItems.more].map(
+                    {[...navItems.admin, ...navItems.records, ...navItems.general, ...navItems.more].map(
                       (item) => (
                         <NavLink
                           key={item.href}
