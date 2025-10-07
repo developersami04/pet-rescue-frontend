@@ -78,9 +78,10 @@ function AdminReportsClientContent() {
         }
 
         try {
-            let status: 'pending' | 'approved' | 'rejected' | 'all' = 'pending';
+            let status: 'pending' | 'rejected' | 'last50' | undefined = undefined;
+             if (tab === 'pending') status = 'pending';
              if (tab === 'rejected') status = 'rejected';
-             if (tab === 'last50') status = 'all';
+             if (tab === 'last50') status = 'last50';
 
             const reportsData = await getPetReports(token, status);
             setReports(reportsData);
@@ -136,13 +137,10 @@ function AdminReportsClientContent() {
     }, [activeTab, fetchReports]);
 
     const filteredReports = useMemo(() => {
-        if (activeTab === 'last50') {
-            return reports
-                .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-                .slice(0, 50);
-        }
+        // The API now handles filtering by status, so we can just display the results.
+        // The `last50` case in the previous implementation which sliced the array is now handled by the API.
         return reports;
-    }, [reports, activeTab]);
+    }, [reports]);
 
     const handleTabChange = (tab: TabValue) => {
         setActiveTab(tab);

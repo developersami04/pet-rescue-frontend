@@ -175,8 +175,12 @@ export async function updateUserDetails(token: string, userData: Record<string, 
     }
 
     const isFormData = userData instanceof FormData;
-    const isPasswordChange = !isFormData && userData.hasOwnProperty('current_password');
-
+    
+    let isPasswordChange = false;
+    if (!isFormData) {
+        isPasswordChange = userData.hasOwnProperty('current_password');
+    }
+    
     const endpoint = isPasswordChange ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
     const method = isPasswordChange ? 'POST' : 'PATCH';
     
@@ -860,12 +864,12 @@ export async function updateUserStatus(token: string, userId: number, field: 'is
     }
 }
 
-export async function getPetReports(token: string, status?: 'pending' | 'approved' | 'rejected' | 'all'): Promise<AdminPetReport[]> {
+export async function getPetReports(token: string, status?: 'pending' | 'approved' | 'rejected' | 'last50'): Promise<AdminPetReport[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
     const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.petReports}`);
-    if (status && status !== 'all') {
+    if (status) {
         url.searchParams.append('status', status);
     }
 
@@ -924,3 +928,4 @@ export async function updatePetReportStatus(token: string, reportId: number, sta
         throw new Error(`An unknown error occurred while updating the report status.`);
     }
 }
+
