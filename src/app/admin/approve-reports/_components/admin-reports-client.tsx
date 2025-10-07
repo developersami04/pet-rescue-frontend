@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
-import { getPetReports, updatePetReportStatus } from '@/lib/actions';
+import { getAdminPetReports, updatePetReportStatus } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AdminPetReport } from '@/lib/data';
@@ -83,7 +83,7 @@ function AdminReportsClientContent() {
              if (tab === 'rejected') status = 'rejected';
              if (tab === 'last50') status = 'last50';
 
-            const reportsData = await getPetReports(token, status);
+            const reportsData = await getAdminPetReports(token, status);
             setReports(reportsData);
         } catch (e: any) {
             if (e.message.includes('Session expired')) {
