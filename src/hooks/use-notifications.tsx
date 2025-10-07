@@ -57,7 +57,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   // Set up polling
   useEffect(() => {
     if (isAuthenticated) {
-      const intervalId = setInterval(fetchUnreadNotifications, 300000); // 5 minutes
+      const intervalId = setInterval(fetchUnreadNotifications, 60*60*1000); // 5 minutes
       return () => clearInterval(intervalId); // Cleanup on unmount
     }
   }, [isAuthenticated, fetchUnreadNotifications]);
