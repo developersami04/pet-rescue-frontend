@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
-import { getPetReports } from '@/lib/actions';
+import { getPetReports, updatePetReportStatus } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AdminPetReport } from '@/lib/data';
@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 type TabValue = 'pending' | 'last50' | 'rejected';
+type ReportStatus = 'approved' | 'rejected' | 'resolved';
 
 function ReportsSkeleton() {
     return (
@@ -48,6 +49,7 @@ function AdminReportsClientContent() {
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [updatingReports, setUpdatingReports] = useState<Record<number, boolean>>({});
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabFromUrl = searchParams.get('tab');
@@ -64,7 +66,10 @@ function AdminReportsClientContent() {
         }
     }, [searchParams]);
 
-    const fetchReports = useCallback(async (tab: TabValue) => {
+    const fetchReports = useCallback(async (tab: TabValue, isRefresh = false) => {
+        if (!isRefresh) {
+            setIsLoading(true);
+        }
         const token = localStorage.getItem('authToken');
         if (!token) {
             setError('You must be logged in to view reports.');
@@ -75,11 +80,7 @@ function AdminReportsClientContent() {
         try {
             let status: 'pending' | 'approved' | 'rejected' | 'all' = 'pending';
              if (tab === 'rejected') status = 'rejected';
-             // The API doesn't seem to support 'last50' or 'approved' directly,
-             // so we'll fetch all and filter for now.
-             // This can be optimized if the API adds more filtering capabilities.
              if (tab === 'last50') status = 'all';
-
 
             const reportsData = await getPetReports(token, status);
             setReports(reportsData);
@@ -91,23 +92,50 @@ function AdminReportsClientContent() {
                 setError(e.message || 'Failed to fetch pet reports.');
                 toast({ variant: 'destructive', title: 'Failed to fetch reports' });
             }
+        } finally {
+            if (!isRefresh) {
+                setIsLoading(false);
+            }
         }
     }, [toast, router]);
 
     const handleRefresh = async () => {
         setIsRefreshing(true);
-        await fetchReports(activeTab);
+        await fetchReports(activeTab, true);
         setIsRefreshing(false);
     }
+    
+    const handleUpdateReport = useCallback(async (reportId: number, status: ReportStatus) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            toast({ variant: 'destructive', title: 'Authentication Error' });
+            return;
+        }
+
+        setUpdatingReports(prev => ({ ...prev, [reportId]: true }));
+
+        try {
+            await updatePetReportStatus(token, reportId, status);
+            toast({ title: 'Report Updated', description: `The report has been successfully ${status}.` });
+            
+            // Optimistically remove the report from the list
+            setReports(prevReports => 
+                prevReports.filter(r => r.id !== reportId)
+            );
+
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Update Failed', description: error.message });
+        } finally {
+            setUpdatingReports(prev => ({ ...prev, [reportId]: false }));
+        }
+    }, [toast]);
+
 
     useEffect(() => {
-        setIsLoading(true);
-        fetchReports(activeTab).finally(() => setIsLoading(false));
+        fetchReports(activeTab);
     }, [activeTab, fetchReports]);
 
     const filteredReports = useMemo(() => {
-        // The API is already filtering by status for 'pending' and 'rejected'.
-        // For 'last50', we sort by date and take the first 50.
         if (activeTab === 'last50') {
             return reports
                 .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
@@ -151,13 +179,13 @@ function AdminReportsClientContent() {
                 <AdminReportTabs activeTab={activeTab} onTabChange={handleTabChange} />
                 <div className="mt-6">
                     <TabsContent value="pending">
-                        <AdminReportList reports={filteredReports} />
+                        <AdminReportList reports={filteredReports} onUpdateReport={handleUpdateReport} updatingReports={updatingReports} />
                     </TabsContent>
                     <TabsContent value="last50">
-                        <AdminReportList reports={filteredReports} />
+                        <AdminReportList reports={filteredReports} onUpdateReport={handleUpdateReport} updatingReports={updatingReports} />
                     </TabsContent>
                     <TabsContent value="rejected">
-                        <AdminReportList reports={filteredReports} />
+                        <AdminReportList reports={filteredReports} onUpdateReport={handleUpdateReport} updatingReports={updatingReports} />
                     </TabsContent>
                 </div>
             </Tabs>

@@ -8,11 +8,15 @@ import { Button } from "@/components/ui/button";
 import { AdminReportCard } from "./admin-report-card";
 import { AdminReportListItem } from "./admin-report-list-item";
 
+type ReportStatus = 'approved' | 'rejected' | 'resolved';
+
 type AdminReportListProps = {
     reports: AdminPetReport[];
+    onUpdateReport: (reportId: number, status: ReportStatus) => void;
+    updatingReports: Record<number, boolean>;
 };
 
-export function AdminReportList({ reports }: AdminReportListProps) {
+export function AdminReportList({ reports, onUpdateReport, updatingReports }: AdminReportListProps) {
     const [view, setView] = useState('grid');
     
     if (reports.length === 0) {
@@ -52,13 +56,23 @@ export function AdminReportList({ reports }: AdminReportListProps) {
             {view === 'grid' ? (
                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {reports.map((report) => (
-                        <AdminReportCard key={report.id} report={report} />
+                        <AdminReportCard 
+                            key={report.id} 
+                            report={report} 
+                            onUpdate={onUpdateReport}
+                            isUpdating={updatingReports[report.id]}
+                        />
                     ))}
                 </div>
             ) : (
                 <div className="space-y-4">
                     {reports.map((report) => (
-                        <AdminReportListItem key={report.id} report={report} />
+                        <AdminReportListItem 
+                            key={report.id} 
+                            report={report} 
+                            onUpdate={onUpdateReport}
+                            isUpdating={updatingReports[report.id]}
+                        />
                     ))}
                 </div>
             )}

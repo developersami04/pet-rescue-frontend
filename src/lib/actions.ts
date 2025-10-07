@@ -175,14 +175,13 @@ export async function updateUserDetails(token: string, userData: Record<string, 
     }
 
     const isFormData = userData instanceof FormData;
-
-    // Determine if this is a password change
     const isPasswordChange = !isFormData && userData.hasOwnProperty('current_password');
 
     const endpoint = isPasswordChange ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
     const method = isPasswordChange ? 'POST' : 'PATCH';
-    const body = isFormData ? userData : JSON.stringify(userData);
     
+    const body = isFormData ? userData : JSON.stringify(userData);
+
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${endpoint}`, {
             method: method,
@@ -892,5 +891,36 @@ export async function getPetReports(token: string, status?: 'pending' | 'approve
            throw new Error(error.message);
         }
         throw new Error('An unknown error occurred while fetching pet reports.');
+    }
+}
+
+export async function updatePetReportStatus(token: string, reportId: number, status: 'approved' | 'rejected' | 'resolved') {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.petReports}${reportId}/`;
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'PATCH',
+            body: JSON.stringify({ report_status: status }),
+        }, token);
+        
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || `Failed to update report to ${status}.`);
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Report status update request timed out.');
+        }
+        console.error('Error updating report status:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error(`An unknown error occurred while updating the report status.`);
     }
 }

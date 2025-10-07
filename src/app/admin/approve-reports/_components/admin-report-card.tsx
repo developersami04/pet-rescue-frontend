@@ -20,13 +20,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Check, MoreVertical, ShieldCheck, ThumbsDown, X } from 'lucide-react';
+import { Check, Loader2, MoreVertical, ShieldCheck, ThumbsDown, X } from 'lucide-react';
+
+type ReportStatus = 'approved' | 'rejected' | 'resolved';
 
 type AdminReportCardProps = {
   report: AdminPetReport;
+  onUpdate: (reportId: number, status: ReportStatus) => void;
+  isUpdating: boolean;
 };
 
-export function AdminReportCard({ report }: AdminReportCardProps) {
+export function AdminReportCard({ report, onUpdate, isUpdating }: AdminReportCardProps) {
   const imageUrl = report.image || `https://picsum.photos/seed/${report.pet_id}/400/300`;
   const petStatus = report.pet_status;
 
@@ -62,20 +66,20 @@ export function AdminReportCard({ report }: AdminReportCardProps) {
             </CardTitle>
              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreVertical className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isUpdating}>
+                        {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreVertical className="h-4 w-4" />}
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onUpdate(report.id, 'approved')}>
                         <ShieldCheck className="mr-2 h-4 w-4" />
                         <span>Approve</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="text-destructive">
+                    <DropdownMenuItem className="text-destructive" onClick={() => onUpdate(report.id, 'rejected')}>
                         <ThumbsDown className="mr-2 h-4 w-4" />
                         <span>Reject</span>
                     </DropdownMenuItem>
-                     <DropdownMenuItem>
+                     <DropdownMenuItem onClick={() => onUpdate(report.id, 'resolved')}>
                         <Check className="mr-2 h-4 w-4" />
                         <span>Resolve</span>
                     </DropdownMenuItem>
@@ -92,14 +96,15 @@ export function AdminReportCard({ report }: AdminReportCardProps) {
         </p>
       </CardContent>
       <CardFooter className="flex flex-col gap-2 !p-4">
-        <Button className="w-full bg-green-600 hover:bg-green-700">
+        <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => onUpdate(report.id, 'approved')} disabled={isUpdating}>
+            {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             <ShieldCheck className="mr-2 h-4 w-4" /> Approve
         </Button>
         <div className="flex w-full gap-2">
-             <Button variant="destructive" className="w-full">
+             <Button variant="destructive" className="w-full" onClick={() => onUpdate(report.id, 'rejected')} disabled={isUpdating}>
                 <ThumbsDown className="mr-2 h-4 w-4" /> Reject
             </Button>
-            <Button variant="secondary" className="w-full">
+            <Button variant="secondary" className="w-full" onClick={() => onUpdate(report.id, 'resolved')} disabled={isUpdating}>
                 <X className="mr-2 h-4 w-4" /> Resolve
             </Button>
         </div>
