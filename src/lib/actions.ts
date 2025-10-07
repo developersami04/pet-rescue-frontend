@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { z } from "zod";
@@ -721,5 +722,36 @@ export async function deleteNotification(token: string, notificationId: number) 
         console.error('Error deleting notification:', error);
         if (error instanceof Error) throw error;
         throw new Error('An unknown error occurred.');
+    }
+}
+
+
+export async function getAdminDashboardMetrics(token: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.adminDashboardMetrics}`, {
+            method: 'GET',
+            cache: 'no-store'
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || 'Failed to fetch admin dashboard metrics.');
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request for admin dashboard metrics timed out.');
+        }
+        console.error('Error fetching admin dashboard metrics:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching admin dashboard metrics.');
     }
 }
