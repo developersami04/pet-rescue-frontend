@@ -27,6 +27,6 @@ const API_ENDPOINTS = {
   notifications: '/api/pet-data/notifications/',
 };
 
-export const API_REQUEST_TIMEOUT = 20000; 
+export const API_REQUEST_TIMEOUT = 25000; 
 
 export default API_ENDPOINTS;
