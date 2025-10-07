@@ -26,6 +26,9 @@ export function AdminReportListItem({ pet }: AdminReportListItemProps) {
     const petStatus = pet.pet_report?.pet_status;
     const isResolved = pet.pet_report?.is_resolved;
 
+    const reportedDate = pet.created_at ? new Date(pet.created_at) : null;
+    const isValidDate = reportedDate && !isNaN(reportedDate.getTime());
+
     return (
         <Card className="p-4 flex items-center gap-4 transition-all duration-300 hover:shadow-md hover:border-primary/50">
             <div className="relative h-20 w-20 flex-shrink-0">
@@ -44,7 +47,9 @@ export function AdminReportListItem({ pet }: AdminReportListItemProps) {
                     </Link>
                     <p className="text-sm text-muted-foreground">{pet.type_name} / {pet.breed || 'N/A'}</p>
                      <p className="text-xs text-muted-foreground mt-1">
-                        Reported {formatDistanceToNow(new Date(pet.created_at), { addSuffix: true })}
+                        {isValidDate
+                            ? `Reported ${formatDistanceToNow(reportedDate, { addSuffix: true })}`
+                            : "Date not available"}
                     </p>
                 </div>
                  <div>
