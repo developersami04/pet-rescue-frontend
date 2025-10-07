@@ -33,7 +33,7 @@ import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isValid } from 'date-fns';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Calendar } from '@/components/ui/calendar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -80,7 +80,7 @@ type UpdatePetFormProps = {
 
 function getChangedValues(initialValues: any, currentValues: any): Partial<any> {
     const changedValues: Partial<any> = {};
-    const allKeys = Object.keys(currentValues);
+    const allKeys = new Set([...Object.keys(initialValues), ...Object.keys(currentValues)]);
 
     for (const key of allKeys) {
         if (key === 'pet_image' || key === 'report_image') continue;
@@ -88,21 +88,17 @@ function getChangedValues(initialValues: any, currentValues: any): Partial<any> 
         const initialValue = initialValues[key];
         const currentValue = currentValues[key];
 
-        // Handle date comparison
-        if (initialValue instanceof Date || currentValue instanceof Date) {
-            const initialDate = initialValue ? format(new Date(initialValue), 'yyyy-MM-dd') : null;
-            const currentDate = currentValue ? format(new Date(currentValue), 'yyyy-MM-dd') : null;
+        // Treat null, undefined, and '' as the same for comparison purposes
+        const initialNormalized = initialValue ?? '';
+        const currentNormalized = currentValue ?? '';
+
+        if (key === 'last_vaccinated_date') {
+            const initialDate = initialValue && isValid(new Date(initialValue)) ? format(new Date(initialValue), 'yyyy-MM-dd') : null;
+            const currentDate = currentValue && isValid(new Date(currentValue)) ? format(new Date(currentValue), 'yyyy-MM-dd') : null;
             if (initialDate !== currentDate) {
                 changedValues[key] = currentValue;
             }
-            continue;
-        }
-
-        // Handle null, undefined, and empty strings consistently
-        const initialNormalized = initialValue === null || initialValue === undefined ? '' : String(initialValue);
-        const currentNormalized = currentValue === null || currentValue === undefined ? '' : String(currentValue);
-
-        if (initialNormalized !== currentNormalized) {
+        } else if (String(initialNormalized) !== String(currentNormalized)) {
             changedValues[key] = currentValue;
         }
     }
@@ -380,7 +376,7 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
                 render={({ field }) => (
                 <FormItem className="flex flex-col"><FormLabel>Last Vaccinated Date</FormLabel><Popover><PopoverTrigger asChild><FormControl>
                     <Button variant={'outline'} className={cn('w-full pl-3 text-left font-normal',!field.value && 'text-muted-foreground')}>
-                        {field.value ? (format(field.value, 'PPP')) : (<span>Pick a date</span>)}
+                        {field.value && isValid(field.value) ? (format(field.value, 'PPP')) : (<span>Pick a date</span>)}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
                 </FormControl></PopoverTrigger><PopoverContent className="w-auto p-0" align="start">
