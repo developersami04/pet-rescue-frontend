@@ -58,9 +58,7 @@ export function AdminStatDetailsDialog({ trigger, title, data }: AdminStatDetail
   return (
     <Dialog>
       <DialogTrigger asChild>
-          <div className="cursor-pointer">
-            {trigger}
-          </div>
+          {trigger}
       </DialogTrigger>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>

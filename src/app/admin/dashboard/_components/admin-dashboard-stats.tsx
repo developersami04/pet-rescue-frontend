@@ -1,8 +1,8 @@
 
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, PawPrint, FileText, CheckCircle } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Users, PawPrint, FileText, CheckCircle, Eye } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,7 @@ import { useEffect, useState, useCallback } from "react";
 import { getAdminDashboardMetrics } from "@/lib/actions";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { AdminStatDetailsDialog } from "./admin-stat-details-dialog";
+import { Button } from "@/components/ui/button";
 
 type Metrics = {
     no_of_users: number;
@@ -39,26 +40,30 @@ function StatCard({ title, value, icon, isLoading, details, detailsTitle }: { ti
     }
 
     const cardContent = (
-         <Card>
+         <Card className="flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{title}</CardTitle>
                 <div className="text-muted-foreground">{icon}</div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pb-2">
                 <div className="text-2xl font-bold">{value}</div>
             </CardContent>
+            {details && (
+                <CardFooter className="p-2 pt-0 border-t mt-auto">
+                    <AdminStatDetailsDialog
+                        trigger={
+                            <Button variant="ghost" size="sm" className="w-full">
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Details
+                            </Button>
+                        }
+                        title={detailsTitle || `Details for ${title}`}
+                        data={details}
+                    />
+                </CardFooter>
+            )}
         </Card>
     );
-
-    if (details) {
-        return (
-            <AdminStatDetailsDialog
-                trigger={cardContent}
-                title={detailsTitle || `Details for ${title}`}
-                data={details}
-            />
-        )
-    }
 
     return cardContent;
 }
