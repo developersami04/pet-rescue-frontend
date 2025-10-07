@@ -1,4 +1,5 @@
 
+
 const API_ENDPOINTS = {
   register: '/api/user-auth/register',
   login: '/api/user-auth/login',
@@ -25,10 +26,14 @@ const API_ENDPOINTS = {
   petAdoptions: '/api/pet-data/pet-adoptions/',
 
   notifications: '/api/pet-data/notifications/',
-
+  
+  // Admin endpoints
   adminDashboardMetrics: '/api/admin-panel/dashboard-metrics/',
   registeredUsers: '/api/admin-panel/registered-users/',
-  petReports: '/api/admin-panel/pet-reports/',
+  adminPetReports: '/api/admin-panel/pet-reports/',
+  
+  // User-facing reports
+  petReports: '/api/pet-data/pet-reports/',
 };
 
 export const API_REQUEST_TIMEOUT = 25000; 

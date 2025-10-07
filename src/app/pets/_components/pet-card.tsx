@@ -18,7 +18,7 @@ type PetCardProps = {
 
 export function PetCard({ pet }: PetCardProps) {
   const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/400/300`;
-  const petStatus = pet.available_for_adopt ? 'adoptable' : pet.pet_report?.pet_status;
+  const petStatus = pet.pet_report?.pet_status;
   const isResolved = pet.pet_report?.is_resolved;
 
   const getStatusInfo = (status: string | undefined | null) => {
@@ -29,7 +29,7 @@ export function PetCard({ pet }: PetCardProps) {
         return { text: 'Lost', className: 'bg-destructive/90 text-destructive-foreground' };
       case 'found':
         return { text: 'Found', className: 'bg-blue-500 text-white' };
-      case 'adoptable':
+      case 'adopt':
         return { text: 'Adoptable', className: 'bg-green-500 text-white' };
       default:
         return null;
@@ -70,7 +70,8 @@ export function PetCard({ pet }: PetCardProps) {
         </CardHeader>
         <CardContent className="flex-grow">
           <p className="text-sm text-muted-foreground">
-            {pet.breed || 'Unknown Breed'} &bull; {pet.age ?? 'Unknown'} {pet.age === 1 ? 'year' : 'years'} old
+            {pet.breed || pet.type_name || 'Unknown Breed'}
+            {pet.age !== null && ` • ${pet.age} ${pet.age === 1 ? 'year' : 'years'} old`}
           </p>
         </CardContent>
       </Card>

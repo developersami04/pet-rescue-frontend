@@ -5,7 +5,7 @@
 import { z } from "zod";
 import API_ENDPOINTS from "./endpoints";
 import { fetchWithAuth, fetchWithTimeout } from "./api";
-import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport } from "./data";
+import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport, PetReport } from "./data";
 import { format } from "date-fns";
 
 // From user.actions.ts
@@ -856,11 +856,11 @@ export async function updateUserStatus(token: string, userId: number, field: 'is
     }
 }
 
-export async function getPetReports(token: string, status?: 'pending' | 'approved' | 'rejected' | 'last50'): Promise<AdminPetReport[]> {
+export async function getAdminPetReports(token: string, status?: 'pending' | 'approved' | 'rejected' | 'last50'): Promise<AdminPetReport[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
-    const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.petReports}`);
+    const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.adminPetReports}`);
     if (status) {
         url.searchParams.append('status', status);
     }
@@ -894,7 +894,7 @@ export async function updatePetReportStatus(token: string, reportId: number, sta
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
-    const url = `${API_BASE_URL}${API_ENDPOINTS.petReports}${reportId}/`;
+    const url = `${API_BASE_URL}${API_ENDPOINTS.adminPetReports}${reportId}/`;
 
     try {
         const response = await fetchWithAuth(url, {
@@ -921,4 +921,34 @@ export async function updatePetReportStatus(token: string, reportId: number, sta
     }
 }
 
+export async function getPetReports(token: string, status: 'lost' | 'found' | 'adopt'): Promise<PetReport[]> {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.petReports}`);
+    url.searchParams.append('pet_status', status);
 
+    try {
+        const response = await fetchWithAuth(url.toString(), {
+            method: 'GET',
+            cache: 'no-store'
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(getErrorMessage(result, 'Failed to fetch pet reports.'));
+        }
+
+        return result.data || [];
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request for pet reports timed out.');
+        }
+        console.error('Error fetching pet reports:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching pet reports.');
+    }
+}

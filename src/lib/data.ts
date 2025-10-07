@@ -46,7 +46,7 @@ export type PetReport = {
     pet: number;
     report_image: string | null;
     pet_name: string;
-    pet_status: 'lost' | 'found' | 'adoptable' | 'adopt';
+    pet_status: 'lost' | 'found' | 'adopt';
     message: string;
     reporter_name: string;
     report_status: string;

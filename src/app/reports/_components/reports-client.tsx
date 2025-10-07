@@ -2,10 +2,10 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
-import { getAllPets } from '@/lib/actions';
+import { getPetReports } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Pet } from '@/lib/data';
+import { PetReport } from '@/lib/data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
@@ -32,7 +32,7 @@ function ReportsSkeleton() {
 }
 
 function ReportsClientContent() {
-    const [pets, setPets] = useState<Pet[]>([]);
+    const [reports, setReports] = useState<PetReport[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
@@ -51,7 +51,7 @@ function ReportsClientContent() {
         }
     }, [searchParams]);
 
-    const fetchPets = useCallback(async () => {
+    const fetchReports = useCallback(async (tab: 'lost' | 'found' | 'adopt') => {
         setIsLoading(true);
         const token = localStorage.getItem('authToken');
         if (!token) {
@@ -61,8 +61,8 @@ function ReportsClientContent() {
         }
 
         try {
-            const petsData = await getAllPets(token);
-            setPets(petsData);
+            const reportsData = await getPetReports(token, tab);
+            setReports(reportsData);
         } catch (e: any) {
             if (e.message.includes('Session expired')) {
                 toast({ variant: 'destructive', title: 'Session Expired' });
@@ -77,22 +77,9 @@ function ReportsClientContent() {
     }, [toast, router]);
 
     useEffect(() => {
-        fetchPets();
-    }, [fetchPets]);
+        fetchReports(activeTab);
+    }, [activeTab, fetchReports]);
 
-    const filteredPets = useMemo(() => {
-        return pets.filter(pet => {
-            const petStatus = pet.pet_report?.pet_status;
-            const isResolved = pet.pet_report?.is_resolved;
-
-            if (isResolved) return false;
-
-            if (activeTab === 'adopt') {
-                return pet.available_for_adopt;
-            }
-            return petStatus === activeTab;
-        });
-    }, [pets, activeTab]);
 
     const handleTabChange = (tab: 'lost' | 'found' | 'adopt') => {
         setActiveTab(tab);
@@ -117,13 +104,13 @@ function ReportsClientContent() {
             <ReportTabs activeTab={activeTab} onTabChange={handleTabChange} />
             <div className="mt-6">
                 <TabsContent value="lost">
-                    <ReportPetList pets={filteredPets} status="lost" />
+                    <ReportPetList reports={reports} status="lost" />
                 </TabsContent>
                 <TabsContent value="found">
-                    <ReportPetList pets={filteredPets} status="found" />
+                    <ReportPetList reports={reports} status="found" />
                 </TabsContent>
                 <TabsContent value="adopt">
-                    <ReportPetList pets={filteredPets} status="adopt" />
+                    <ReportPetList reports={reports} status="adopt" />
                 </TabsContent>
             </div>
         </Tabs>
