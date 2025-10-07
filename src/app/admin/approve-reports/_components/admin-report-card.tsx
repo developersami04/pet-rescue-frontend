@@ -47,7 +47,7 @@ export function AdminReportCard({ report, onUpdate, isUpdating }: AdminReportCar
             />
             {petStatus && (
                 <Badge 
-                className={cn("absolute top-2 left-2 capitalize", 
+                className={cn("absolute bottom-2 left-2 capitalize", 
                     petStatus === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 
                     petStatus === 'found' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'
                 )}
@@ -55,6 +55,14 @@ export function AdminReportCard({ report, onUpdate, isUpdating }: AdminReportCar
                     {petStatus}
                 </Badge>
             )}
+             <Badge 
+                className={cn("absolute bottom-2 right-2 capitalize", 
+                    report.report_status === 'pending' ? 'bg-amber-500 text-white' : 
+                    report.report_status === 'approved' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                )}
+                >
+                    {report.report_status}
+                </Badge>
             </div>
       </Link>
       <CardHeader>
