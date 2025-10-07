@@ -5,7 +5,7 @@
 import { z } from "zod";
 import API_ENDPOINTS from "./endpoints";
 import { fetchWithAuth, fetchWithTimeout } from "./api";
-import type { Pet, Notification, RegisteredUser } from "./data";
+import type { Pet, Notification, RegisteredUser, UnverifiedUser } from "./data";
 
 // From user.actions.ts
 
@@ -174,9 +174,9 @@ export async function updateUserDetails(token: string, userData: Record<string, 
         throw new Error('API is not configured. Please contact support.');
     }
     
-    const isPasswordChange = userData instanceof FormData ? false : userData.hasOwnProperty('current_password');
+    const isPasswordChange = !(userData instanceof FormData) && userData.hasOwnProperty('current_password');
     const endpoint = isPasswordChange ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
-    const method = userData instanceof FormData ? 'PATCH' : (isPasswordChange ? 'POST' : 'PATCH');
+    const method = isPasswordChange ? 'POST' : 'PATCH';
     
     const body = userData instanceof FormData ? userData : JSON.stringify(userData);
 
@@ -783,5 +783,35 @@ export async function getRegisteredUsers(token: string): Promise<RegisteredUser[
            throw new Error(error.message);
         }
         throw new Error('An unknown error occurred while fetching registered users.');
+    }
+}
+
+export async function getUnverifiedUsers(token: string): Promise<UnverifiedUser[]> {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.unverifiedUsers}`, {
+            method: 'GET',
+            cache: 'no-store'
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || 'Failed to fetch unverified users.');
+        }
+
+        return result.data || [];
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request for unverified users timed out.');
+        }
+        console.error('Error fetching unverified users:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching unverified users.');
     }
 }
