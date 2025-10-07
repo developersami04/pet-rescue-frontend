@@ -78,7 +78,7 @@ function ReportsClientContent() {
 
     useEffect(() => {
         fetchReports(activeTab);
-    }, [activeTab, fetchReports]);
+    }, [activeTab]);
 
 
     const handleTabChange = (tab: 'lost' | 'found' | 'adopt') => {
