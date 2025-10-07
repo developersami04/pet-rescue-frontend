@@ -23,6 +23,7 @@ import {
   Shapes,
   ShieldCheck,
   Users,
+  Bell,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
