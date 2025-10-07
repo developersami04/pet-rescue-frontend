@@ -1,21 +1,22 @@
 
+
 'use client';
 
-import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import type { RegisteredUser } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
-import { Award, BadgeCheck, Mail, User, UserCheck, UserCog, UserX, XCircle } from 'lucide-react';
+import { Award, BadgeCheck, Loader2, Mail, User, UserCheck, UserCog, UserX, XCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
 
 type UserCardProps = {
   user: RegisteredUser;
+  onUpdate: (userId: number, field: 'is_verified' | 'is_active' | 'is_staff', value: boolean) => void;
+  isUpdating: boolean;
 };
 
-export function UserCard({ user }: UserCardProps) {
+export function UserCard({ user, onUpdate, isUpdating }: UserCardProps) {
   const fullName = `${user.first_name} ${user.last_name}`;
   const avatarFallback = (user.first_name?.[0] ?? '') + (user.last_name?.[0] ?? '');
   const joinedDate = new Date(user.date_joined);
@@ -53,15 +54,18 @@ export function UserCard({ user }: UserCardProps) {
         <p className="text-xs text-muted-foreground pt-2">Joined {formatDistanceToNow(joinedDate, { addSuffix: true })}</p>
       </CardContent>
       <CardFooter className="flex flex-col gap-2 !p-4 border-t">
-        <Button className="w-full">
+        <Button className="w-full" onClick={() => onUpdate(user.id, 'is_verified', !user.is_verified)} disabled={isUpdating}>
+            {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {user.is_verified ? <XCircle className="mr-2 h-4 w-4" /> : <UserCheck className="mr-2 h-4 w-4" />}
             {user.is_verified ? 'Unverify' : 'Verify'}
         </Button>
-        <Button variant="secondary" className="w-full">
+        <Button variant="secondary" className="w-full" onClick={() => onUpdate(user.id, 'is_active', !user.is_active)} disabled={isUpdating}>
+            {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {user.is_active ? <UserX className="mr-2 h-4 w-4" /> : <UserCheck className="mr-2 h-4 w-4" />}
             {user.is_active ? 'Deactivate' : 'Activate'}
         </Button>
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full" onClick={() => onUpdate(user.id, 'is_staff', !user.is_staff)} disabled={isUpdating}>
+            {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {user.is_staff ? <User className="mr-2 h-4 w-4" /> : <UserCog className="mr-2 h-4 w-4" />}
              {user.is_staff ? 'Make User' : 'Make Staff'}
         </Button>

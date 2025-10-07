@@ -1,8 +1,9 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { getRegisteredUsers } from '@/lib/actions';
+import { getRegisteredUsers, updateUserStatus } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { RegisteredUser } from '@/lib/data';
@@ -46,6 +47,7 @@ export function ManageUsersClient() {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [view, setView] = useState<'grid' | 'list'>('grid');
+    const [updatingUsers, setUpdatingUsers] = useState<Record<number, boolean>>({});
     const router = useRouter();
     const { toast } = useToast();
 
@@ -76,6 +78,31 @@ export function ManageUsersClient() {
         await fetchUsers();
         setIsRefreshing(false);
     }
+
+    const handleUpdateUser = useCallback(async (userId: number, field: 'is_verified' | 'is_active' | 'is_staff', value: boolean) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            toast({ variant: 'destructive', title: 'Authentication Error' });
+            return;
+        }
+
+        setUpdatingUsers(prev => ({ ...prev, [userId]: true }));
+
+        try {
+            await updateUserStatus(token, userId, field, value);
+            toast({ title: 'User Updated', description: 'The user status has been successfully updated.' });
+            
+            // Optimistically update UI or refetch
+            setUsers(prevUsers => 
+                prevUsers.map(u => u.id === userId ? { ...u, [field]: value } : u)
+            );
+
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Update Failed', description: error.message });
+        } finally {
+            setUpdatingUsers(prev => ({ ...prev, [userId]: false }));
+        }
+    }, [toast]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -123,13 +150,23 @@ export function ManageUsersClient() {
             ) : view === 'grid' ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {users.map((user) => (
-                        <UserCard key={user.id} user={user} />
+                        <UserCard 
+                            key={user.id} 
+                            user={user} 
+                            onUpdate={handleUpdateUser}
+                            isUpdating={updatingUsers[user.id]}
+                        />
                     ))}
                 </div>
             ) : (
                 <div className="space-y-4">
                     {users.map((user) => (
-                        <UserListItem key={user.id} user={user} />
+                        <UserListItem 
+                            key={user.id} 
+                            user={user} 
+                            onUpdate={handleUpdateUser}
+                            isUpdating={updatingUsers[user.id]}
+                        />
                     ))}
                 </div>
             )}

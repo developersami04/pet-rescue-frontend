@@ -174,12 +174,12 @@ export async function updateUserDetails(token: string, userData: Record<string, 
         throw new Error('API is not configured. Please contact support.');
     }
     
-    // Check if this is a password change request
     const isPasswordChange = !(userData instanceof FormData) && userData.hasOwnProperty('current_password');
 
     const endpoint = isPasswordChange ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
     const method = isPasswordChange ? 'POST' : 'PATCH';
     const body = userData instanceof FormData ? userData : JSON.stringify(userData);
+     const headers = userData instanceof FormData ? {} : { 'Content-Type': 'application/json' };
 
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${endpoint}`, {
@@ -190,7 +190,6 @@ export async function updateUserDetails(token: string, userData: Record<string, 
         const result = await response.json();
 
         if (!response.ok) {
-            // Flatten errors if they are in a nested object
             if (typeof result === 'object' && result !== null) {
                 const errorMessages = Object.values(result).flat().join(' ');
                 if (errorMessages) {
@@ -817,3 +816,32 @@ export async function getUnverifiedUsers(token: string): Promise<UnverifiedUser[
     }
 }
 
+export async function updateUserStatus(token: string, userId: number, field: 'is_verified' | 'is_active' | 'is_staff', value: boolean) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.registeredUsers}${userId}/`, {
+            method: 'PATCH',
+            body: JSON.stringify({ [field]: value }),
+        }, token);
+        
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || result.detail || 'Failed to update user status.');
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('User status update request timed out.');
+        }
+        console.error('Error updating user status:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while updating user status.');
+    }
+}
