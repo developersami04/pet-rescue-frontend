@@ -166,17 +166,16 @@ export function AddPetForm() {
     }
     
     const formData = new FormData();
-    const allKeys = Object.keys(basePetSchema.shape);
+    const allKeys = Object.keys(values);
     
     const availableForAdopt = values.pet_status === 'adopt';
     formData.append('available_for_adopt', String(availableForAdopt));
 
     // Handle pet_status and message based on the selection
+    formData.append('pet_status', values.pet_status);
     if (values.pet_status === 'adopt') {
-        formData.append('pet_status', 'adopt');
         formData.append('message', values.description || ''); 
     } else {
-        formData.append('pet_status', values.pet_status);
         formData.append('message', values.message || '');
     }
 
@@ -190,8 +189,11 @@ export function AddPetForm() {
             formData.append(key, format(value, 'yyyy-MM-dd'));
         } else if (typeof value === 'boolean') {
             formData.append(key, String(value));
-        } else if (value === null || value === undefined) {
-             formData.append(key, ''); // Send empty for null/undefined
+        } else if (value === null || value === undefined || value === '') {
+             // Do not append null/undefined/empty string values unless necessary
+             // The backend might interpret empty strings differently than nulls.
+             // If backend expects empty strings for nullable fields, you can use:
+             // formData.append(key, '');
         } else {
             formData.append(key, String(value));
         }
@@ -420,3 +422,5 @@ export function AddPetForm() {
     </>
   );
 }
+
+    
