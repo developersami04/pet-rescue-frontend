@@ -4,11 +4,9 @@ import Link from 'next/link';
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import type { Pet } from '@/lib/data';
 import { PawPrint, BadgeCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -20,8 +18,25 @@ type PetCardProps = {
 
 export function PetCard({ pet }: PetCardProps) {
   const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/400/300`;
-  const petStatus = pet.pet_report?.pet_status;
+  const petStatus = pet.available_for_adopt ? 'adoptable' : pet.pet_report?.pet_status;
   const isResolved = pet.pet_report?.is_resolved;
+
+  const getStatusInfo = (status: string | undefined | null) => {
+    if (!status || isResolved) return null;
+
+    switch (status) {
+      case 'lost':
+        return { text: 'Lost', className: 'bg-destructive/90 text-destructive-foreground' };
+      case 'found':
+        return { text: 'Found', className: 'bg-blue-500 text-white' };
+      case 'adoptable':
+        return { text: 'Adoptable', className: 'bg-green-500 text-white' };
+      default:
+        return null;
+    }
+  };
+
+  const statusInfo = getStatusInfo(petStatus);
 
   return (
     <Link href={`/pets/${pet.id}`} className="group">
@@ -39,14 +54,12 @@ export function PetCard({ pet }: PetCardProps) {
               <PawPrint className="h-12 w-12 text-white/50" />
             </div>
           )}
-          {petStatus && !isResolved && (
+          {statusInfo && (
             <Badge 
-              className={cn("absolute bottom-2 right-2 capitalize", 
-                  petStatus === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
-              )}
-              >
-                  {petStatus}
-              </Badge>
+              className={cn("absolute bottom-2 right-2 capitalize", statusInfo.className)}
+            >
+              {statusInfo.text}
+            </Badge>
           )}
         </div>
         <CardHeader>
