@@ -168,30 +168,24 @@ export function AddPetForm() {
     const formData = new FormData();
     const schemaKeys = Object.keys(basePetSchema.shape);
     
-    // Explicitly handle booleans and special cases
     formData.append('available_for_adopt', String(values.pet_status === 'adopt'));
-
+    
     for (const key of schemaKeys) {
         const value = values[key as keyof typeof values];
 
-        if (key === 'pet_image') {
+        if (key === 'pet_image' || key === 'report_image') {
             if (value instanceof FileList && value.length > 0) {
                 formData.append(key, value[0]);
+            } else {
+                formData.append(key, ''); // Send empty string if no file is selected.
             }
             continue;
         }
-        if (key === 'report_image') {
-            if (value instanceof FileList && value.length > 0) {
-                formData.append(key, value[0]);
-            }
-            continue;
-        }
+
         if (key === 'message') {
             if (values.pet_status === 'adopt') {
-                // For 'adopt', message can be description or empty, but must exist
                 formData.append('message', values.description || '');
             } else {
-                // For 'lost'/'found', message is required
                 formData.append('message', values.message || '');
             }
             continue;
@@ -200,7 +194,7 @@ export function AddPetForm() {
         if (value instanceof Date) {
             formData.append(key, format(value, 'yyyy-MM-dd'));
         } else if (value === null || value === undefined) {
-             formData.append(key, ''); // Send empty string for null/undefined
+             formData.append(key, '');
         } else {
             formData.append(key, String(value));
         }
@@ -421,6 +415,8 @@ export function AddPetForm() {
     </>
   );
 }
+
+    
 
     
 
