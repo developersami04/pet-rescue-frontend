@@ -44,7 +44,7 @@ function CategoryCard({ petType }: { petType: PetType }) {
   const colorClasses = colors[colorIndex];
 
   return (
-    <Link href={`/pets?type=${petType.name}`} className="group">
+    <Link href={`/pets/category/${petType.name}`} className="group">
         <Card className={cn("overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full flex flex-col", colorClasses)}>
             <CardContent className="p-6 flex flex-col items-center justify-center text-center flex-grow">
                 <PetTypeIcon typeName={petType.name} className="h-12 w-12 mb-4 opacity-70 group-hover:opacity-100 transition-opacity" />

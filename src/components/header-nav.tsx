@@ -53,16 +53,11 @@ import { NotificationPopover } from "./notification-popover";
 const navItems = {
   main: [
       { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
+      { href: "/pets", icon: PawPrint, label: "All Pets" },
+      { href: "/pet-categories", icon: Shapes, label: "Categories" },
     ],
-  pets: [
-    { href: "/pets", icon: PawPrint, label: "Find a Pet" },
-    { href: "/pet-categories", icon: Shapes, label: "Pet Categories" },
-  ],
   reports: [
     { href: "/reports", icon: FileText, label: "All Reports" },
-    { href: "/reports?tab=lost", icon: AlertTriangle, label: "Lost Pets" },
-    { href: "/reports?tab=found", icon: Search, label: "Found Pets" },
-    { href: "/reports?tab=adopt", icon: Hand, label: "Adoptable Pets" },
   ],
   more: [
       { href: "/about-us", icon: Info, label: "About Us" },
@@ -186,7 +181,6 @@ export function HeaderNav() {
                   </Link>
               </Button>
             )})}
-            <DropdownNav label="Pets" items={navItems.pets} />
             <DropdownNav label="Reports" items={navItems.reports} />
             <DropdownNav label="More" items={navItems.more} />
              <Button asChild size="sm" className="ml-4">
@@ -310,7 +304,7 @@ export function HeaderNav() {
                     />
                   </div>
                   <nav className="flex flex-col gap-1">
-                    {[...navItems.main, ...navItems.pets, ...navItems.reports, ...navItems.more].map(
+                    {[...navItems.main, ...navItems.reports, ...navItems.more].map(
                       (item) => (
                         <NavLink
                           key={item.href}
