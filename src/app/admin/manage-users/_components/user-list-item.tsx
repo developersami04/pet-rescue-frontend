@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { cn } from "@/lib/utils";
 
 type UserListItemProps = {
     user: RegisteredUser;
@@ -28,7 +29,7 @@ export function UserListItem({ user, onUpdate, isUpdating }: UserListItemProps) 
     const joinedDate = new Date(user.date_joined);
 
     return (
-        <Card className="p-4 flex items-center gap-4 transition-all duration-300 hover:shadow-md hover:border-primary/50">
+        <Card className={cn("p-4 flex items-center gap-4 transition-all duration-300 hover:shadow-md hover:border-primary/50", user.is_staff && "bg-primary/5 border-primary/50")}>
             <Avatar className="h-12 w-12">
                 <AvatarImage src={user.profile_image ?? ''} alt={fullName} />
                 <AvatarFallback>{avatarFallback || user.username[0].toUpperCase()}</AvatarFallback>

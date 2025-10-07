@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Award, BadgeCheck, Loader2, Mail, User, UserCheck, UserCog, UserX, XCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 type UserCardProps = {
   user: RegisteredUser;
@@ -22,7 +23,7 @@ export function UserCard({ user, onUpdate, isUpdating }: UserCardProps) {
   const joinedDate = new Date(user.date_joined);
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+    <Card className={cn("flex flex-col h-full overflow-hidden transition-shadow duration-300 hover:shadow-xl", user.is_staff && "bg-primary/5 border-primary/50")}>
         <CardHeader className="p-4 items-center gap-4 flex-row">
             <Avatar className="h-16 w-16">
                 <AvatarImage src={user.profile_image ?? ''} alt={fullName} />
