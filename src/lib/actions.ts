@@ -174,10 +174,11 @@ export async function updateUserDetails(token: string, userData: Record<string, 
         throw new Error('API is not configured. Please contact support.');
     }
     
+    // Check if this is a password change request
     const isPasswordChange = !(userData instanceof FormData) && userData.hasOwnProperty('current_password');
+
     const endpoint = isPasswordChange ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
     const method = isPasswordChange ? 'POST' : 'PATCH';
-    
     const body = userData instanceof FormData ? userData : JSON.stringify(userData);
 
     try {
@@ -815,3 +816,4 @@ export async function getUnverifiedUsers(token: string): Promise<UnverifiedUser[
         throw new Error('An unknown error occurred while fetching unverified users.');
     }
 }
+
