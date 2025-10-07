@@ -1,6 +1,8 @@
 
 import { PageHeader } from "@/components/page-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AdminReportsClient } from "./_components/admin-reports-client";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 export default function ApproveReportsPage() {
   return (
@@ -9,18 +11,9 @@ export default function ApproveReportsPage() {
         title="Approve Reports"
         description="Review and approve pet reports from users."
       />
-      <Card>
-        <CardHeader>
-          <CardTitle>Pending Reports</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            This is where you will see reports pending approval. Functionality coming soon.
-          </p>
-        </CardContent>
-      </Card>
+      <Suspense fallback={<Loading />}>
+        <AdminReportsClient />
+      </Suspense>
     </div>
   );
 }
-
-    
