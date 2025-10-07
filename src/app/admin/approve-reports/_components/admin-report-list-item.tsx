@@ -81,7 +81,7 @@ export function AdminReportListItem({ report, onUpdate, isUpdating }: AdminRepor
                     <p className="text-xs text-muted-foreground">Reporter</p>
                 </div>
                  <div className="flex justify-end items-center gap-2">
-                     <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => onUpdate(report.id, 'approved')} disabled={isUpdating}>
+                     <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => onUpdate(report.id, 'approved')} disabled={isUpdating || report.report_status === 'approved'}>
                         {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Approve
                     </Button>
@@ -92,11 +92,11 @@ export function AdminReportListItem({ report, onUpdate, isUpdating }: AdminRepor
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => onUpdate(report.id, 'approved')}>
+                            <DropdownMenuItem onClick={() => onUpdate(report.id, 'approved')} disabled={report.report_status === 'approved'}>
                                 <ShieldCheck className="mr-2 h-4 w-4" />
                                 <span>Approve</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive" onClick={() => onUpdate(report.id, 'rejected')}>
+                            <DropdownMenuItem className="text-destructive" onClick={() => onUpdate(report.id, 'rejected')} disabled={report.report_status === 'rejected'}>
                                 <ThumbsDown className="mr-2 h-4 w-4" />
                                 <span>Reject</span>
                             </DropdownMenuItem>

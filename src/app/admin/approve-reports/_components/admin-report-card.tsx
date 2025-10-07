@@ -79,11 +79,11 @@ export function AdminReportCard({ report, onUpdate, isUpdating }: AdminReportCar
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => onUpdate(report.id, 'approved')}>
+                    <DropdownMenuItem onClick={() => onUpdate(report.id, 'approved')} disabled={report.report_status === 'approved'}>
                         <ShieldCheck className="mr-2 h-4 w-4" />
                         <span>Approve</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="text-destructive" onClick={() => onUpdate(report.id, 'rejected')}>
+                    <DropdownMenuItem className="text-destructive" onClick={() => onUpdate(report.id, 'rejected')} disabled={report.report_status === 'rejected'}>
                         <ThumbsDown className="mr-2 h-4 w-4" />
                         <span>Reject</span>
                     </DropdownMenuItem>
@@ -104,12 +104,12 @@ export function AdminReportCard({ report, onUpdate, isUpdating }: AdminReportCar
         </p>
       </CardContent>
       <CardFooter className="flex flex-col gap-2 !p-4">
-        <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => onUpdate(report.id, 'approved')} disabled={isUpdating}>
+        <Button className="w-full bg-green-600 hover:bg-green-700" onClick={() => onUpdate(report.id, 'approved')} disabled={isUpdating || report.report_status === 'approved'}>
             {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             <ShieldCheck className="mr-2 h-4 w-4" /> Approve
         </Button>
         <div className="flex w-full gap-2">
-             <Button variant="destructive" className="w-full" onClick={() => onUpdate(report.id, 'rejected')} disabled={isUpdating}>
+             <Button variant="destructive" className="w-full" onClick={() => onUpdate(report.id, 'rejected')} disabled={isUpdating || report.report_status === 'rejected'}>
                 <ThumbsDown className="mr-2 h-4 w-4" /> Reject
             </Button>
             <Button variant="secondary" className="w-full" onClick={() => onUpdate(report.id, 'resolved')} disabled={isUpdating}>
