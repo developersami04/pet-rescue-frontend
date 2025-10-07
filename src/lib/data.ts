@@ -1,4 +1,5 @@
 
+
 export type MedicalHistory = {
     id: number;
     pet: number;
@@ -42,9 +43,10 @@ export type MyAdoptionRequest = {
 
 export type PetReport = {
     id: number;
+    pet: number;
     report_image: string | null;
     pet_name: string;
-    pet_status: 'lost' | 'found' | 'adoptable';
+    pet_status: 'lost' | 'found' | 'adoptable' | 'adopt';
     message: string;
     reporter_name: string;
     report_status: string;
@@ -76,7 +78,7 @@ export type Pet = {
   color: string | null;
   is_vaccinated: boolean;
   is_diseased: boolean;
-  is_verified: boolean;
+  is_verified?: boolean; // This field is not in the new pet profile response
   address: string | null;
   city: string | null;
   pincode: number | null;
@@ -88,8 +90,7 @@ export type Pet = {
   medical_history: MedicalHistory | null;
   adoption_requests: AdoptionRequest[] | null;
   pet_report: PetReport | null;
-  pet_status?: 'lost' | 'found' | 'adopt' | null;
-  available_for_adopt?: boolean;
+  available_for_adopt?: boolean; // Keep for pet list card, but profile page will use pet_report.pet_status
 };
 
 

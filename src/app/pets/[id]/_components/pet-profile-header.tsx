@@ -20,6 +20,8 @@ export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
     const petStatus = pet.pet_report?.pet_status;
     const isResolved = pet.pet_report?.is_resolved;
 
+    const isAvailableForAdoption = petStatus === 'adopt' && !isResolved;
+
     return (
        <div className="relative h-96 w-full rounded-lg overflow-hidden bg-muted">
             <Image
@@ -36,7 +38,9 @@ export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
                     {petStatus && !isResolved && (
                         <Badge
                             className={cn("capitalize text-base",
-                                petStatus === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 'bg-blue-500 text-white'
+                                petStatus === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 
+                                petStatus === 'found' ? 'bg-blue-500 text-white' :
+                                petStatus === 'adopt' ? 'bg-green-500 text-white' : ''
                             )}
                         >
                             {petStatus}
@@ -46,7 +50,7 @@ export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
                  <p className="mt-2 text-lg max-w-2xl text-white/90">{pet.description}</p>
             </div>
             <div className="absolute top-6 right-6 flex gap-2">
-                {pet.available_for_adopt && (
+                {isAvailableForAdoption && (
                     <AdoptionRequestDialog petId={pet.id} petName={pet.name} onUpdate={onUpdate}>
                         <Button>
                             <Hand className="mr-2 h-4 w-4" />

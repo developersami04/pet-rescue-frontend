@@ -25,6 +25,7 @@ const DetailRow = ({ icon, label, value, isBadge }: { icon: React.ReactNode, lab
 export function PetDetailsCard({ pet }: PetDetailsCardProps) {
 
     const fullAddress = [pet.address, pet.city, pet.state, pet.pincode].filter(Boolean).join(', ');
+    const isAvailableForAdoption = pet.pet_report?.pet_status === 'adopt' && !pet.pet_report?.is_resolved;
 
     return (
         <Card className="h-full">
@@ -71,7 +72,7 @@ export function PetDetailsCard({ pet }: PetDetailsCardProps) {
                         <div className="flex flex-wrap gap-2">
                             {pet.is_vaccinated && <Badge variant="secondary">Vaccinated</Badge>}
                             {pet.is_diseased && <Badge variant="destructive">Has Disease</Badge>}
-                            {pet.available_for_adopt && <Badge variant="default">Ready for Adoption</Badge>}
+                            {isAvailableForAdoption && <Badge variant="default">Ready for Adoption</Badge>}
                         </div>
                     }
                 />
