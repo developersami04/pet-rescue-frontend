@@ -390,7 +390,7 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
                 )}
             />
         </div>
-        <FormField control={form.control} name="note" render={({ field }) => (<FormItem><FormLabel>Note</FormLabel><FormControl><Textarea placeholder="Add any additional medical notes..." className="resize-none" rows={4} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>)} />
+        <FormField control={form.control} name="note" render={({ field }) => (<FormItem><FormLabel>Note</FormLabel><FormControl><Textarea placeholder="Add any additional medical notes..." className="resize-none" rows={4} {...field} value={field.value ?? ''}/></FormControl><FormMessage /></FormItem>)} />
 
         <Separator className="my-8" />
         
@@ -440,5 +440,3 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     </Form>
   );
 }
-
-    

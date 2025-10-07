@@ -420,7 +420,3 @@ export function AddPetForm() {
     </>
   );
 }
-
-    
-
-    
