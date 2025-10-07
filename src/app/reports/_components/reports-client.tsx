@@ -38,11 +38,11 @@ function ReportsClientContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabFromUrl = searchParams.get('tab');
+    const { toast } = useToast();
 
     const [activeTab, setActiveTab] = useState<'lost' | 'found' | 'adopt'>(
         tabFromUrl === 'found' || tabFromUrl === 'adopt' ? tabFromUrl : 'lost'
     );
-    const { toast } = useToast();
 
     useEffect(() => {
         const newTab = searchParams.get('tab');
@@ -51,34 +51,35 @@ function ReportsClientContent() {
         }
     }, [searchParams]);
 
-    const fetchReports = useCallback(async (tab: 'lost' | 'found' | 'adopt') => {
-        setIsLoading(true);
-        const token = localStorage.getItem('authToken');
-        if (!token) {
-            setError('You must be logged in to view reports.');
-            setIsLoading(false);
-            return;
-        }
-
-        try {
-            const reportsData = await getPetReports(token, tab);
-            setReports(reportsData);
-        } catch (e: any) {
-            if (e.message.includes('Session expired')) {
-                toast({ variant: 'destructive', title: 'Session Expired' });
-                router.push('/login');
-            } else {
-                setError(e.message || 'Failed to fetch pet reports.');
-                toast({ variant: 'destructive', title: 'Failed to fetch reports' });
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    }, [toast, router]);
-
     useEffect(() => {
-        fetchReports(activeTab);
-    }, [activeTab]);
+        const fetchReports = async () => {
+            setIsLoading(true);
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                setError('You must be logged in to view reports.');
+                setIsLoading(false);
+                return;
+            }
+
+            try {
+                const reportsData = await getPetReports(token, activeTab);
+                setReports(reportsData);
+                setError(null);
+            } catch (e: any) {
+                if (e.message.includes('Session expired')) {
+                    toast({ variant: 'destructive', title: 'Session Expired' });
+                    router.push('/login');
+                } else {
+                    setError(e.message || 'Failed to fetch pet reports.');
+                    toast({ variant: 'destructive', title: 'Failed to fetch reports' });
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchReports();
+    }, [activeTab, toast, router]);
 
 
     const handleTabChange = (tab: 'lost' | 'found' | 'adopt') => {
@@ -86,7 +87,7 @@ function ReportsClientContent() {
         router.push(`/reports?tab=${tab}`, { scroll: false });
     };
 
-    if (isLoading) {
+    if (isLoading && reports.length === 0) {
         return <ReportsSkeleton />;
     }
 
@@ -104,13 +105,13 @@ function ReportsClientContent() {
             <ReportTabs activeTab={activeTab} onTabChange={handleTabChange} />
             <div className="mt-6">
                 <TabsContent value="lost">
-                    <ReportPetList reports={reports} status="lost" />
+                    {isLoading ? <ReportsSkeleton /> : <ReportPetList reports={reports} status="lost" />}
                 </TabsContent>
                 <TabsContent value="found">
-                    <ReportPetList reports={reports} status="found" />
+                    {isLoading ? <ReportsSkeleton /> : <ReportPetList reports={reports} status="found" />}
                 </TabsContent>
                 <TabsContent value="adopt">
-                    <ReportPetList reports={reports} status="adopt" />
+                    {isLoading ? <ReportsSkeleton /> : <ReportPetList reports={reports} status="adopt" />}
                 </TabsContent>
             </div>
         </Tabs>
