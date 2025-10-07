@@ -171,29 +171,24 @@ export function AddPetForm() {
     const availableForAdopt = values.pet_status === 'adopt';
     formData.append('available_for_adopt', String(availableForAdopt));
 
-    // Handle pet_status and message based on the selection
-    formData.append('pet_status', values.pet_status);
-    if (values.pet_status === 'adopt') {
-        formData.append('message', values.description || ''); 
-    } else {
-        formData.append('message', values.message || '');
-    }
-
     allKeys.forEach(key => {
-        // Skip keys that have been handled manually or are image files
-        if (key === 'pet_status' || key === 'message' || key === 'pet_image' || key === 'report_image') return;
+        if (key === 'pet_image' || key === 'report_image') return;
 
         const value = values[key as keyof typeof values];
 
+        if (key === 'message') {
+            if (values.pet_status === 'adopt') {
+                formData.append('message', values.description || '');
+            } else {
+                formData.append('message', values.message || '');
+            }
+            return;
+        }
+
         if (value instanceof Date) {
             formData.append(key, format(value, 'yyyy-MM-dd'));
-        } else if (typeof value === 'boolean') {
-            formData.append(key, String(value));
-        } else if (value === null || value === undefined || value === '') {
-             // Do not append null/undefined/empty string values unless necessary
-             // The backend might interpret empty strings differently than nulls.
-             // If backend expects empty strings for nullable fields, you can use:
-             // formData.append(key, '');
+        } else if (value === null || value === undefined) {
+             formData.append(key, '');
         } else {
             formData.append(key, String(value));
         }
