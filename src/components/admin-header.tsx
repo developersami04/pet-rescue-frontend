@@ -26,6 +26,7 @@ import {
   Bell,
   FileText,
   ShieldCheck,
+  UserCheck,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -54,7 +55,10 @@ import { NotificationPopover } from "./notification-popover";
 const navItems = {
   admin: [
     { href: "/admin/dashboard", icon: LayoutGrid, label: "Admin Dashboard" },
+  ],
+  approveRecords: [
     { href: "/admin/approve-reports", icon: ShieldCheck, label: "Approve Reports" },
+    { href: "/admin/approve-reports?tab=verify-users", icon: UserCheck, label: "Verify Users" },
   ],
   general: [
     { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
@@ -108,7 +112,25 @@ function DropdownNav({
   items: { href: string; icon: React.ElementType; label: string }[];
 }) {
   const pathname = usePathname();
-  const isActive = items.some((item) => pathname.startsWith(item.href));
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  const currentTab = searchParams.get('tab');
+
+  const isActive = items.some((item) => {
+    const itemPath = item.href.split('?')[0];
+    const itemQuery = new URLSearchParams(item.href.split('?')[1] || '');
+    const itemTab = itemQuery.get('tab');
+    
+    if (pathname.startsWith(itemPath)) {
+        if(itemTab) {
+            return itemTab === currentTab;
+        }
+        if(!itemTab && !currentTab) {
+           return true;
+        }
+    }
+    return false;
+  });
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -184,6 +206,7 @@ export function AdminHeader() {
                   </Link>
               </Button>
             )})}
+            <DropdownNav label="Approve Records" items={navItems.approveRecords} />
             <DropdownNav label="General" items={navItems.general} />
             <DropdownNav label="More" items={navItems.more} />
              <Button asChild size="sm" className="ml-4">
@@ -307,7 +330,7 @@ export function AdminHeader() {
                     />
                   </div>
                   <nav className="flex flex-col gap-1">
-                    {[...navItems.admin, ...navItems.general, ...navItems.more].map(
+                    {[...navItems.admin, ...navItems.approveRecords, ...navItems.general, ...navItems.more].map(
                       (item) => (
                         <NavLink
                           key={item.href}
