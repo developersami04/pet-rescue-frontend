@@ -20,7 +20,7 @@ export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
     const petStatus = pet.pet_report?.pet_status;
     const isResolved = pet.pet_report?.is_resolved;
 
-    const isAvailableForAdoption = petStatus === 'adopt' && !isResolved;
+    const isAvailableForAdoption = (petStatus === 'adopt' || petStatus === 'found') && !isResolved;
 
     return (
        <div className="relative h-96 w-full rounded-lg overflow-hidden bg-muted">

@@ -26,6 +26,8 @@ export function PetDetailsCard({ pet }: PetDetailsCardProps) {
 
     const fullAddress = [pet.address, pet.city, pet.state, pet.pincode].filter(Boolean).join(', ');
     const isAvailableForAdoption = pet.pet_report?.pet_status === 'adopt' && !pet.pet_report?.is_resolved;
+    const canBeAdopted = pet.pet_report?.pet_status === 'found' && !pet.pet_report?.is_resolved;
+
 
     return (
         <Card className="h-full">
@@ -73,6 +75,7 @@ export function PetDetailsCard({ pet }: PetDetailsCardProps) {
                             {pet.is_vaccinated && <Badge variant="secondary">Vaccinated</Badge>}
                             {pet.is_diseased && <Badge variant="destructive">Has Disease</Badge>}
                             {isAvailableForAdoption && <Badge variant="default">Ready for Adoption</Badge>}
+                            {canBeAdopted && <Badge variant="default" className="bg-blue-500 hover:bg-blue-600 text-white">Can be Adopted</Badge>}
                         </div>
                     }
                 />
