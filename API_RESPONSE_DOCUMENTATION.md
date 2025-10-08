@@ -1,7 +1,6 @@
+# Petopia API Documentation
 
-# Petopia API Response Documentation
-
-This document outlines the expected JSON response structures for the various API endpoints consumed by the Petopia frontend application.
+This document outlines the expected JSON request and response structures for the various API endpoints consumed by the Petopia frontend application.
 
 ---
 
@@ -20,6 +19,23 @@ This document outlines the expected JSON response structures for the various API
 ### `POST /api/user-auth/register`
 
 -   **Purpose**: Register a new user.
+-   **Request Body**:
+    ```json
+    {
+        "username": "newuser",
+        "email": "newuser@example.com",
+        "password": "strongpassword123",
+        "first_name": "New",
+        "last_name": "User",
+        "profile_image": null,
+        "phone_no": "1234567890",
+        "gender": "Male",
+        "pin_code": 12345,
+        "address": "123 Main St",
+        "city": "Anytown",
+        "state": "Anystate"
+    }
+    ```
 -   **Success Response (201 Created)**:
     ```json
     {
@@ -49,6 +65,13 @@ This document outlines the expected JSON response structures for the various API
 ### `POST /api/user-auth/login`
 
 -   **Purpose**: Authenticate a user and receive access/refresh tokens.
+-   **Request Body**:
+    ```json
+    {
+        "username": "testuser",
+        "password": "password"
+    }
+    ```
 -   **Success Response (200 OK)**:
     ```json
     {
@@ -74,6 +97,12 @@ This document outlines the expected JSON response structures for the various API
 ### `POST /api/user-auth/token-refresh`
 
 -   **Purpose**: Obtain a new access token using a refresh token.
+-   **Request Body**:
+    ```json
+    {
+        "refresh": "ey..."
+    }
+    ```
 -   **Success Response (200 OK)**:
     ```json
     {
@@ -115,6 +144,15 @@ This document outlines the expected JSON response structures for the various API
 ### `PATCH /api/user-auth/update-account`
 
 -   **Purpose**: Update details for the authenticated user.
+-   **Request Body**:
+    ```json
+    // Send only the fields that need to be updated.
+    {
+        "first_name": "Updated",
+        "city": "Newville",
+        "profile_image": "data:image/jpeg;base64,..." // Can also be multipart/form-data
+    }
+    ```
 -   **Success Response (200 OK)**:
     ```json
     {
@@ -126,6 +164,13 @@ This document outlines the expected JSON response structures for the various API
 ### `POST /api/user-auth/change-password`
 
 -   **Purpose**: Change the authenticated user's password.
+-   **Request Body**:
+    ```json
+    {
+        "current_password": "old_password",
+        "new_password": "new_strong_password"
+    }
+    ```
 -   **Success Response (200 OK)**:
     ```json
     {
@@ -136,6 +181,22 @@ This document outlines the expected JSON response structures for the various API
     ```json
     {
         "current_password": ["Wrong password."]
+    }
+    ```
+
+### `POST /api/user-auth/verify-email`
+
+-   **Purpose**: Verify the user's email address with an OTP.
+-   **Request Body**:
+    ```json
+    {
+        "otp": "123456"
+    }
+    ```
+-   **Success Response (200 OK)**:
+    ```json
+    {
+        "message": "Email verified successfully"
     }
     ```
 
@@ -240,12 +301,34 @@ This document outlines the expected JSON response structures for the various API
 ### `POST /api/pet-data/pet-request-form/`
 
 -   **Purpose**: Submit a new pet for listing, or report a pet.
+-   **Request Body**: This is a `multipart/form-data` request containing all pet details, medical history, and report information. See `add-pet-form.tsx` for all possible fields.
+    -   `name`: "Buddy"
+    -   `pet_type`: 1
+    -   `gender`: "Male"
+    -   `pet_image`: (file)
+    -   `pet_status`: "adopt"
+    -   ... and all other fields.
 -   **Success Response (201 Created)**:
     ```json
     {
         "status": "Success",
         "message": "Your pet request for Buddy has been submitted successfully and is pending admin approval.",
         "data": { ... } // Returns the created pet object
+    }
+    ```
+    
+### `PATCH /api/pet-data/pet-request-view/{id}/`
+-   **Purpose**: Update an existing pet request.
+-   **Request Body**: This is a `multipart/form-data` request containing only the fields that have been changed.
+    -   `age`: 4
+    -   `description`: "A very good boy."
+    -   `pet_image`: (new file)
+-   **Success Response (200 OK)**:
+    ```json
+    {
+        "status": "Success",
+        "message": "Your pet request for Buddy has been updated successfully.",
+        "data": { ... } // Returns the updated pet object
     }
     ```
 
@@ -276,12 +359,37 @@ This document outlines the expected JSON response structures for the various API
 ### `POST /api/pet-data/pet-adoptions/`
 
 -   **Purpose**: Create an adoption request for a pet.
+-   **Request Body**:
+    ```json
+    {
+        "pet": 123, // ID of the pet
+        "message": "I would love to give this pet a forever home."
+    }
+    ```
 -   **Success Response (201 Created)**:
     ```json
     {
         "status": "Success",
         "message": "Your adoption request has been sent to the pet owner.",
         "data": { ... } // The created adoption request object
+    }
+    ```
+    
+### `PATCH /api/pet-data/pet-adoptions/{id}/`
+
+-   **Purpose**: Update an existing adoption request message.
+-   **Request Body**:
+    ```json
+    {
+        "message": "Updated message: I have a big yard and another friendly dog."
+    }
+    ```
+-   **Success Response (200 OK)**:
+    ```json
+    {
+        "status": "Success",
+        "message": "Your adoption request has been updated.",
+        "data": { ... } // The updated adoption request object
     }
     ```
 
@@ -324,6 +432,11 @@ This document outlines the expected JSON response structures for the various API
         "message": "Notification marked as read."
     }
     ```
+    
+### `DELETE /api/pet-data/notifications/{id}/`
+
+-   **Purpose**: Delete a specific notification.
+-   **Success Response (204 No Content)**: The response will be empty with a 204 status code.
 
 ---
 
@@ -358,6 +471,24 @@ This document outlines the expected JSON response structures for the various API
     }
     ```
 
+### `PATCH /api/admin-panel/registered-users/{id}/`
+
+-   **Purpose**: Update a user's status (is_active, is_verified, is_staff).
+-   **Request Body**:
+    ```json
+    {
+        "is_active": false
+    }
+    ```
+-   **Success Response (200 OK)**:
+    ```json
+    {
+        "status": "Success",
+        "message": "User status updated successfully.",
+        "data": { ... } // The updated user object
+    }
+    ```
+
 ### `GET /api/admin-panel/pet-reports/`
 
 -   **Purpose**: Get pet reports for admin review. Can be filtered by `status` (`pending`, `approved`, `rejected`).
@@ -373,6 +504,12 @@ This document outlines the expected JSON response structures for the various API
 ### `PATCH /api/admin-panel/pet-reports/{id}/`
 
 -   **Purpose**: Update the status of a pet report (`approved`, `rejected`, `resolved`).
+-   **Request Body**:
+    ```json
+    {
+        "report_status": "approved"
+    }
+    ```
 -   **Success Response (200 OK)**:
     ```json
     {
