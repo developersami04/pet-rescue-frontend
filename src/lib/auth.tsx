@@ -24,7 +24,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const router = useRouter();
   
   const logout = useCallback(() => {
     localStorage.removeItem('authToken');
@@ -44,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     
-    setIsLoading(true);
+    if (!isLoginEvent) setIsLoading(true);
     
     try {
         const { isAuthenticated: authStatus, user: userData, error, message } = await checkUserAuth(token);
@@ -110,6 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = (token: string, refreshToken: string) => {
     localStorage.setItem('authToken', token);
     localStorage.setItem('refreshToken', refreshToken);
+    // Instead of dispatching event, directly call verifyAuth
     verifyAuth(true);
   }
 
