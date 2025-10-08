@@ -13,6 +13,9 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 // Helper functions
 function getErrorMessage(result: any, defaultMessage: string): string {
     if (result) {
+        if (typeof result === 'string' && result.trim().startsWith('<!doctype html>')) {
+            return "The requested resource was not found on this server.";
+        }
         if (result.message && typeof result.message === 'string') return result.message;
         if (result.detail && typeof result.detail === 'string') return result.detail;
         if (typeof result === 'object' && result !== null) {
@@ -183,15 +186,16 @@ export async function updateUserDetails(token: string, userData: Record<string, 
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
+    
+    const isFormData = userData instanceof FormData;
 
-    const isPasswordChange = userData.hasOwnProperty('current_password');
-    const endpoint = isPasswordChange ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
-    const method = isPasswordChange ? 'POST' : 'PATCH';
+    const endpoint = userData.current_password ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
+    const method = userData.current_password ? 'POST' : 'PATCH';
     
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${endpoint}`, {
             method: method,
-            body: JSON.stringify(userData),
+            body: isFormData ? userData : JSON.stringify(userData),
         }, token);
         
         const result = await response.json();
@@ -390,8 +394,8 @@ export async function getMyPets(token: string): Promise<Pet[] | null> {
         }
 
         return result.data || [];
-    } catch (error) {
-        if ((error as any).name === 'AbortError' || error instanceof Error && error.message.includes('Session expired')) {
+    } catch (error: any) {
+        if (error.name === 'AbortError' || error.message?.includes('Session expired')) {
             throw error;
         }
         console.error('Error fetching your pets:', error);
@@ -531,7 +535,7 @@ export async function deletePetRequest(token: string, petId: string) {
             method: 'DELETE',
         }, token);
 
-        if (!response.ok && response.status !== 204) {
+        if (response.status !== 204 && !response.ok) {
             const result = await response.json();
             throw new Error(getErrorMessage(result, 'Failed to delete pet request.'));
         }
@@ -608,11 +612,7 @@ export async function deleteAdoptionRequest(token: string, requestId: number) {
             method: 'DELETE',
         }, token);
 
-        if (response.status === 204) {
-            return { message: 'Adoption request deleted successfully.' };
-        }
-
-        if (!response.ok) {
+        if (response.status !== 204 && !response.ok) {
             const result = await response.json();
             throw new Error(getErrorMessage(result, 'Failed to delete adoption request.'));
         }
