@@ -63,7 +63,6 @@ export async function fetchWithAuth(url: string, options: RequestInit, token: st
     return response;
 }
 
-
 export async function refreshAccessToken(): Promise<string | null> {
     if (typeof window === 'undefined') return null;
 

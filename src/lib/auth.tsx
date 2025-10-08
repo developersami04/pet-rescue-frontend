@@ -6,6 +6,9 @@ import { checkUserAuth } from './actions';
 import { toast } from '@/hooks/use-toast';
 import { User } from './data';
 import { useRouter } from 'next/navigation';
+import { refreshAccessToken } from './api';
+
+const TOKEN_REFRESH_INTERVAL = 10 * 60 * 1000; // 10 minutes
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -86,6 +89,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, [verifyAuth]);
+
+  // Set up interval for refreshing token
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isAuthenticated) {
+      interval = setInterval(async () => {
+        console.log('Refreshing token...');
+        await refreshAccessToken();
+      }, TOKEN_REFRESH_INTERVAL);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isAuthenticated]);
 
   const login = (token: string, refreshToken: string) => {
     localStorage.setItem('authToken', token);
