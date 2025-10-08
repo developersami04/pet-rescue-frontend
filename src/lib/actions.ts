@@ -1,31 +1,16 @@
 
-
 'use server';
 
 import { z } from "zod";
 import API_ENDPOINTS from "./endpoints";
 import { fetchWithAuth, fetchWithTimeout } from "./api";
 import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport, PetReport } from "./data";
-import { format } from "date-fns";
+// import { format } from "date-fns";
 
-// From user.actions.ts
-
-const registerUserSchema = z.object({
-  firstName: z.string().min(1, 'First name is required.'),
-  lastName: z.string().optional(),
-  username: z.string().min(3, 'Username must be at least 3 characters.'),
-  email: z.string().email('Please enter a valid email address.'),
-  password: z.string().min(6, 'Password must be at least 6 characters.'),
-  phone_no: z.string().min(10, 'Please enter a valid phone number.'),
-  gender: z.enum(['Male', 'Female', 'Other', 'Prefer Not To Say']),
-  address: z.string().min(1, 'Address is required.'),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  pin_code: z.coerce.number().optional().nullable(),
-});
-
+// Import the backend Host Address from .env file
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+// Helper functions
 function getErrorMessage(result: any, defaultMessage: string): string {
     if (result) {
         if (result.message && typeof result.message === 'string') return result.message;
@@ -38,6 +23,20 @@ function getErrorMessage(result: any, defaultMessage: string): string {
     return defaultMessage;
 }
 
+
+const registerUserSchema = z.object({
+    firstName: z.string().min(1, 'First name is required.'),
+    lastName: z.string().optional(),
+    username: z.string().min(3, 'Username must be at least 3 characters.'),
+    email: z.string().email('Please enter a valid email address.'),
+    password: z.string().min(6, 'Password must be at least 6 characters.'),
+    phone_no: z.string().min(10, 'Please enter a valid phone number.'),
+    gender: z.enum(['Male', 'Female', 'Other', 'Prefer Not To Say']),
+    address: z.string().min(1, 'Address is required.'),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    pin_code: z.coerce.number().optional().nullable(),
+  });
 
 export async function registerUser(userData: z.infer<typeof registerUserSchema>) {
     if (!API_BASE_URL) {
@@ -180,27 +179,19 @@ export async function getUserDetails(token: string) {
     }
 }
 
-export async function updateUserDetails(token: string, userData: Record<string, any> | FormData) {
+export async function updateUserDetails(token: string, userData: Record<string, any>) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
 
-    const isFormData = userData instanceof FormData;
-    
-    let isPasswordChange = false;
-    if (!isFormData) {
-        isPasswordChange = userData.hasOwnProperty('current_password');
-    }
-    
+    const isPasswordChange = userData.hasOwnProperty('current_password');
     const endpoint = isPasswordChange ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
     const method = isPasswordChange ? 'POST' : 'PATCH';
     
-    const body = isFormData ? userData : JSON.stringify(userData);
-
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${endpoint}`, {
             method: method,
-            body: body,
+            body: JSON.stringify(userData),
         }, token);
         
         const result = await response.json();
@@ -281,7 +272,11 @@ export async function verifyOtp(token: string, otp: string) {
     }
 }
 
-// From pet.actions.ts
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+
 
 type PetType = {
   id: number;
@@ -403,7 +398,6 @@ export async function getMyPets(token: string): Promise<Pet[] | null> {
         return null;
     }
 }
-
 
 export async function submitRequest(token: string, formData: FormData) {
     if (!API_BASE_URL) {
@@ -603,7 +597,6 @@ export async function updateAdoptionRequest(token: string, requestId: number, me
     }
 }
 
-
 export async function deleteAdoptionRequest(token: string, requestId: number) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -615,10 +608,15 @@ export async function deleteAdoptionRequest(token: string, requestId: number) {
             method: 'DELETE',
         }, token);
 
-        if (!response.ok && response.status !== 204) {
-             const result = await response.json();
+        if (response.status === 204) {
+            return { message: 'Adoption request deleted successfully.' };
+        }
+
+        if (!response.ok) {
+            const result = await response.json();
             throw new Error(getErrorMessage(result, 'Failed to delete adoption request.'));
         }
+
         return { message: 'Adoption request deleted successfully.' };
     } catch (error) {
         console.error('Error deleting adoption request:', error);
@@ -626,8 +624,6 @@ export async function deleteAdoptionRequest(token: string, requestId: number) {
         throw new Error('An unknown error occurred while deleting the adoption request.');
     }
 }
-
-// From notification.actions.ts
 
 export async function getNotifications(
   token: string,
@@ -721,7 +717,6 @@ export async function deleteNotification(token: string, notificationId: number) 
         throw new Error('An unknown error occurred.');
     }
 }
-
 
 export async function getAdminDashboardMetrics(token: string) {
     if (!API_BASE_URL) {
