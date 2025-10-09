@@ -20,7 +20,7 @@ export function PetReportListItem({ report }: PetReportListItemProps) {
     const imageUrl = report.report_image || placeholder.url;
     const imageHint = report.report_image ? 'pet report' : placeholder.hint;
 
-    const getStatusInfo = (status: 'lost' | 'found' | 'adoptable') => {
+    const getStatusInfo = (status: 'lost' | 'found' | 'adopt') => {
         switch (status) {
             case 'lost':
                 return {
@@ -34,7 +34,7 @@ export function PetReportListItem({ report }: PetReportListItemProps) {
                     style: 'bg-blue-500 text-white',
                     text: 'Found',
                 };
-            case 'adoptable':
+            case 'adopt':
                  return {
                     icon: <Hand className="mr-1 h-3 w-3" />,
                     style: 'bg-green-500 text-white',

@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { getPlaceholderImage } from "@/lib/placeholder-images";
 
 export function FavoritePets() {
     const [favoritePets, setFavoritePets] = useState<Pet[]>([]);
@@ -78,7 +79,9 @@ export function FavoritePets() {
                     </div>
                 ) : favoritePets.length > 0 ? (
                     favoritePets.map(pet => {
-                        const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/300/300`;
+                        const placeholder = getPlaceholderImage(pet.type_name);
+                        const imageUrl = pet.pet_image || placeholder.url;
+                        const imageHint = pet.pet_image ? (pet.breed ?? pet.type_name) : placeholder.hint;
                         return (
                             <Card key={pet.id} className="overflow-hidden">
                                 <div className="relative aspect-square w-full">
@@ -87,7 +90,7 @@ export function FavoritePets() {
                                         alt={pet.name}
                                         fill
                                         className="object-cover"
-                                        data-ai-hint={pet.breed ?? pet.type_name}
+                                        data-ai-hint={imageHint}
                                     />
                                 </div>
                                 <CardHeader className="p-4">

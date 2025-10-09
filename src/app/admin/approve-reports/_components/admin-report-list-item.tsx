@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Check, Loader2, MoreVertical, ShieldCheck, ThumbsDown, X } from 'lucide-react';
+import { getPlaceholderImage } from "@/lib/placeholder-images";
 
 type ReportStatus = 'approved' | 'rejected' | 'resolved';
 
@@ -26,7 +27,9 @@ type AdminReportListItemProps = {
 }
 
 export function AdminReportListItem({ report, onUpdate, isUpdating }: AdminReportListItemProps) {
-    const imageUrl = report.image || `https://picsum.photos/seed/${report.pet_id}/100/100`;
+    const placeholder = getPlaceholderImage(report.pet_type_name);
+    const imageUrl = report.image || placeholder.url;
+    const imageHint = report.image ? report.pet_type_name : placeholder.hint;
     const petStatus = report.pet_status;
 
     const reportedDate = report.created_at ? new Date(report.created_at) : null;
@@ -40,7 +43,7 @@ export function AdminReportListItem({ report, onUpdate, isUpdating }: AdminRepor
                     alt={report.pet_name}
                     fill
                     className="object-cover rounded-md"
-                    data-ai-hint={report.pet_type_name}
+                    data-ai-hint={imageHint}
                 />
             </div>
             <div className="flex-grow grid grid-cols-1 sm:grid-cols-5 items-center gap-4">

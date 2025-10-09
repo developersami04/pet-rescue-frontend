@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Check, Loader2, MoreVertical, ShieldCheck, ThumbsDown, X } from 'lucide-react';
+import { getPlaceholderImage } from '@/lib/placeholder-images';
 
 type ReportStatus = 'approved' | 'rejected' | 'resolved';
 
@@ -31,7 +32,9 @@ type AdminReportCardProps = {
 };
 
 export function AdminReportCard({ report, onUpdate, isUpdating }: AdminReportCardProps) {
-  const imageUrl = report.image || `https://picsum.photos/seed/${report.pet_id}/400/300`;
+  const placeholder = getPlaceholderImage(report.pet_type_name);
+  const imageUrl = report.image || placeholder.url;
+  const imageHint = report.image ? report.pet_type_name : placeholder.hint;
   const petStatus = report.pet_status;
 
   return (
@@ -43,7 +46,7 @@ export function AdminReportCard({ report, onUpdate, isUpdating }: AdminReportCar
                 alt={report.pet_name}
                 fill
                 className="object-cover"
-                data-ai-hint={report.pet_type_name}
+                data-ai-hint={imageHint}
             />
             {petStatus && (
                 <Badge 
