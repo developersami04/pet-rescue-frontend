@@ -33,7 +33,7 @@ import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { format, parseISO, isValid, isEqual } from 'date-fns';
+import { format, parseISO, isValid, isEqual, isDate } from 'date-fns';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Calendar } from '@/components/ui/calendar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -80,28 +80,35 @@ type UpdatePetFormProps = {
 
 function getChangedValues(initialValues: any, currentValues: any): Partial<any> {
     const changedValues: Partial<any> = {};
-    const allKeys = new Set([...Object.keys(initialValues), ...Object.keys(currentValues)]);
+    if (!initialValues) return currentValues;
+
+    const allKeys = new Set(Object.keys(currentValues));
 
     for (const key of allKeys) {
         if (key === 'pet_image' || key === 'report_image') continue;
 
-        let initialValue = initialValues[key];
-        let currentValue = currentValues[key];
+        const initialValue = initialValues[key];
+        const currentValue = currentValues[key];
 
-        // Normalize undefined, null, and empty strings to a single value for comparison
-        initialValue = (initialValue === undefined || initialValue === null || initialValue === '') ? null : initialValue;
-        currentValue = (currentValue === undefined || currentValue === null || currentValue === '') ? null : currentValue;
-
-        if (key === 'last_vaccinated_date') {
-             const initialDate = initialValue && isValid(new Date(initialValue)) ? new Date(initialValue) : null;
-             const currentDate = currentValue && isValid(new Date(currentValue)) ? new Date(currentValue) : null;
+        // Different comparison for dates
+        if (isDate(initialValue) || isDate(currentValue)) {
+             const initialDate = initialValue ? new Date(initialValue) : null;
+             const currentDate = currentValue ? new Date(currentValue) : null;
 
              if (!initialDate && !currentDate) continue;
+
              if ((initialDate && !currentDate) || (!initialDate && currentDate) || (initialDate && currentDate && !isEqual(initialDate, currentDate))) {
-                changedValues[key] = currentValue;
+                changedValues[key] = currentValue === null ? '' : currentValue;
              }
-        } else if (String(initialValue) !== String(currentValue)) {
-            changedValues[key] = currentValue;
+             continue;
+        }
+
+        // Normalize null/undefined to empty string for comparison, but only if not a boolean
+        const normalizedInitial = (initialValue === null || initialValue === undefined) ? '' : initialValue;
+        const normalizedCurrent = (currentValue === null || currentValue === undefined) ? '' : currentValue;
+
+        if (String(normalizedInitial) !== String(normalizedCurrent)) {
+            changedValues[key] = currentValue === null ? '' : currentValue;
         }
     }
     return changedValues;
@@ -225,16 +232,11 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     if (changedValues.hasOwnProperty('pet_status')) {
         const availableForAdopt = changedValues.pet_status === 'adopt';
         formData.append('available_for_adopt', String(availableForAdopt));
-        formData.append('pet_status', changedValues.pet_status);
     }
 
     for (const [key, value] of Object.entries(changedValues)) {
-        if (key === 'available_for_adopt' || key === 'pet_status') continue;
-        
         if (value instanceof Date) {
             formData.append(key, format(value, 'yyyy-MM-dd'));
-        } else if (value === null) {
-            formData.append(key, '');
         } else if (value !== undefined) {
             formData.append(key, String(value));
         }

@@ -498,7 +498,7 @@ export async function updatePetRequest(token: string, petId: string, formData: F
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
-    const url = `${API_BASE_URL}${API_ENDPOINTS.petRequestView}${petId}/`;
+    const url = `${API_BASE_URL}${API_ENDPOINTS.petRequestView}${petId}`;
 
     try {
         const response = await fetchWithAuth(url, {
