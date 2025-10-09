@@ -6,8 +6,9 @@ import { Pet } from "@/lib/data";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Hand, MessageSquareQuote } from "lucide-react";
+import { Hand, MessageSquareQuote, Expand } from "lucide-react";
 import { AdoptionRequestDialog } from "./adoption-request-dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 
 type PetProfileHeaderProps = {
@@ -36,15 +37,37 @@ export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
     };
 
     return (
-       <div className="relative h-96 w-full rounded-lg overflow-hidden bg-muted">
-            <Image
-                src={imageUrl}
-                alt={pet.name}
-                fill
-                className="object-cover"
-                data-ai-hint={pet.breed ?? pet.type_name}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+       <div className="relative h-96 w-full rounded-lg overflow-hidden bg-muted group">
+            <Dialog>
+                 <DialogTrigger asChild>
+                    <div className="absolute inset-0 cursor-pointer">
+                        <Image
+                            src={imageUrl}
+                            alt={pet.name}
+                            fill
+                            className="object-cover"
+                            data-ai-hint={pet.breed ?? pet.type_name}
+                        />
+                         <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button variant="secondary">
+                                <Expand className="mr-2 h-4 w-4" />
+                                View Fullscreen
+                            </Button>
+                        </div>
+                    </div>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl h-[80vh] p-2">
+                    <div className="relative w-full h-full">
+                         <Image
+                            src={imageUrl}
+                            alt={pet.name}
+                            fill
+                            className="object-contain"
+                        />
+                    </div>
+                </DialogContent>
+            </Dialog>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
             <div className="absolute bottom-0 left-0 right-0 p-6 flex justify-between items-end text-white">
                 <div>
                     <div className="flex items-center gap-4">
@@ -90,3 +113,4 @@ export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
        </div>
     );
 }
+
