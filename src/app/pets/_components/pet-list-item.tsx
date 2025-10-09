@@ -17,7 +17,9 @@ type PetListItemProps = {
 }
 
 export function PetListItem({ pet }: PetListItemProps) {
-    const imageUrl = pet.pet_image || getPlaceholderImage(pet.type_name).url;
+    const placeholder = getPlaceholderImage(pet.type_name);
+    const imageUrl = pet.pet_image || placeholder.url;
+    const imageHint = pet.pet_image ? (pet.breed ?? pet.type_name) : placeholder.hint;
     const petStatus = pet.pet_report?.pet_status;
     const isResolved = pet.pet_report?.is_resolved;
 
@@ -45,7 +47,7 @@ export function PetListItem({ pet }: PetListItemProps) {
                     alt={pet.name}
                     fill
                     className="object-cover rounded-md"
-                    data-ai-hint={pet.breed ?? pet.type_name}
+                    data-ai-hint={imageHint}
                 />
                  <div className="absolute top-1 left-1 bg-background/80 p-0.5 rounded-full backdrop-blur-sm">
                     <PetTypeIcon typeName={pet.type_name} className="h-4 w-4 text-foreground/80" />

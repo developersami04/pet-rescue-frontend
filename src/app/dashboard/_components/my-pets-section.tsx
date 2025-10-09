@@ -64,7 +64,9 @@ export function MyPetsSection({ myPets }: MyPetsSectionProps) {
             {view === 'grid' ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {myPets.map(pet => {
-                        const imageUrl = pet.pet_image || getPlaceholderImage(pet.type_name).url;
+                        const placeholder = getPlaceholderImage(pet.type_name);
+                        const imageUrl = pet.pet_image || placeholder.url;
+                        const imageHint = pet.pet_image ? (pet.breed ?? pet.type_name) : placeholder.hint;
                         const isResolved = pet.pet_report?.is_resolved ?? false;
                         return (
                             <Card key={pet.id} className="overflow-hidden flex flex-col">
@@ -75,7 +77,7 @@ export function MyPetsSection({ myPets }: MyPetsSectionProps) {
                                             alt={pet.name}
                                             fill
                                             className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                            data-ai-hint={pet.breed ?? pet.type_name}
+                                            data-ai-hint={imageHint}
                                         />
                                         <div className="absolute top-2 left-2 bg-background/80 p-1 rounded-full backdrop-blur-sm flex items-center gap-1">
                                             <PetTypeIcon typeName={pet.type_name} className="h-4 w-4 text-foreground/80" />

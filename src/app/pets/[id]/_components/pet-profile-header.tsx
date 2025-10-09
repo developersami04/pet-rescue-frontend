@@ -18,7 +18,9 @@ type PetProfileHeaderProps = {
 }
 
 export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
-    const imageUrl = pet.pet_image || getPlaceholderImage(pet.type_name).url;
+    const placeholder = getPlaceholderImage(pet.type_name);
+    const imageUrl = pet.pet_image || placeholder.url;
+    const imageHint = pet.pet_image ? (pet.breed ?? pet.type_name) : placeholder.hint;
     const petStatus = pet.pet_report?.pet_status;
     const isResolved = pet.pet_report?.is_resolved;
     const reportStatus = pet.pet_report?.report_status;
@@ -47,7 +49,7 @@ export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
                             alt={pet.name}
                             fill
                             className="object-cover"
-                            data-ai-hint={pet.breed ?? pet.type_name}
+                            data-ai-hint={imageHint}
                         />
                          <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <Button variant="secondary">

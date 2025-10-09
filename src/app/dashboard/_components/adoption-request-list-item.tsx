@@ -11,6 +11,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { UpdateAdoptionRequestDialog } from "./update-adoption-request-dialog";
 import { DeleteAdoptionRequestDialog } from "./delete-adoption-request-dialog";
+import { getPlaceholderImage } from "@/lib/placeholder-images";
 
 type AdoptionRequestListItemProps = {
     request: MyAdoptionRequest;
@@ -18,7 +19,9 @@ type AdoptionRequestListItemProps = {
 }
 
 export function AdoptionRequestListItem({ request, onUpdate }: AdoptionRequestListItemProps) {
-    const imageUrl = request.pet_image || `https://picsum.photos/seed/${request.pet}/100/100`;
+    const placeholder = getPlaceholderImage('Default');
+    const imageUrl = request.pet_image || placeholder.url;
+    const imageHint = request.pet_image ? 'pet' : placeholder.hint;
 
     const getStatusVariant = (status: string) => {
         switch (status.toLowerCase()) {
@@ -51,7 +54,7 @@ export function AdoptionRequestListItem({ request, onUpdate }: AdoptionRequestLi
                     alt={request.pet_name}
                     fill
                     className="object-cover rounded-md"
-                    data-ai-hint={'pet'}
+                    data-ai-hint={imageHint}
                 />
             </div>
             <div className="flex-grow grid grid-cols-1 md:grid-cols-3 items-center gap-4 w-full">

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { AlertTriangle, Hand } from "lucide-react";
 import Link from "next/link";
+import { getPlaceholderImage } from "@/lib/placeholder-images";
 
 
 type PetReportListItemProps = {
@@ -15,7 +16,9 @@ type PetReportListItemProps = {
 }
 
 export function PetReportListItem({ report }: PetReportListItemProps) {
-    const imageUrl = report.report_image || `https://picsum.photos/seed/${report.pet}/100/100`;
+    const placeholder = getPlaceholderImage('Default');
+    const imageUrl = report.report_image || placeholder.url;
+    const imageHint = report.report_image ? 'pet report' : placeholder.hint;
 
     const getStatusInfo = (status: 'lost' | 'found' | 'adoptable') => {
         switch (status) {
@@ -56,7 +59,7 @@ export function PetReportListItem({ report }: PetReportListItemProps) {
                     alt={report.pet_name}
                     fill
                     className="object-cover rounded-md"
-                    data-ai-hint={'pet report'}
+                    data-ai-hint={imageHint}
                 />
             </div>
             <div className="flex-grow grid grid-cols-1 md:grid-cols-3 items-center gap-4">

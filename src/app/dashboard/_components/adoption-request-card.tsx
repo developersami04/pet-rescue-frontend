@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Pen, Trash2 } from "lucide-react";
 import { UpdateAdoptionRequestDialog } from "./update-adoption-request-dialog";
 import { DeleteAdoptionRequestDialog } from "./delete-adoption-request-dialog";
+import { getPlaceholderImage } from "@/lib/placeholder-images";
 
 type AdoptionRequestCardProps = {
     request: MyAdoptionRequest;
@@ -18,7 +19,11 @@ type AdoptionRequestCardProps = {
 }
 
 export function AdoptionRequestCard({ request, onUpdate }: AdoptionRequestCardProps) {
-    const imageUrl = request.pet_image || `https://picsum.photos/seed/${request.pet}/300/300`;
+    // Pet type name is not available in MyAdoptionRequest, so we assume a default or pass it if available.
+    const placeholder = getPlaceholderImage('Default'); 
+    const imageUrl = request.pet_image || placeholder.url;
+    const imageHint = request.pet_image ? 'pet' : placeholder.hint;
+
 
     const getStatusVariant = (status: string) => {
         switch (status.toLowerCase()) {
@@ -41,7 +46,7 @@ export function AdoptionRequestCard({ request, onUpdate }: AdoptionRequestCardPr
                         alt={request.pet_name}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        data-ai-hint={'pet'}
+                        data-ai-hint={imageHint}
                     />
                 </div>
             </Link>

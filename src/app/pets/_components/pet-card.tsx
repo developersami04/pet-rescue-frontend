@@ -18,7 +18,9 @@ type PetCardProps = {
 };
 
 export function PetCard({ pet }: PetCardProps) {
-  const imageUrl = pet.pet_image || getPlaceholderImage(pet.type_name);
+  const placeholder = getPlaceholderImage(pet.type_name);
+  const imageUrl = pet.pet_image || placeholder.url;
+  const imageHint = pet.pet_image ? (pet.breed ?? pet.type_name) : placeholder.hint;
   const petStatus = pet.pet_report?.pet_status;
   const isResolved = pet.pet_report?.is_resolved;
 
@@ -44,11 +46,11 @@ export function PetCard({ pet }: PetCardProps) {
       <Card className="flex flex-col h-full overflow-hidden transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg">
         <div className="relative h-56 w-full">
           <Image
-            src={imageUrl.url}
+            src={imageUrl}
             alt={pet.name}
             fill
             className="object-cover"
-            data-ai-hint={imageUrl.hint}
+            data-ai-hint={imageHint}
           />
            <div className="absolute top-2 left-2 bg-background/80 p-1 rounded-full backdrop-blur-sm">
                 <PetTypeIcon typeName={pet.type_name} className="h-5 w-5 text-foreground/80" />

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PetReportListItem } from "./pet-report-list-item";
+import { getPlaceholderImage } from "@/lib/placeholder-images";
 
 type LostPetsSectionProps = {
     lostPets: PetReport[];
@@ -53,7 +54,9 @@ export function LostPetsSection({ lostPets }: LostPetsSectionProps) {
             {view === 'grid' ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {lostPets.map(report => {
-                        const imageUrl = report.report_image || `https://picsum.photos/seed/${report.pet}/300/300`;
+                        const placeholder = getPlaceholderImage('Default');
+                        const imageUrl = report.report_image || placeholder.url;
+                        const imageHint = report.report_image ? 'lost pet' : placeholder.hint;
                         return (
                             <Card key={report.id} className="overflow-hidden flex flex-col">
                                 <Link href={`/pets/${report.pet}`} className="group">
@@ -63,7 +66,7 @@ export function LostPetsSection({ lostPets }: LostPetsSectionProps) {
                                             alt={report.pet_name}
                                             fill
                                             className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                            data-ai-hint={'lost pet'}
+                                            data-ai-hint={imageHint}
                                         />
                                         <Badge variant={'destructive'} className="absolute bottom-2 right-2 capitalize whitespace-nowrap">
                                             Lost
