@@ -40,25 +40,24 @@ export default function AboutUsPage() {
           </CardContent>
         </Card>
         
-        <div className="grid gap-8 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Team Lead</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-               <TeamMember name="Lead Name" role="Project Lead" seed="lead1" />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Our Mentors</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <TeamMember name="Mentor One" role="Project Mentor" seed="mentor1" />
-              <TeamMember name="Mentor Two" role="Technical Mentor" seed="mentor2" />
-            </CardContent>
-          </Card>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Our Mentors</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <TeamMember name="Mentor One" role="Project Mentor" seed="mentor1" />
+            <TeamMember name="Mentor Two" role="Technical Mentor" seed="mentor2" />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Team Lead</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+              <TeamMember name="Lead Name" role="Project Lead" seed="lead1" />
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>
