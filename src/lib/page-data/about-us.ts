@@ -16,7 +16,10 @@ export const aboutUsStory = {
   title: 'Our Story',
   paragraphs: [
     'Petopia was born from the passion and creativity of a dedicated team of interns as part of the Infosys SpringBoard program. Our goal was to apply our developing skills to a real-world challenge, and we chose to focus on a cause close to our hearts: animal welfare.',
-    'This platform is the culmination of our internship project, where we explored full-stack web development, UI/UX design, and the power of AI to make a positive impact. We aimed to create a user-friendly application that simplifies the process of pet adoption, reporting lost and found animals, and connecting a community of pet lovers. We are proud to present Petopia as a testament to our learning, collaboration, and dedication.',
+    'The Infosys Springboard Internship 6.0 is a transformative learning experience designed to bridge the gap between academic knowledge and industry expectations. Through this internship, aspiring engineers and developers get the opportunity to explore real-world problems, apply modern technologies, and develop innovative solutions under professional mentorship.',
+    'Our project under this program focuses on fostering creativity, collaboration, and technical excellence. With a strong emphasis on hands-on implementation, we explored end-to-end software development processes — from brainstorming ideas and designing prototypes to building, testing, and deploying functional systems.',
+    'The internship encouraged participants to think beyond conventional boundaries and embrace industry-standard tools and frameworks, including Next.js, React, TypeScript, Tailwind CSS, and Genkit for AI features. Every step of the journey was guided by a spirit of innovation and continuous learning.',
+    'At its core, the Petopia project aims to empower young minds to turn ideas into impactful digital solutions while nurturing professional ethics, teamwork, and problem-solving skills. It’s more than just an internship — it’s a launchpad into the world of technology and innovation.'
   ],
 };
 
@@ -44,7 +47,7 @@ export const mentorsData: TeamMemberData[] = [
 export const leadData: TeamMemberData = {
   name: "Supriya Khanra",
   role: "Lead Developer, Frontend, Backend, API Intrigation",
-  imageUrl: "https://picsum.photos/seed/lead1/200/200",
+  imageUrl: "https://github.com/supriyakhanra.png",
   socials: { 
     github: "https://github.com/supriyakhanra", 
     linkedin: "#", 
