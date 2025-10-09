@@ -56,9 +56,9 @@ const navItems = {
     { href: "/admin/dashboard", icon: LayoutGrid, label: "Admin Dashboard" },
   ],
   records: [
-    { href: "/admin/approve-reports", icon: ShieldCheck, label: "Approve Reports" },
-    { href: "/admin/adoption-requests", icon: Hand, label: "Adoption Requests" },
     { href: "/admin/manage-users", icon: Users, label: "Manage Users" },
+    { href: "/admin/approve-reports", icon: ShieldCheck, label: "Manage Reports" },
+    { href: "/admin/adoption-requests", icon: Hand, label: "Manage Adoptions" },
   ],
   general: [
     { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
