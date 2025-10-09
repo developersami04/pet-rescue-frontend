@@ -297,6 +297,12 @@ export function HeaderNav() {
               </SheetHeader>
               <div className="flex h-full flex-col">
                 <div className="flex-1 overflow-y-auto p-4">
+                  <Button asChild className="w-full mb-4">
+                    <Link href="/submit-request" onClick={closeMobileMenu}>
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Pet Request Form
+                    </Link>
+                  </Button>
                   <div className="relative mb-4">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -344,17 +350,6 @@ export function HeaderNav() {
                             ))}
                         </div>
                     </div>
-                    
-                    <Separator />
-                    
-                    <NavLink
-                        href="/submit-request"
-                        className="text-base bg-primary/10 text-primary"
-                        closeMenu={closeMobileMenu}
-                        >
-                        <PlusCircle className="h-5 w-5" />
-                        Pet Request Form
-                    </NavLink>
                   </nav>
                 </div>
                  <div className="border-t p-4">
