@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { getAdminAdoptionRequests, updateAdoptionRequestStatus } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -14,7 +14,7 @@ import { Loader2 } from 'lucide-react';
 import { AdoptionRequestsTabs } from './adoption-requests-tabs';
 import { AdoptionRequestList } from './adoption-request-list';
 
-type TabValue = 'pending' | 'approved' | 'rejected';
+type TabValue = 'pending' | 'last50' | 'rejected';
 type RequestStatus = 'approved' | 'rejected';
 
 function RequestsSkeleton() {
@@ -44,13 +44,13 @@ function AdoptionRequestsClientContent() {
     const tabFromUrl = searchParams.get('tab');
 
     const [activeTab, setActiveTab] = useState<TabValue>(
-        tabFromUrl === 'approved' || tabFromUrl === 'rejected' ? tabFromUrl : 'pending'
+        tabFromUrl === 'last50' || tabFromUrl === 'rejected' ? tabFromUrl : 'pending'
     );
     const { toast } = useToast();
 
     useEffect(() => {
         const newTab = searchParams.get('tab');
-        if (newTab === 'pending' || newTab === 'approved' || newTab === 'rejected') {
+        if (newTab === 'pending' || newTab === 'last50' || newTab === 'rejected') {
             setActiveTab(newTab);
         }
     }, [searchParams]);
@@ -67,7 +67,12 @@ function AdoptionRequestsClientContent() {
         }
 
         try {
-            const requestsData = await getAdminAdoptionRequests(token, tab);
+            let status: 'pending' | 'rejected' | 'last50' | undefined = undefined;
+             if (tab === 'pending') status = 'pending';
+             if (tab === 'rejected') status = 'rejected';
+             if (tab === 'last50') status = 'last50';
+
+            const requestsData = await getAdminAdoptionRequests(token, status);
             setRequests(requestsData);
         } catch (e: any) {
             if (e.message.includes('Session expired')) {
@@ -103,17 +108,22 @@ function AdoptionRequestsClientContent() {
             await updateAdoptionRequestStatus(token, requestId, status);
             toast({ title: 'Request Updated', description: `The request has been successfully ${status}.` });
             
-            // Optimistically remove the request from the list
-            setRequests(prevRequests => 
-                prevRequests.filter(r => r.id !== requestId)
-            );
+            // Optimistically remove the request from the list if it's pending
+            if (activeTab === 'pending') {
+                setRequests(prevRequests => 
+                    prevRequests.filter(r => r.id !== requestId)
+                );
+            } else {
+                // otherwise, just refresh data for other tabs
+                await fetchRequests(activeTab, true);
+            }
 
         } catch (error: any) {
             toast({ variant: 'destructive', title: 'Update Failed', description: error.message });
         } finally {
             setUpdatingRequests(prev => ({ ...prev, [requestId]: false }));
         }
-    }, [toast]);
+    }, [toast, activeTab, fetchRequests]);
 
 
     useEffect(() => {
@@ -152,7 +162,7 @@ function AdoptionRequestsClientContent() {
                     <TabsContent value="pending">
                         <AdoptionRequestList requests={requests} onUpdate={handleUpdateRequest} updatingRequests={updatingRequests} />
                     </TabsContent>
-                    <TabsContent value="approved">
+                    <TabsContent value="last50">
                         <AdoptionRequestList requests={requests} onUpdate={handleUpdateRequest} updatingRequests={updatingRequests} />
                     </TabsContent>
                     <TabsContent value="rejected">

@@ -3,18 +3,18 @@
 
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { Clock, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Clock, History, ThumbsDown } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const tabInfo = [
     { value: "pending", label: "Pending Requests", icon: Clock },
-    { value: "approved", label: "Approved Requests", icon: ThumbsUp },
+    { value: "last50", label: "Last 50 Requests", icon: History },
     { value: "rejected", label: "Rejected Requests", icon: ThumbsDown },
 ];
 
 type AdoptionRequestsTabsProps = {
     activeTab: string;
-    onTabChange: (tab: 'pending' | 'approved' | 'rejected') => void;
+    onTabChange: (tab: 'pending' | 'last50' | 'rejected') => void;
 };
 
 export function AdoptionRequestsTabs({ activeTab, onTabChange }: AdoptionRequestsTabsProps) {

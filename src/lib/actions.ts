@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { z } from "zod";
@@ -948,7 +949,7 @@ export async function getPetReports(token: string, status: 'lost' | 'found' | 'a
     }
 }
 
-export async function getAdminAdoptionRequests(token: string, status?: 'pending' | 'approved' | 'rejected'): Promise<AdoptionRequest[]> {
+export async function getAdminAdoptionRequests(token: string, status?: 'pending' | 'approved' | 'rejected' | 'last50'): Promise<AdoptionRequest[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
