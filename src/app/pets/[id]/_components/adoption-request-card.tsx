@@ -4,9 +4,8 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AdoptionRequest } from "@/lib/data";
-import { Button } from "@/components/ui/button";
-import { Check, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { formatDistanceToNow } from "date-fns";
 
 type AdoptionRequestsCardProps = {
     requests: AdoptionRequest[];
@@ -33,8 +32,8 @@ export function AdoptionRequestsCard({ requests, petName }: AdoptionRequestsCard
                 <CardTitle>Adoption Requests for {petName}</CardTitle>
                 <CardDescription>
                     {requests.length > 0
-                        ? `You have ${requests.length} pending request(s).`
-                        : "There are no pending adoption requests for this pet."
+                        ? `${requests.length} request(s) have been made for this pet.`
+                        : "There are no adoption requests for this pet yet."
                     }
                 </CardDescription>
             </CardHeader>
@@ -48,22 +47,14 @@ export function AdoptionRequestsCard({ requests, petName }: AdoptionRequestsCard
                             </Avatar>
                             <div>
                                 <p className="font-semibold">{request.requester_name}</p>
-                                <p className="text-sm text-muted-foreground truncate max-w-xs">"{request.message}"</p>
+                                <p className="text-sm text-muted-foreground truncate max-w-xs" title={request.message}>"{request.message}"</p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
+                                </p>
                             </div>
                         </div>
                          <div className="flex items-center gap-2">
-                             {request.status === 'pending' ? (
-                                <>
-                                    <Button size="icon" variant="outline" className="h-8 w-8 bg-green-100 text-green-700 hover:bg-green-200">
-                                        <Check className="h-4 w-4" />
-                                    </Button>
-                                    <Button size="icon" variant="outline" className="h-8 w-8 bg-red-100 text-red-700 hover:bg-red-200">
-                                        <X className="h-4 w-4" />
-                                    </Button>
-                                </>
-                             ) : (
-                                 <Badge variant={getStatusVariant(request.status)} className="capitalize">{request.status}</Badge>
-                             )}
+                            <Badge variant={getStatusVariant(request.status)} className="capitalize">{request.status}</Badge>
                         </div>
                     </div>
                 ))}

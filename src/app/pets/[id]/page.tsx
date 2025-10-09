@@ -73,8 +73,6 @@ export default function PetProfilePage() {
     return null; // Or a "Pet not found" component
   }
 
-  const isOwner = currentUser?.id === pet.created_by;
-
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
       <div className="space-y-8">
@@ -107,7 +105,7 @@ export default function PetProfilePage() {
             </div>
         </div>
 
-        {isOwner && pet.adoption_requests && pet.adoption_requests.length > 0 && (
+        {pet.adoption_requests && pet.adoption_requests.length > 0 && (
             <AdoptionRequestsCard requests={pet.adoption_requests} petName={pet.name}/>
         )}
 
