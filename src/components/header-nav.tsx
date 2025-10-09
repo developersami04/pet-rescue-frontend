@@ -49,6 +49,7 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useAuth } from '@/lib/auth.tsx';
 import { Skeleton } from "./ui/skeleton";
 import { NotificationPopover } from "./notification-popover";
+import { Separator } from "./ui/separator";
 
 const navItems = {
   main: [
@@ -303,23 +304,52 @@ export function HeaderNav() {
                       className="w-full rounded-lg bg-muted pl-10"
                     />
                   </div>
-                  <nav className="flex flex-col gap-1">
-                    {[...navItems.main, ...navItems.reports, ...navItems.more].map(
-                      (item) => (
-                        <NavLink
-                          key={item.href}
-                          href={item.href}
-                          className="text-base"
-                          closeMenu={closeMobileMenu}
-                        >
-                          <item.icon className="h-5 w-5" />
-                          {item.label}
-                        </NavLink>
-                      )
-                    )}
+                  <nav className="flex flex-col gap-4">
+                     <div>
+                        <h4 className="px-3 py-2 text-xs font-semibold uppercase text-muted-foreground/80 tracking-wider">Main</h4>
+                        <div className="flex flex-col gap-1">
+                            {navItems.main.map((item) => (
+                                <NavLink key={item.href} href={item.href} className="text-base" closeMenu={closeMobileMenu}>
+                                    <item.icon className="h-5 w-5" />
+                                    {item.label}
+                                </NavLink>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    <Separator />
+
+                    <div>
+                        <h4 className="px-3 py-2 text-xs font-semibold uppercase text-muted-foreground/80 tracking-wider">Reports</h4>
+                        <div className="flex flex-col gap-1">
+                            {navItems.reports.map((item) => (
+                                <NavLink key={item.href} href={item.href} className="text-base" closeMenu={closeMobileMenu}>
+                                    <item.icon className="h-5 w-5" />
+                                    {item.label}
+                                </NavLink>
+                            ))}
+                        </div>
+                    </div>
+
+                    <Separator />
+                    
+                    <div>
+                        <h4 className="px-3 py-2 text-xs font-semibold uppercase text-muted-foreground/80 tracking-wider">More</h4>
+                        <div className="flex flex-col gap-1">
+                            {navItems.more.map((item) => (
+                                <NavLink key={item.href} href={item.href} className="text-base" closeMenu={closeMobileMenu}>
+                                    <item.icon className="h-5 w-5" />
+                                    {item.label}
+                                </NavLink>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    <Separator />
+                    
                     <NavLink
                         href="/submit-request"
-                        className="text-base mt-2 bg-primary/10 text-primary"
+                        className="text-base bg-primary/10 text-primary"
                         closeMenu={closeMobileMenu}
                         >
                         <PlusCircle className="h-5 w-5" />
