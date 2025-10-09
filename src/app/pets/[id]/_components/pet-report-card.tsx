@@ -17,13 +17,31 @@ export function PetReportContent({ report }: PetReportContentProps) {
     );
 
     const imageUrl = report.report_image;
+    
+    const getReportStatusVariant = (status: string) => {
+        switch (status.toLowerCase()) {
+            case 'approved':
+                return 'default';
+            case 'rejected':
+                return 'destructive';
+            case 'pending':
+            default:
+                return 'secondary';
+        }
+    };
+
 
     return (
         <div className="pt-2 space-y-6">
             <div className="flex justify-between items-start">
-                <div className="flex flex-col gap-1">
-                    <p className="text-sm font-semibold">Report Status: <span className="capitalize text-muted-foreground font-normal">{report.pet_status}</span></p>
-                    <p className="text-sm font-semibold">Activity: <span className="capitalize text-muted-foreground font-normal">{report.report_status}</span></p>
+                <div className="flex flex-col gap-2">
+                    <p className="text-sm font-semibold">Pet Status: <span className="capitalize text-muted-foreground font-normal">{report.pet_status}</span></p>
+                    <div className="flex items-center gap-2">
+                         <p className="text-sm font-semibold">Admin Status:</p>
+                         <Badge variant={getReportStatusVariant(report.report_status)} className="capitalize">
+                            {report.report_status}
+                         </Badge>
+                    </div>
                 </div>
                  <Badge variant={report.is_resolved ? 'default' : 'secondary'}>
                     {report.is_resolved ? 'Resolved' : 'Active'}
