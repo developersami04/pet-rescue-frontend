@@ -1,10 +1,12 @@
 
+
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Github, Linkedin, X } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { aboutUsStory, mentorsData, leadData, membersData, type TeamMemberData } from "@/lib/page-data/about-us";
 
 function SocialLink({ href, children }: { href: string, children: React.ReactNode }) {
   return (
@@ -16,44 +18,30 @@ function SocialLink({ href, children }: { href: string, children: React.ReactNod
   );
 }
 
-function TeamMember({ 
-  name, 
-  role, 
-  seed,
-  github,
-  linkedin,
-  twitter
-}: { 
-  name: string, 
-  role: string, 
-  seed: string,
-  github?: string,
-  linkedin?: string,
-  twitter?: string
-}) {
+function TeamMember({ member }: { member: TeamMemberData }) {
   return (
     <div className="flex flex-col items-center text-center gap-4 p-4 border rounded-lg hover:shadow-lg transition-shadow">
       <Avatar className="h-24 w-24">
-        <AvatarImage src={`https://picsum.photos/seed/${seed}/200/200`} alt={name} />
-        <AvatarFallback>{name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+        <AvatarImage src={`https://picsum.photos/seed/${member.seed}/200/200`} alt={member.name} />
+        <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
       </Avatar>
       <div>
-        <h3 className="font-semibold text-lg">{name}</h3>
-        <p className="text-sm text-muted-foreground">{role}</p>
+        <h3 className="font-semibold text-lg">{member.name}</h3>
+        <p className="text-sm text-muted-foreground">{member.role}</p>
       </div>
       <div className="flex gap-2">
-        {github && (
-          <SocialLink href={github}>
+        {member.socials.github && (
+          <SocialLink href={member.socials.github}>
             <Github className="h-5 w-5" />
           </SocialLink>
         )}
-        {linkedin && (
-          <SocialLink href={linkedin}>
+        {member.socials.linkedin && (
+          <SocialLink href={member.socials.linkedin}>
             <Linkedin className="h-5 w-5" />
           </SocialLink>
         )}
-        {twitter && (
-          <SocialLink href={twitter}>
+        {member.socials.twitter && (
+          <SocialLink href={member.socials.twitter}>
             <X className="h-5 w-5" />
           </SocialLink>
         )}
@@ -72,15 +60,12 @@ export default function AboutUsPage() {
       <div className="grid gap-8 lg:grid-cols-1">
         <Card>
           <CardHeader>
-            <CardTitle>Our Story</CardTitle>
+            <CardTitle>{aboutUsStory.title}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-muted-foreground">
-            <p>
-              Petopia was born from the passion and creativity of a dedicated team of interns as part of the Infosys SpringBoard program. Our goal was to apply our developing skills to a real-world challenge, and we chose to focus on a cause close to our hearts: animal welfare.
-            </p>
-            <p>
-              This platform is the culmination of our internship project, where we explored full-stack web development, UI/UX design, and the power of AI to make a positive impact. We aimed to create a user-friendly application that simplifies the process of pet adoption, reporting lost and found animals, and connecting a community of pet lovers. We are proud to present Petopia as a testament to our learning, collaboration, and dedication.
-            </p>
+            {aboutUsStory.paragraphs.map((p, index) => (
+              <p key={index}>{p}</p>
+            ))}
           </CardContent>
         </Card>
         
@@ -89,8 +74,9 @@ export default function AboutUsPage() {
             <CardTitle>Our Mentors</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <TeamMember name="Mentor One" role="Project Mentor" seed="mentor1" linkedin="#" twitter="#" />
-            <TeamMember name="Mentor Two" role="Technical Mentor" seed="mentor2" github="#" linkedin="#" />
+            {mentorsData.map((mentor) => (
+                <TeamMember key={mentor.seed} member={mentor} />
+            ))}
           </CardContent>
         </Card>
 
@@ -100,7 +86,7 @@ export default function AboutUsPage() {
           </CardHeader>
           <CardContent className="flex justify-center">
               <div className="w-full max-w-xs">
-                <TeamMember name="Lead Name" role="Project Lead" seed="lead1" github="#" linkedin="#" twitter="#" />
+                <TeamMember member={leadData} />
               </div>
           </CardContent>
         </Card>
@@ -110,12 +96,9 @@ export default function AboutUsPage() {
             <CardTitle>Team Members</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <TeamMember name="Member One" role="Frontend Developer" seed="member1" github="#" linkedin="#" twitter="#" />
-            <TeamMember name="Member Two" role="Backend Developer" seed="member2" github="#" linkedin="#" />
-            <TeamMember name="Member Three" role="UI/UX Designer" seed="member3" linkedin="#" twitter="#" />
-            <TeamMember name="Member Four" role="AI Specialist" seed="member4" github="#" linkedin="#" />
-            <TeamMember name="Member Five" role="QA Tester" seed="member5" linkedin="#" />
-            <TeamMember name="Member Six" role="DevOps Engineer" seed="member6" github="#" linkedin="#" twitter="#" />
+            {membersData.map((member) => (
+                <TeamMember key={member.seed} member={member} />
+            ))}
           </CardContent>
         </Card>
 
