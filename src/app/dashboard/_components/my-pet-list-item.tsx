@@ -9,13 +9,15 @@ import { BadgeCheck, Clock, Pen } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { getPlaceholderImage } from "@/lib/placeholder-images";
+import { PetTypeIcon } from "@/components/pet-icons";
 
 type MyPetListItemProps = {
     pet: Pet;
 }
 
 export function MyPetListItem({ pet }: MyPetListItemProps) {
-    const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/100/100`;
+    const imageUrl = pet.pet_image || getPlaceholderImage(pet.type_name).url;
     const isResolved = pet.pet_report?.is_resolved ?? false;
 
     return (
@@ -28,7 +30,8 @@ export function MyPetListItem({ pet }: MyPetListItemProps) {
                     className="object-cover rounded-md"
                     data-ai-hint={pet.breed ?? pet.type_name}
                 />
-                 <div className="absolute top-1 left-1 bg-background/80 p-0.5 rounded-full backdrop-blur-sm">
+                 <div className="absolute top-1 left-1 bg-background/80 p-0.5 rounded-full backdrop-blur-sm flex items-center gap-0.5">
+                    <PetTypeIcon typeName={pet.type_name} className="h-4 w-4 text-foreground/80" />
                     {pet.is_verified ? (
                         <BadgeCheck className="h-4 w-4 text-primary" />
                     ) : (

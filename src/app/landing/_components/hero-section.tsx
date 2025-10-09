@@ -4,10 +4,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import placeholderImages from '@/lib/placeholder-images.json';
 
 export function HeroSection() {
-  const heroImage = PlaceHolderImages.find((p) => p.id === 'hero-background');
+  const heroImage = placeholderImages.placeholderImages.find((p) => p.id === 'hero-background');
 
   return (
     <section className="relative h-[80vh] min-h-[500px] w-full flex items-center justify-center">

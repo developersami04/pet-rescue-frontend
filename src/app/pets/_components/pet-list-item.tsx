@@ -7,16 +7,17 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Cake, PawPrint, PersonStanding, View } from "lucide-react";
+import { Cake, PersonStanding, View } from "lucide-react";
 import Link from "next/link";
 import { PetTypeIcon } from "@/components/pet-icons";
+import { getPlaceholderImage } from "@/lib/placeholder-images";
 
 type PetListItemProps = {
     pet: Pet;
 }
 
 export function PetListItem({ pet }: PetListItemProps) {
-    const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/100/100`;
+    const imageUrl = pet.pet_image || getPlaceholderImage(pet.type_name).url;
     const petStatus = pet.pet_report?.pet_status;
     const isResolved = pet.pet_report?.is_resolved;
 
@@ -46,6 +47,9 @@ export function PetListItem({ pet }: PetListItemProps) {
                     className="object-cover rounded-md"
                     data-ai-hint={pet.breed ?? pet.type_name}
                 />
+                 <div className="absolute top-1 left-1 bg-background/80 p-0.5 rounded-full backdrop-blur-sm">
+                    <PetTypeIcon typeName={pet.type_name} className="h-4 w-4 text-foreground/80" />
+                </div>
             </div>
             <div className="flex-grow grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
                  <div className="sm:col-span-1">

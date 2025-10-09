@@ -12,6 +12,8 @@ import { PlusCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { MyPetListItem } from "./my-pet-list-item";
+import { getPlaceholderImage } from "@/lib/placeholder-images";
+import { PetTypeIcon } from "@/components/pet-icons";
 
 type MyPetsSectionProps = {
     myPets: Pet[];
@@ -62,7 +64,7 @@ export function MyPetsSection({ myPets }: MyPetsSectionProps) {
             {view === 'grid' ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {myPets.map(pet => {
-                        const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/300/300`;
+                        const imageUrl = pet.pet_image || getPlaceholderImage(pet.type_name).url;
                         const isResolved = pet.pet_report?.is_resolved ?? false;
                         return (
                             <Card key={pet.id} className="overflow-hidden flex flex-col">
@@ -75,11 +77,12 @@ export function MyPetsSection({ myPets }: MyPetsSectionProps) {
                                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                                             data-ai-hint={pet.breed ?? pet.type_name}
                                         />
-                                        <div className="absolute top-2 left-2 bg-background/80 p-1 rounded-full backdrop-blur-sm">
+                                        <div className="absolute top-2 left-2 bg-background/80 p-1 rounded-full backdrop-blur-sm flex items-center gap-1">
+                                            <PetTypeIcon typeName={pet.type_name} className="h-4 w-4 text-foreground/80" />
                                             {pet.is_verified ? (
-                                                <BadgeCheck className="h-5 w-5 text-primary" />
+                                                <BadgeCheck className="h-4 w-4 text-primary" />
                                             ) : (
-                                                <Clock className="h-5 w-5 text-amber-500" />
+                                                <Clock className="h-4 w-4 text-amber-500" />
                                             )}
                                         </div>
                                         {pet.pet_status && !isResolved && (

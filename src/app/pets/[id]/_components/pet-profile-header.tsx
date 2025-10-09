@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Hand, MessageSquareQuote, Expand } from "lucide-react";
 import { AdoptionRequestDialog } from "./adoption-request-dialog";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { getPlaceholderImage } from "@/lib/placeholder-images";
 
 
 type PetProfileHeaderProps = {
@@ -17,7 +18,7 @@ type PetProfileHeaderProps = {
 }
 
 export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
-    const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/800/600`;
+    const imageUrl = pet.pet_image || getPlaceholderImage(pet.type_name).url;
     const petStatus = pet.pet_report?.pet_status;
     const isResolved = pet.pet_report?.is_resolved;
     const reportStatus = pet.pet_report?.report_status;
@@ -113,4 +114,3 @@ export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
        </div>
     );
 }
-

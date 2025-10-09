@@ -8,16 +8,17 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import type { Pet } from '@/lib/data';
-import { PawPrint } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { getPlaceholderImage } from '@/lib/placeholder-images';
+import { PetTypeIcon } from '@/components/pet-icons';
 
 type PetCardProps = {
   pet: Pet;
 };
 
 export function PetCard({ pet }: PetCardProps) {
-  const imageUrl = pet.pet_image || `https://picsum.photos/seed/${pet.id}/400/300`;
+  const imageUrl = pet.pet_image || getPlaceholderImage(pet.type_name);
   const petStatus = pet.pet_report?.pet_status;
   const isResolved = pet.pet_report?.is_resolved;
 
@@ -43,17 +44,15 @@ export function PetCard({ pet }: PetCardProps) {
       <Card className="flex flex-col h-full overflow-hidden transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg">
         <div className="relative h-56 w-full">
           <Image
-            src={imageUrl}
+            src={imageUrl.url}
             alt={pet.name}
             fill
             className="object-cover"
-            data-ai-hint={pet.breed ?? pet.type_name}
+            data-ai-hint={imageUrl.hint}
           />
-          {!pet.pet_image && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-              <PawPrint className="h-12 w-12 text-white/50" />
+           <div className="absolute top-2 left-2 bg-background/80 p-1 rounded-full backdrop-blur-sm">
+                <PetTypeIcon typeName={pet.type_name} className="h-5 w-5 text-foreground/80" />
             </div>
-          )}
           {statusInfo && (
             <Badge 
               className={cn("absolute bottom-2 right-2 capitalize", statusInfo.className)}
