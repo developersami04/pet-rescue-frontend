@@ -2,21 +2,54 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Users, PawPrint, FileText, CheckCircle, Eye } from "lucide-react";
+import { Users, PawPrint, FileText, Handshake, Eye } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminStatDetailsDialog } from "./admin-stat-details-dialog";
 import { Button } from "@/components/ui/button";
 
+export type UserMetrics = {
+    total: number;
+    active: number;
+    inactive: number;
+    verified: number;
+    unverified: number;
+    staff: number;
+    non_staff: number;
+};
+
+export type PetMetrics = {
+    total: number;
+    current: number;
+    deleted: number;
+    verified: number;
+    unverified: number;
+};
+
+export type ReportMetrics = {
+    total: number;
+    found: number;
+    adoptable: number;
+    lost: number;
+    pending: number;
+    approved: number;
+    resolved: number;
+    rejected: number;
+};
+
+export type AdoptionMetrics = {
+    total: number;
+    pending_from_admin: number;
+    approved_from_admin: number;
+    rejected_from_admin: number;
+    successful: number;
+    rejected_by_user: number;
+};
+
 export type Metrics = {
-    no_of_users: number;
-    no_of_current_pets: number;
-    no_of_unverified_pets: number;
-    no_of_verified_pets: number;
-    no_of_lost_reports: number;
-    no_of_found_reports: number;
-    no_of_pending_reports: number;
-    no_of_adoption_requests: number;
-    no_of_successful_adoptions: number;
+    users: UserMetrics;
+    pets: PetMetrics;
+    reports: ReportMetrics;
+    adoptions: AdoptionMetrics;
 };
 
 type AdminDashboardStatsProps = {
@@ -24,8 +57,7 @@ type AdminDashboardStatsProps = {
     isLoading: boolean;
 };
 
-
-function StatCard({ title, value, icon, isLoading, details, detailsTitle }: { title: string, value: number, icon: React.ReactNode, isLoading: boolean, details?: Record<string, number>, detailsTitle?: string }) {
+function StatCard({ title, value, icon, isLoading, details, detailsTitle }: { title: string, value: number, icon: React.ReactNode, isLoading: boolean, details?: any, detailsTitle?: string }) {
     if (isLoading) {
         return (
             <Card>
@@ -74,42 +106,35 @@ export function AdminDashboardStats({ metrics, isLoading }: AdminDashboardStatsP
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
              <StatCard 
                 title="Total Users" 
-                value={metrics?.no_of_users ?? 0}
+                value={metrics?.users?.total ?? 0}
                 icon={<Users className="h-4 w-4" />}
                 isLoading={isLoading}
+                detailsTitle="User Statistics"
+                details={metrics?.users}
              />
              <StatCard 
                 title="Total Pets" 
-                value={metrics?.no_of_current_pets ?? 0}
+                value={metrics?.pets?.total ?? 0}
                 icon={<PawPrint className="h-4 w-4" />}
                 isLoading={isLoading}
-                detailsTitle="Pet Verification Breakdown"
-                details={{
-                    "Verified Pets": metrics?.no_of_verified_pets ?? 0,
-                    "Unverified Pets": metrics?.no_of_unverified_pets ?? 0,
-                }}
+                detailsTitle="Pet Statistics"
+                details={metrics?.pets}
              />
              <StatCard 
-                title="Pending Reports" 
-                value={metrics?.no_of_pending_reports ?? 0}
+                title="Total Reports" 
+                value={metrics?.reports?.total ?? 0}
                 icon={<FileText className="h-4 w-4" />}
                 isLoading={isLoading}
-                detailsTitle="Pending Report Types"
-                details={{
-                    "Lost Reports": metrics?.no_of_lost_reports ?? 0,
-                    "Found Reports": metrics?.no_of_found_reports ?? 0,
-                }}
+                detailsTitle="Report Statistics"
+                details={metrics?.reports}
              />
              <StatCard 
-                title="Adoption Requests" 
-                value={metrics?.no_of_adoption_requests ?? 0}
-                icon={<CheckCircle className="h-4 w-4" />}
+                title="Total Adoptions" 
+                value={metrics?.adoptions?.total ?? 0}
+                icon={<Handshake className="h-4 w-4" />}
                 isLoading={isLoading}
-                detailsTitle="Adoption Funnel"
-                details={{
-                    "Pending Requests": metrics?.no_of_adoption_requests ?? 0,
-                    "Successful Adoptions": metrics?.no_of_successful_adoptions ?? 0,
-                }}
+                detailsTitle="Adoption Statistics"
+                details={metrics?.adoptions}
              />
         </div>
     );
