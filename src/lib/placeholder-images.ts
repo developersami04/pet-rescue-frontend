@@ -7,15 +7,15 @@ export type PlaceholderInfo = {
 const placeholderData: Record<string, PlaceholderInfo> = {
     Dog: { 
         url: "https://images.unsplash.com/photo-1561037404-61cd46aa615b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        hint: "dog cute"
+        hint: "dog"
     },
     Cat: {
         url: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        hint: "cat striped"
+        hint: "cat"
     },
     Rabbit: {
         url: "https://images.unsplash.com/photo-1591325021237-52d3f33fb855?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        hint: "rabbit fluffy"
+        hint: "Rabbit"
     },
     Bird: {
         url: "https://images.unsplash.com/photo-1552728089-57bdde3e70a5?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",

@@ -81,7 +81,7 @@ export function FavoritePets() {
                     favoritePets.map(pet => {
                         const placeholder = getPlaceholderImage(pet.type_name);
                         const imageUrl = pet.pet_image || placeholder.url;
-                        const imageHint = pet.pet_image ? (pet.breed ?? pet.type_name) : placeholder.hint;
+                        const imageHint = pet.pet_image ? pet.type_name : placeholder.hint;
                         return (
                             <Card key={pet.id} className="overflow-hidden">
                                 <div className="relative aspect-square w-full">

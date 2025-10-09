@@ -17,8 +17,9 @@ type MyPetListItemProps = {
 }
 
 export function MyPetListItem({ pet }: MyPetListItemProps) {
-    const imageUrl = pet.pet_image || getPlaceholderImage(pet.type_name).url;
-    const imageHint = pet.pet_image ? (pet.breed ?? pet.type_name) : getPlaceholderImage(pet.type_name).hint;
+    const placeholder = getPlaceholderImage(pet.type_name);
+    const imageUrl = pet.pet_image || placeholder.url;
+    const imageHint = pet.pet_image ? pet.type_name : placeholder.hint;
     const isResolved = pet.pet_report?.is_resolved ?? false;
 
     return (

@@ -66,7 +66,7 @@ export function MyPetsSection({ myPets }: MyPetsSectionProps) {
                     {myPets.map(pet => {
                         const placeholder = getPlaceholderImage(pet.type_name);
                         const imageUrl = pet.pet_image || placeholder.url;
-                        const imageHint = pet.pet_image ? (pet.breed ?? pet.type_name) : placeholder.hint;
+                        const imageHint = pet.pet_image ? pet.type_name : placeholder.hint;
                         const isResolved = pet.pet_report?.is_resolved ?? false;
                         return (
                             <Card key={pet.id} className="overflow-hidden flex flex-col">
