@@ -19,16 +19,10 @@ type RequestStatus = 'approved' | 'rejected';
 
 function RequestsSkeleton() {
     return (
-        <div className="space-y-8">
-            <div className="flex items-center justify-between">
-                <Skeleton className="h-10 w-24" />
-            </div>
-            <Skeleton className="h-12 w-full" />
-            <div className="space-y-4">
-                {[...Array(5)].map((_, i) => (
-                     <Skeleton key={i} className="h-28 w-full" />
-                ))}
-            </div>
+        <div className="space-y-4">
+            {[...Array(5)].map((_, i) => (
+                    <Skeleton key={i} className="h-28 w-full" />
+            ))}
         </div>
     );
 }
@@ -59,6 +53,7 @@ function AdoptionRequestsClientContent() {
         if (!isRefresh) {
             setIsLoading(true);
         }
+        setError(null);
         const token = localStorage.getItem('authToken');
         if (!token) {
             setError('You must be logged in to view requests.');
@@ -135,39 +130,27 @@ function AdoptionRequestsClientContent() {
         router.push(`/admin/adoption-requests?tab=${tab}`, { scroll: false });
     };
 
-    if (isLoading) {
-        return <RequestsSkeleton />;
-    }
-
-    if (error) {
-        return (
-            <Alert variant="destructive" className="mt-6">
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-            </Alert>
-        );
-    }
-
     return (
         <>
             <div className="flex items-center justify-end mb-4">
-                <Button onClick={handleRefresh} disabled={isRefreshing}>
-                    {isRefreshing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                <Button onClick={handleRefresh} disabled={isRefreshing || isLoading}>
+                    {(isRefreshing || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Refresh
                 </Button>
             </div>
             <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as any)} className="w-full">
                 <AdoptionRequestsTabs activeTab={activeTab} onTabChange={handleTabChange} />
                 <div className="mt-6">
-                    <TabsContent value="pending">
+                    {isLoading ? (
+                        <RequestsSkeleton />
+                    ) : error ? (
+                        <Alert variant="destructive" className="mt-6">
+                            <AlertTitle>Error</AlertTitle>
+                            <AlertDescription>{error}</AlertDescription>
+                        </Alert>
+                    ) : (
                         <AdoptionRequestList requests={requests} onUpdate={handleUpdateRequest} updatingRequests={updatingRequests} />
-                    </TabsContent>
-                    <TabsContent value="last50">
-                        <AdoptionRequestList requests={requests} onUpdate={handleUpdateRequest} updatingRequests={updatingRequests} />
-                    </TabsContent>
-                    <TabsContent value="rejected">
-                        <AdoptionRequestList requests={requests} onUpdate={handleUpdateRequest} updatingRequests={updatingRequests} />
-                    </TabsContent>
+                    )}
                 </div>
             </Tabs>
         </>
