@@ -40,8 +40,8 @@ export default function AboutUsPage() {
           </CardContent>
         </Card>
         
-        <div className="grid gap-8 md:grid-cols-3">
-          <Card className="md:col-span-2">
+        <div className="grid gap-8 md:grid-cols-2">
+          <Card>
             <CardHeader>
               <CardTitle>Team Lead</CardTitle>
             </CardHeader>
@@ -49,7 +49,7 @@ export default function AboutUsPage() {
                <TeamMember name="Lead Name" role="Project Lead" seed="lead1" />
             </CardContent>
           </Card>
-          <Card className="md:col-span-1">
+          <Card>
             <CardHeader>
               <CardTitle>Our Mentors</CardTitle>
             </CardHeader>
