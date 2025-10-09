@@ -21,15 +21,35 @@ export const aboutUsStory = {
 };
 
 export const mentorsData: TeamMemberData[] = [
-  { name: "Mentor One", role: "Project Mentor", seed: "mentor1", socials: { linkedin: "#", twitter: "#" } },
-  { name: "Mentor Two", role: "Technical Mentor", seed: "mentor2", socials: { github: "#", linkedin: "#" } },
+  { 
+    name: "Mentor One", 
+    role: "Project Mentor", 
+    seed: "mentor1", 
+    socials: { 
+      linkedin: "#", 
+      twitter: "#" 
+    } 
+  },
+  { 
+    name: "Mentor Two", 
+    role: "Technical Mentor", 
+    seed: "mentor2", 
+    socials: { 
+      github: "#", 
+      linkedin: "#" 
+    } 
+  },
 ];
 
 export const leadData: TeamMemberData = {
-  name: "Lead Name",
-  role: "Project Lead",
+  name: "Supriya Khanra",
+  role: "Lead Developer, Frontend, Backend, API Intrigation",
   seed: "lead1",
-  socials: { github: "#", linkedin: "#", twitter: "#" }
+  socials: { 
+    github: "https://github.com/supriyakhanra", 
+    linkedin: "#", 
+    twitter: "#" 
+  }
 };
 
 export const membersData: TeamMemberData[] = [
