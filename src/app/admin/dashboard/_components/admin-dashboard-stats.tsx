@@ -107,7 +107,7 @@ export function AdminDashboardStats({ metrics, isLoading }: AdminDashboardStatsP
              <StatCard 
                 title="Total Users" 
                 value={metrics?.users?.total ?? 0}
-                icon={<Users className="h-4 w-4" />}
+                icon={<Users className="h-6 w-6" />}
                 isLoading={isLoading}
                 detailsTitle="User Statistics"
                 details={metrics?.users}
@@ -115,7 +115,7 @@ export function AdminDashboardStats({ metrics, isLoading }: AdminDashboardStatsP
              <StatCard 
                 title="Total Pets" 
                 value={metrics?.pets?.total ?? 0}
-                icon={<PawPrint className="h-4 w-4" />}
+                icon={<PawPrint className="h-6 w-6" />}
                 isLoading={isLoading}
                 detailsTitle="Pet Statistics"
                 details={metrics?.pets}
@@ -123,7 +123,7 @@ export function AdminDashboardStats({ metrics, isLoading }: AdminDashboardStatsP
              <StatCard 
                 title="Total Reports" 
                 value={metrics?.reports?.total ?? 0}
-                icon={<FileText className="h-4 w-4" />}
+                icon={<FileText className="h-6 w-6" />}
                 isLoading={isLoading}
                 detailsTitle="Report Statistics"
                 details={metrics?.reports}
@@ -131,7 +131,7 @@ export function AdminDashboardStats({ metrics, isLoading }: AdminDashboardStatsP
              <StatCard 
                 title="Total Adoptions" 
                 value={metrics?.adoptions?.total ?? 0}
-                icon={<Handshake className="h-4 w-4" />}
+                icon={<Handshake className="h-6 w-6" />}
                 isLoading={isLoading}
                 detailsTitle="Adoption Statistics"
                 details={metrics?.adoptions}

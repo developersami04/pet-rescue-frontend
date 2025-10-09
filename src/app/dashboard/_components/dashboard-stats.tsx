@@ -116,12 +116,12 @@ export function DashboardStats() {
 
 
     const stats = [
-        { title: "My Pets", value: counts.myPetsCount, icon: <PawPrint className="h-4 w-4" /> },
-        { title: "Lost Pets", value: counts.lostPetsCount, icon: <AlertTriangle className="h-4 w-4" /> },
-        { title: "Found Pets", value: counts.foundPetsCount, icon: <Search className="h-4 w-4" /> },
-        { title: "Adoptable Pets", value: counts.adoptablePetsCount, icon: <Hand className="h-4 w-4" /> },
-        { title: "My Requests", value: counts.myRequestsCount, icon: <FileText className="h-4 w-4" /> },
-        { title: "Requests Received", value: counts.adoptionRequestsReceivedCount, icon: <Inbox className="h-4 w-4" /> },
+        { title: "My Pets", value: counts.myPetsCount, icon: <PawPrint className="h-6 w-6" /> },
+        { title: "Lost Pets", value: counts.lostPetsCount, icon: <AlertTriangle className="h-6 w-6" /> },
+        { title: "Found Pets", value: counts.foundPetsCount, icon: <Search className="h-6 w-6" /> },
+        { title: "Adoptable Pets", value: counts.adoptablePetsCount, icon: <Hand className="h-6 w-6" /> },
+        { title: "My Requests", value: counts.myRequestsCount, icon: <FileText className="h-6 w-6" /> },
+        { title: "Requests Received", value: counts.adoptionRequestsReceivedCount, icon: <Inbox className="h-6 w-6" /> },
     ];
 
     return (
