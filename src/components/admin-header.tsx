@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   Users,
   Bell,
+  Hand,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,7 @@ const navItems = {
   ],
   records: [
     { href: "/admin/approve-reports", icon: ShieldCheck, label: "Approve Reports" },
+    { href: "/admin/adoption-requests", icon: Hand, label: "Adoption Requests" },
     { href: "/admin/manage-users", icon: Users, label: "Manage Users" },
   ],
   general: [

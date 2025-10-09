@@ -4,7 +4,7 @@
 import { z } from "zod";
 import API_ENDPOINTS from "./endpoints";
 import { fetchWithAuth, fetchWithTimeout } from "./api";
-import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport, PetReport } from "./data";
+import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport, PetReport, AdoptionRequest } from "./data";
 // import { format } from "date-fns";
 
 // Import the backend Host Address from .env file
@@ -535,7 +535,7 @@ export async function deletePetRequest(token: string, petId: string) {
             method: 'DELETE',
         }, token);
 
-        if (response.status !== 204 && !response.ok) {
+        if (response.status !== 204) {
             const result = await response.json();
             throw new Error(getErrorMessage(result, 'Failed to delete pet request.'));
         }
@@ -612,7 +612,7 @@ export async function deleteAdoptionRequest(token: string, requestId: number) {
             method: 'DELETE',
         }, token);
 
-        if (response.status !== 204 && !response.ok) {
+        if (response.status !== 204) {
             const result = await response.json();
             throw new Error(getErrorMessage(result, 'Failed to delete adoption request.'));
         }
@@ -945,5 +945,70 @@ export async function getPetReports(token: string, status: 'lost' | 'found' | 'a
            throw new Error(error.message);
         }
         throw new Error('An unknown error occurred while fetching pet reports.');
+    }
+}
+
+export async function getAdminAdoptionRequests(token: string, status?: 'pending' | 'approved' | 'rejected'): Promise<AdoptionRequest[]> {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.adminAdoptionRequests}`);
+    if (status) {
+        url.searchParams.append('status', status);
+    }
+
+    try {
+        const response = await fetchWithAuth(url.toString(), {
+            method: 'GET',
+            cache: 'no-store'
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(getErrorMessage(result, 'Failed to fetch adoption requests.'));
+        }
+
+        return result.data || [];
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request for adoption requests timed out.');
+        }
+        console.error('Error fetching adoption requests:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching adoption requests.');
+    }
+}
+
+export async function updateAdoptionRequestStatus(token: string, requestId: number, status: 'approved' | 'rejected') {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.adminAdoptionRequests}${requestId}/`;
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: status }),
+        }, token);
+        
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(getErrorMessage(result, `Failed to update request to ${status}.`));
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Adoption request status update timed out.');
+        }
+        console.error('Error updating adoption request status:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error(`An unknown error occurred while updating the request status.`);
     }
 }

@@ -31,6 +31,7 @@ const API_ENDPOINTS = {
   adminDashboardMetrics: '/api/admin-panel/dashboard-metrics/',
   registeredUsers: '/api/admin-panel/registered-users/',
   adminPetReports: '/api/admin-panel/pet-reports/',
+  adminAdoptionRequests: '/api/admin-panel/adoption-requests/',
   
   // User-facing reports
   petReports: '/api/pet-data/pet-reports/',

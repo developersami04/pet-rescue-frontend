@@ -518,3 +518,33 @@ This document outlines the expected JSON request and response structures for the
         "data": { ... } // The updated report object
     }
     ```
+
+### `GET /api/admin-panel/adoption-requests/`
+
+-   **Purpose**: Get adoption requests for admin review. Can be filtered by `status` (`pending`, `approved`, `rejected`).
+-   **Success Response (200 OK)**:
+    ```json
+    {
+        "status": "Success",
+        "message": "Adoption requests fetched successfully!",
+        "data": [ ... ] // Array of AdoptionRequest objects from `src/lib/data.ts`
+    }
+    ```
+
+### `PATCH /api/admin-panel/adoption-requests/{id}/`
+
+-   **Purpose**: Update the status of an adoption request (`approved`, `rejected`).
+-   **Request Body**:
+    ```json
+    {
+        "status": "approved"
+    }
+    ```
+-   **Success Response (200 OK)**:
+    ```json
+    {
+        "status": "Success",
+        "message": "Adoption request status updated successfully to approved.",
+        "data": { ... } // The updated request object
+    }
+    ```
