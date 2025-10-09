@@ -23,19 +23,13 @@ function InfoRow({ icon, label, value }: { icon: React.ReactNode, label: string,
 }
 
 export function MedicalHistoryContent({ history }: MedicalHistoryCardProps) {
-    if (!history) {
-        return (
-            <p className="text-muted-foreground text-sm">No medical history provided for this pet.</p>
-        )
-    }
+    const lastVaccinated = history?.last_vaccinated_date ? format(parseISO(history.last_vaccinated_date), 'PPP') : 'N/A';
 
-    const lastVaccinated = history.last_vaccinated_date ? format(parseISO(history.last_vaccinated_date), 'PPP') : 'N/A';
+    const hasDiseaseInfo = history?.disease_name || history?.stage;
+    const hasVaccineInfo = history?.vaccination_name || history?.last_vaccinated_date || history?.no_of_years;
+    const hasNotes = history?.note;
 
-    const hasDiseaseInfo = history.disease_name || history.stage;
-    const hasVaccineInfo = history.vaccination_name || history.last_vaccinated_date || history.no_of_years;
-    const hasNotes = history.note;
-
-    const noInfoAvailable = !hasDiseaseInfo && !hasVaccineInfo && !hasNotes;
+    const noInfoAvailable = !history || (!hasDiseaseInfo && !hasVaccineInfo && !hasNotes);
 
     return (
         <div className="space-y-4 pt-2">
