@@ -1,13 +1,12 @@
 
-
-
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Github, Linkedin } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { aboutUsStory, mentorsData, leadData, membersData, type TeamMemberData } from "@/lib/page-data/about-us";
+import { aboutUsStory, mentorsData, leadData, membersData, type TeamMemberData, techStackData } from "@/lib/page-data/about-us";
+import { Badge } from "@/components/ui/badge";
 
 function SocialLink({ href, children }: { href: string, children: React.ReactNode }) {
   return (
@@ -51,6 +50,19 @@ function TeamMember({ member }: { member: TeamMemberData }) {
   )
 }
 
+function TechCategory({ title, techs }: { title: string, techs: { name: string }[] }) {
+    return (
+        <div>
+            <h4 className="font-semibold text-md mb-2">{title}</h4>
+            <div className="flex flex-wrap gap-2">
+                {techs.map((tech) => (
+                    <Badge key={tech.name} variant="secondary">{tech.name}</Badge>
+                ))}
+            </div>
+        </div>
+    )
+}
+
 export default function AboutUsPage() {
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
@@ -67,6 +79,18 @@ export default function AboutUsPage() {
             {aboutUsStory.paragraphs.map((p, index) => (
               <p key={index}>{p}</p>
             ))}
+          </CardContent>
+        </Card>
+
+         <Card>
+          <CardHeader>
+            <CardTitle>Our Tech Stack</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <TechCategory title="Frontend" techs={techStackData.frontend} />
+            <TechCategory title="Backend" techs={techStackData.backend} />
+            <TechCategory title="Database" techs={techStackData.database} />
+            <TechCategory title="Media & AI" techs={techStackData.deployment} />
           </CardContent>
         </Card>
         
