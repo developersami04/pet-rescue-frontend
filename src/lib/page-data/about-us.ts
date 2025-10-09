@@ -30,7 +30,6 @@ export const techStackData = {
     { name: 'TypeScript' },
     { name: 'Tailwind CSS' },
     { name: 'ShadCN UI' },
-    { name: 'Genkit' }
   ],
   backend: [
     { name: 'Django' },
@@ -39,8 +38,10 @@ export const techStackData = {
   database: [
     { name: 'PostgreSQL' },
   ],
-  deployment: [
-    { name: 'Cloudinary' },
+  mediaAndDeployment: [
+    { name: 'Cloudinary (CDN)' },
+    { name: 'Vercel' },
+    { name: 'Render' },
   ]
 };
 

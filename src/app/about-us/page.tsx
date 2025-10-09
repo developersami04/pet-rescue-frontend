@@ -90,7 +90,7 @@ export default function AboutUsPage() {
             <TechCategory title="Frontend" techs={techStackData.frontend} />
             <TechCategory title="Backend" techs={techStackData.backend} />
             <TechCategory title="Database" techs={techStackData.database} />
-            <TechCategory title="Media & AI" techs={techStackData.deployment} />
+            <TechCategory title="Media & Deployment" techs={techStackData.mediaAndDeployment} />
           </CardContent>
         </Card>
         
