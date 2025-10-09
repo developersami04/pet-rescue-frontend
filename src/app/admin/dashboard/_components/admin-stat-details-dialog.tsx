@@ -14,6 +14,8 @@ import {
     ChartTooltip,
     ChartTooltipContent,
     ChartConfig,
+    ChartLegend,
+    ChartLegendContent,
 } from "@/components/ui/chart";
 import { Pie, PieChart, Cell, BarChart, XAxis, YAxis, Bar, CartesianGrid, Tooltip, Legend } from "recharts";
 import { useMemo, useState } from "react";
@@ -22,6 +24,7 @@ import type { UserMetrics, PetMetrics, ReportMetrics, AdoptionMetrics } from "./
 type ChartData = {
     name: string;
     value: number;
+    fill: string;
 };
 
 type BarChartData = {
@@ -65,26 +68,27 @@ function CustomTooltip({ active, payload, label }: any) {
 function PieChartComponent({ data, title }: { data: ChartData[], title: string }) {
     const chartConfig = useMemo(() => {
       const config: ChartConfig = {};
-      data.forEach((entry, index) => {
+      data.forEach((entry) => {
         config[entry.name] = {
           label: entry.name,
-          color: CHART_COLORS[index % CHART_COLORS.length],
+          color: entry.fill,
         };
       });
       return config;
     }, [data]);
     
     return (
-        <div>
+        <div className="flex flex-col items-center">
             <h4 className="text-center font-semibold mb-2">{title}</h4>
             <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[200px] w-full">
                 <PieChart>
                     <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                     <Pie data={data} dataKey="value" nameKey="name" innerRadius={40} strokeWidth={5}>
                         {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={chartConfig[entry.name].color} />
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
                         ))}
                     </Pie>
+                    <ChartLegend content={<ChartLegendContent nameKey="name" />} />
                 </PieChart>
             </ChartContainer>
         </div>
@@ -159,18 +163,18 @@ function renderContent(data: any) {
                 <PieChartComponent 
                     title="Report Types"
                     data={[
-                        { name: 'Found', value: data.found },
-                        { name: 'Adoptable', value: data.adoptable },
-                        { name: 'Lost', value: data.lost },
+                        { name: 'Found', value: data.found, fill: "hsl(var(--chart-1))" },
+                        { name: 'Adoptable', value: data.adoptable, fill: "hsl(var(--chart-2))" },
+                        { name: 'Lost', value: data.lost, fill: "hsl(var(--chart-3))" },
                     ]}
                 />
                 <PieChartComponent 
                     title="Report Status"
                     data={[
-                        { name: 'Pending', value: data.pending },
-                        { name: 'Approved', value: data.approved },
-                        { name: 'Resolved', value: data.resolved },
-                        { name: 'Rejected', value: data.rejected },
+                        { name: 'Pending', value: data.pending, fill: "hsl(var(--chart-4))" },
+                        { name: 'Approved', value: data.approved, fill: "hsl(var(--chart-5))" },
+                        { name: 'Resolved', value: data.resolved, fill: "hsl(var(--chart-1))" },
+                        { name: 'Rejected', value: data.rejected, fill: "hsl(var(--chart-2))" },
                     ]}
                 />
             </div>
@@ -182,9 +186,9 @@ function renderContent(data: any) {
                  <PieChartComponent 
                     title="Admin Approval Status"
                     data={[
-                        { name: 'Pending', value: data.pending_from_admin },
-                        { name: 'Approved', value: data.approved_from_admin },
-                        { name: 'Rejected', value: data.rejected_from_admin },
+                        { name: 'Pending', value: data.pending_from_admin, fill: "hsl(var(--chart-1))" },
+                        { name: 'Approved', value: data.approved_from_admin, fill: "hsl(var(--chart-2))" },
+                        { name: 'Rejected', value: data.rejected_from_admin, fill: "hsl(var(--chart-3))" },
                     ]}
                 />
                 <BarChartComponent
