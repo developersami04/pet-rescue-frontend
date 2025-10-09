@@ -30,7 +30,6 @@ export function PetFilters({
   onClearFilters,
 }: PetFiltersProps) {
   return (
-    <div className="mb-8 p-4 bg-card border rounded-lg shadow-sm">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="relative lg:col-span-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -59,6 +58,5 @@ export function PetFilters({
           Clear Filters
         </Button>
       </div>
-    </div>
   );
 }

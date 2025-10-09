@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import type { Pet } from '@/lib/data';
-import { PawPrint, BadgeCheck } from 'lucide-react';
+import { PawPrint } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
@@ -65,8 +65,7 @@ export function PetCard({ pet }: PetCardProps) {
         <CardHeader>
           <CardTitle className="font-headline tracking-wide flex items-center gap-2">
             {pet.name}
-            {pet.is_verified && <BadgeCheck className="h-5 w-5 text-primary" />}
-            </CardTitle>
+          </CardTitle>
         </CardHeader>
         <CardContent className="flex-grow">
           <p className="text-sm text-muted-foreground">

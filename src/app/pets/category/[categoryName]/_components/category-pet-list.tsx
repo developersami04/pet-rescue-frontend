@@ -12,19 +12,10 @@ import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Search, LayoutGrid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { PetListItem } from '@/app/pets/_components/pet-list-item';
 
-function PetListSkeleton() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {[...Array(8)].map((_, i) => (
-        <CardSkeleton key={i} />
-      ))}
-    </div>
-  );
-}
-
-function CardSkeleton() {
-    return (
+function PetListSkeleton({ view }: { view: 'grid' | 'list' }) {
+    const CardSkeleton = () => (
         <div className="flex flex-col space-y-3">
             <Skeleton className="h-56 w-full rounded-lg" />
             <div className="space-y-2">
@@ -33,6 +24,22 @@ function CardSkeleton() {
             </div>
         </div>
     )
+    const ListSkeleton = () => (
+        <div className="flex flex-col space-y-3">
+            <Skeleton className="h-24 w-full rounded-lg" />
+        </div>
+    );
+  return view === 'grid' ? (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {[...Array(8)].map((_, i) => (
+        <CardSkeleton key={i} />
+      ))}
+    </div>
+  ) : (
+      <div className="space-y-4">
+        {[...Array(8)].map((_, i) => <ListSkeleton key={i} />)}
+      </div>
+  );
 }
 
 
@@ -135,7 +142,7 @@ export function CategoryPetList({ categoryName }: CategoryPetListProps) {
         </div>
       </div>
       {isLoading ? (
-         <PetListSkeleton />
+         <PetListSkeleton view={view}/>
       ) : error ? (
         <Alert variant="destructive">
             <AlertTitle>Error</AlertTitle>
@@ -159,8 +166,7 @@ export function CategoryPetList({ categoryName }: CategoryPetListProps) {
             ) : (
                  <div className="space-y-4">
                     {filteredPets.map((pet) => (
-                       <p key={pet.id}>List item view not implemented yet. Pet: {pet.name}</p>
-                       // Replace with a PetListItem component later
+                       <PetListItem key={pet.id} pet={pet} />
                     ))}
                 </div>
             )}
