@@ -8,7 +8,7 @@ export type SocialLinks = {
 export type TeamMemberData = {
   name: string;
   role: string;
-  seed: string;
+  imageUrl: string;
   socials: SocialLinks;
 };
 
@@ -24,7 +24,7 @@ export const mentorsData: TeamMemberData[] = [
   { 
     name: "Mentor One", 
     role: "Project Mentor", 
-    seed: "mentor1", 
+    imageUrl: "https://picsum.photos/seed/mentor1/200/200", 
     socials: { 
       linkedin: "#", 
       twitter: "#" 
@@ -33,7 +33,7 @@ export const mentorsData: TeamMemberData[] = [
   { 
     name: "Mentor Two", 
     role: "Technical Mentor", 
-    seed: "mentor2", 
+    imageUrl: "https://picsum.photos/seed/mentor2/200/200", 
     socials: { 
       github: "#", 
       linkedin: "#" 
@@ -44,7 +44,7 @@ export const mentorsData: TeamMemberData[] = [
 export const leadData: TeamMemberData = {
   name: "Supriya Khanra",
   role: "Lead Developer, Frontend, Backend, API Intrigation",
-  seed: "lead1",
+  imageUrl: "https://picsum.photos/seed/lead1/200/200",
   socials: { 
     github: "https://github.com/supriyakhanra", 
     linkedin: "#", 
@@ -53,10 +53,10 @@ export const leadData: TeamMemberData = {
 };
 
 export const membersData: TeamMemberData[] = [
-  { name: "Member One", role: "Frontend Developer", seed: "member1", socials: { github: "#", linkedin: "#", twitter: "#" } },
-  { name: "Member Two", role: "Backend Developer", seed: "member2", socials: { github: "#", linkedin: "#" } },
-  { name: "Member Three", role: "UI/UX Designer", seed: "member3", socials: { linkedin: "#", twitter: "#" } },
-  { name: "Member Four", role: "AI Specialist", seed: "member4", socials: { github: "#", linkedin: "#" } },
-  { name: "Member Five", role: "QA Tester", seed: "member5", socials: { linkedin: "#" } },
-  { name: "Member Six", role: "DevOps Engineer", seed: "member6", socials: { github: "#", linkedin: "#", twitter: "#" } },
+  { name: "Member One", role: "Frontend Developer", imageUrl: "https://picsum.photos/seed/member1/200/200", socials: { github: "#", linkedin: "#", twitter: "#" } },
+  { name: "Member Two", role: "Backend Developer", imageUrl: "https://picsum.photos/seed/member2/200/200", socials: { github: "#", linkedin: "#" } },
+  { name: "Member Three", role: "UI/UX Designer", imageUrl: "https://picsum.photos/seed/member3/200/200", socials: { linkedin: "#", twitter: "#" } },
+  { name: "Member Four", role: "AI Specialist", imageUrl: "https://picsum.photos/seed/member4/200/200", socials: { github: "#", linkedin: "#" } },
+  { name: "Member Five", role: "QA Tester", imageUrl: "https://picsum.photos/seed/member5/200/200", socials: { linkedin: "#" } },
+  { name: "Member Six", role: "DevOps Engineer", imageUrl: "https://picsum.photos/seed/member6/200/200", socials: { github: "#", linkedin: "#", twitter: "#" } },
 ];

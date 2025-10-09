@@ -1,5 +1,6 @@
 
 
+
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -22,7 +23,7 @@ function TeamMember({ member }: { member: TeamMemberData }) {
   return (
     <div className="flex flex-col items-center text-center gap-4 p-4 border rounded-lg hover:shadow-lg transition-shadow">
       <Avatar className="h-24 w-24">
-        <AvatarImage src={`https://picsum.photos/seed/${member.seed}/200/200`} alt={member.name} />
+        <AvatarImage src={member.imageUrl} alt={member.name} />
         <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
       </Avatar>
       <div>
@@ -75,7 +76,7 @@ export default function AboutUsPage() {
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {mentorsData.map((mentor) => (
-                <TeamMember key={mentor.seed} member={mentor} />
+                <TeamMember key={mentor.name} member={mentor} />
             ))}
           </CardContent>
         </Card>
@@ -97,7 +98,7 @@ export default function AboutUsPage() {
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {membersData.map((member) => (
-                <TeamMember key={member.seed} member={member} />
+                <TeamMember key={member.name} member={member} />
             ))}
           </CardContent>
         </Card>
