@@ -1,5 +1,3 @@
-
-
 export type MedicalHistory = {
     id: number;
     pet: number;
@@ -94,6 +92,14 @@ export type Pet = {
   adoption_requests: AdoptionRequest[] | null;
   pet_report: PetReport | null;
   available_for_adopt?: boolean; // Keep for pet list card, but profile page will use pet_report.pet_status
+};
+
+export type FavoritePet = {
+  id: number;
+  pet_id: number;
+  pet_name: string;
+  pet_image: string | null;
+  created_at: string;
 };
 
 

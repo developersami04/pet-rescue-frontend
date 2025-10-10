@@ -1,51 +1,45 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Pet } from "@/lib/data";
+import { FavoritePet } from "@/lib/data";
 import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
-import { getAllPets } from "@/lib/actions";
+import { getFavoritePets, removeFavoritePet } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getPlaceholderImage } from "@/lib/placeholder-images";
+import { Button } from "@/components/ui/button";
+import { Loader2, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export function FavoritePets() {
-    const [favoritePets, setFavoritePets] = useState<Pet[]>([]);
+    const [favoritePets, setFavoritePets] = useState<FavoritePet[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isDeleting, setIsDeleting] = useState<number | null>(null);
     const [error, setError] = useState<string | null>(null);
     const { toast } = useToast();
     const router = useRouter();
 
-    const fetchPets = useCallback(async () => {
+    const fetchFavoritePets = useCallback(async () => {
         setIsLoading(true);
         setError(null);
         const token = localStorage.getItem('authToken');
         if (!token) {
             setIsLoading(false);
-            // It's okay to not have a token, just don't show favorites
             return;
         }
         try {
-            const allPets = await getAllPets(token);
-            // Mocking favorites for now, e.g., first 3 pets
-            setFavoritePets(allPets.slice(0, 3));
+            const favPets = await getFavoritePets(token);
+            setFavoritePets(favPets);
         } catch (error: any) {
             if (error.message.includes('Session expired')) {
-                toast({
-                    variant: 'destructive',
-                    title: 'Session Expired',
-                    description: 'Please log in again to continue.',
-                });
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('refreshToken');
-                window.dispatchEvent(new Event('storage'));
+                toast({ variant: 'destructive', title: 'Session Expired' });
                 router.push('/login');
             } else {
                 setError("Could not load favorite pets.");
-                console.error("Failed to fetch favorite pets:", error);
             }
         } finally {
             setIsLoading(false);
@@ -53,8 +47,27 @@ export function FavoritePets() {
     }, [router, toast]);
 
     useEffect(() => {
-        fetchPets();
-    }, [fetchPets]);
+        fetchFavoritePets();
+    }, [fetchFavoritePets]);
+
+    const handleRemoveFavorite = async (petId: number) => {
+        setIsDeleting(petId);
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            toast({ variant: 'destructive', title: 'Authentication Error' });
+            setIsDeleting(null);
+            return;
+        }
+        try {
+            await removeFavoritePet(token, petId);
+            setFavoritePets(prev => prev.filter(p => p.pet_id !== petId));
+            toast({ title: "Removed from favorites." });
+        } catch (error: any) {
+            toast({ variant: "destructive", title: "Error", description: error.message });
+        } finally {
+            setIsDeleting(null);
+        }
+    }
 
     return (
         <Card>
@@ -79,22 +92,49 @@ export function FavoritePets() {
                     </div>
                 ) : favoritePets.length > 0 ? (
                     favoritePets.map(pet => {
-                        const placeholder = getPlaceholderImage(pet.type_name);
+                        const placeholder = getPlaceholderImage('Default');
                         const imageUrl = pet.pet_image || placeholder.url;
-                        const imageHint = pet.pet_image ? pet.type_name : placeholder.hint;
+                        const imageHint = pet.pet_image ? 'pet' : placeholder.hint;
                         return (
-                            <Card key={pet.id} className="overflow-hidden">
-                                <div className="relative aspect-square w-full">
-                                    <Image
-                                        src={imageUrl}
-                                        alt={pet.name}
-                                        fill
-                                        className="object-cover"
-                                        data-ai-hint={imageHint}
-                                    />
-                                </div>
-                                <CardHeader className="p-4">
-                                    <CardTitle className="text-base font-bold">{pet.name}</CardTitle>
+                            <Card key={pet.id} className="overflow-hidden group">
+                                <Link href={`/pets/${pet.pet_id}`}>
+                                    <div className="relative aspect-square w-full">
+                                        <Image
+                                            src={imageUrl}
+                                            alt={pet.pet_name}
+                                            fill
+                                            className="object-cover transition-transform group-hover:scale-105"
+                                            data-ai-hint={imageHint}
+                                        />
+                                    </div>
+                                </Link>
+                                <CardHeader className="p-3 flex flex-row items-center justify-between">
+                                    <CardTitle className="text-base font-bold">
+                                        <Link href={`/pets/${pet.pet_id}`} className="hover:underline">
+                                            {pet.pet_name}
+                                        </Link>
+                                    </CardTitle>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                             <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isDeleting === pet.pet_id}>
+                                                {isDeleting === pet.pet_id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4 text-destructive" />}
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This will remove {pet.pet_name} from your favorites.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction onClick={() => handleRemoveFavorite(pet.pet_id)}>
+                                                    Remove
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
                                 </CardHeader>
                             </Card>
                         )

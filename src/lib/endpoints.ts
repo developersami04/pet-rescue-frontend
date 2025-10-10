@@ -1,5 +1,3 @@
-
-
 const API_ENDPOINTS = {
   // User Auth and Account endpoints
   userCheck: '/api/home/user-check',
@@ -23,6 +21,7 @@ const API_ENDPOINTS = {
   myPets: '/api/pet-data/my-pets/',
   myPetData: '/api/pet-data/my-pet-data/',
   petProfile: '/api/pet-data/pet-profile/',
+  favouritePets: '/api/pet-data/favourite-pets/',
 
 
   // Report and Adoption Endpoints

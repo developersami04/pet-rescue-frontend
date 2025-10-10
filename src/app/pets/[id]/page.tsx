@@ -1,12 +1,11 @@
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getPetById } from '@/lib/actions';
+import { getPetById, getFavoritePets } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/lib/auth.tsx';
-import type { Pet } from '@/lib/data';
+import type { Pet, FavoritePet } from '@/lib/data';
 
 import Loading from './loading';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -29,6 +28,7 @@ export default function PetProfilePage() {
   const [pet, setPet] = useState<Pet | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [favoritePets, setFavoritePets] = useState<FavoritePet[]>([]);
 
   const fetchPetDetails = useCallback(async () => {
     const token = localStorage.getItem('authToken');
@@ -40,8 +40,12 @@ export default function PetProfilePage() {
 
     try {
       setIsLoading(true);
-      const petData = await getPetById(token, petId);
+      const [petData, favoritePetsData] = await Promise.all([
+        getPetById(token, petId),
+        getFavoritePets(token)
+      ]);
       setPet(petData);
+      setFavoritePets(favoritePetsData);
     } catch (e: any) {
       setError(e.message || 'Failed to fetch pet details.');
       toast({ variant: 'destructive', title: 'Error', description: e.message });
@@ -53,6 +57,8 @@ export default function PetProfilePage() {
   useEffect(() => {
     fetchPetDetails();
   }, [fetchPetDetails]);
+  
+  const isFavorited = favoritePets.some(fav => fav.pet_id === pet?.id);
 
   if (isLoading) {
     return <Loading />;
@@ -76,7 +82,7 @@ export default function PetProfilePage() {
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
       <div className="space-y-8">
-        <PetProfileHeader pet={pet} onUpdate={fetchPetDetails} />
+        <PetProfileHeader pet={pet} isFavorited={isFavorited} onUpdate={fetchPetDetails} />
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-8">

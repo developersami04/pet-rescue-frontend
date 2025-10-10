@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from "@/components/ui/button";
@@ -6,18 +5,24 @@ import { Pet } from "@/lib/data";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Hand, MessageSquareQuote, Expand } from "lucide-react";
+import { Hand, MessageSquareQuote, Expand, Heart, Loader2 } from "lucide-react";
 import { AdoptionRequestDialog } from "./adoption-request-dialog";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { getPlaceholderImage } from "@/lib/placeholder-images";
+import { addFavoritePet, removeFavoritePet } from "@/lib/actions";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 
 type PetProfileHeaderProps = {
     pet: Pet;
+    isFavorited: boolean;
     onUpdate: () => void;
 }
 
-export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
+export function PetProfileHeader({ pet, isFavorited, onUpdate }: PetProfileHeaderProps) {
+    const { toast } = useToast();
+    const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
     const placeholder = getPlaceholderImage(pet.type_name);
     const imageUrl = pet.pet_image || placeholder.url;
     const imageHint = pet.pet_image ? pet.type_name : placeholder.hint;
@@ -38,6 +43,32 @@ export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
                 return 'secondary';
         }
     };
+
+    const handleFavoriteToggle = async () => {
+        setIsFavoriteLoading(true);
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            toast({ variant: 'destructive', title: 'Authentication Error', description: 'You must be logged in.' });
+            setIsFavoriteLoading(false);
+            return;
+        }
+
+        try {
+            if (isFavorited) {
+                await removeFavoritePet(token, pet.id);
+                toast({ title: 'Removed from Favorites' });
+            } else {
+                await addFavoritePet(token, pet.id);
+                toast({ title: 'Added to Favorites' });
+            }
+            onUpdate(); // Re-fetch pet details to update favorite status
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Error', description: error.message });
+        } finally {
+            setIsFavoriteLoading(false);
+        }
+    }
+
 
     return (
        <div className="relative h-96 w-full rounded-lg overflow-hidden bg-muted group">
@@ -98,6 +129,14 @@ export function PetProfileHeader({ pet, onUpdate }: PetProfileHeaderProps) {
                 )}
             </div>
             <div className="absolute top-6 right-6 flex items-start gap-2">
+                <Button variant="secondary" size="icon" onClick={handleFavoriteToggle} disabled={isFavoriteLoading}>
+                    {isFavoriteLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <Heart className={cn("h-4 w-4", isFavorited && "fill-red-500 text-red-500")} />
+                    )}
+                    <span className="sr-only">Favorite</span>
+                </Button>
                 <div className="flex flex-col gap-2">
                     {isAvailableForAdoption && (
                         <AdoptionRequestDialog petId={pet.id} petName={pet.name} onUpdate={onUpdate}>

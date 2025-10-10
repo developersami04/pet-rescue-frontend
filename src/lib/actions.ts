@@ -1,11 +1,9 @@
-
-
 'use server';
 
 import { z } from "zod";
 import API_ENDPOINTS from "./endpoints";
 import { fetchWithAuth, fetchWithTimeout } from "./api";
-import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport, PetReport, AdoptionRequest } from "./data";
+import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport, PetReport, AdoptionRequest, FavoritePet } from "./data";
 // import { format } from "date-fns";
 
 // Import the backend Host Address from .env file
@@ -1046,6 +1044,59 @@ export async function deleteAdminAdoptionRequest(token: string, requestId: numbe
         return { message: 'Adoption request deleted successfully.' };
     } catch (error) {
         console.error('Error deleting adoption request:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred.');
+    }
+}
+
+export async function getFavoritePets(token: string): Promise<FavoritePet[]> {
+    if (!API_BASE_URL) throw new Error('API not configured.');
+    const url = `${API_BASE_URL}${API_ENDPOINTS.favouritePets}`;
+    try {
+        const response = await fetchWithAuth(url, { method: 'GET', cache: 'no-store' }, token);
+        const result = await response.json();
+        if (!response.ok) throw new Error(getErrorMessage(result, 'Failed to fetch favorite pets.'));
+        return result.data || [];
+    } catch (error) {
+        console.error('Error fetching favorite pets:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred while fetching favorites.');
+    }
+}
+
+export async function addFavoritePet(token: string, petId: number) {
+    if (!API_BASE_URL) throw new Error('API not configured.');
+    const url = `${API_BASE_URL}${API_ENDPOINTS.favouritePets}`;
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'POST',
+            body: JSON.stringify({ pet_id: petId }),
+        }, token);
+        const result = await response.json();
+        if (!response.ok) throw new Error(getErrorMessage(result, 'Failed to add to favorites.'));
+        return result;
+    } catch (error) {
+        console.error('Error adding favorite:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred.');
+    }
+}
+
+export async function removeFavoritePet(token: string, petId: number) {
+    if (!API_BASE_URL) throw new Error('API not configured.');
+    const url = `${API_BASE_URL}${API_ENDPOINTS.favouritePets}`;
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'DELETE',
+            body: JSON.stringify({ pet_id: petId }),
+        }, token);
+         if (response.status !== 204 && !response.ok) {
+            const result = await response.json();
+            throw new Error(getErrorMessage(result, 'Failed to remove from favorites.'));
+        }
+        return { message: 'Removed from favorites' };
+    } catch (error) {
+        console.error('Error removing favorite:', error);
         if (error instanceof Error) throw error;
         throw new Error('An unknown error occurred.');
     }
