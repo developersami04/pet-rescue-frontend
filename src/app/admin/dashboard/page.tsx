@@ -13,6 +13,7 @@ import { getAdminDashboardMetrics } from "@/lib/actions";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { UserStats } from "./_components/user-stats";
 import { PetStats } from "./_components/pet-stats";
+import { ReportStats } from "./_components/report-stats";
 
 function StatsSkeleton() {
   return (
@@ -88,6 +89,7 @@ function DashboardContent() {
                     <AdminDashboardStats metrics={metrics} isLoading={isLoading} />
                     <UserStats metrics={metrics?.users ?? null} isLoading={isLoading} />
                     <PetStats metrics={metrics?.pets ?? null} isLoading={isLoading} />
+                    <ReportStats metrics={metrics?.reports ?? null} isLoading={isLoading} />
                 </>
             )}
         </div>
