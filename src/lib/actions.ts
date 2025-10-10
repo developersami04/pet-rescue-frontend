@@ -955,7 +955,7 @@ export async function getAdminAdoptionRequests(token: string, status?: 'pending'
     }
     const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.adminAdoptionRequests}`);
     if (status) {
-        url.searchParams.append('status', status);
+        url.searchParams.append('report_status', status);
     }
 
     try {
