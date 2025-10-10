@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/chart";
 import { Pie, PieChart, Cell } from "recharts";
 import { useMemo } from "react";
+import { Separator } from "@/components/ui/separator";
 
 function StatItem({ icon, label, value, colorClass }: { icon: React.ElementType, label: string, value: number, colorClass?: string }) {
     const Icon = icon;
@@ -118,11 +119,13 @@ export function ReportStats({ metrics, isLoading }: { metrics: ReportMetrics | n
                         label="Total Reports"
                         value={metrics?.total ?? 0}
                     />
+                    <Separator />
                     <div className="grid grid-cols-2 gap-4">
                         <StatItem icon={AlertTriangle} label="Lost" value={metrics?.lost ?? 0} colorClass="text-red-600" />
                         <StatItem icon={Search} label="Found" value={metrics?.found ?? 0} colorClass="text-blue-600" />
                         <StatItem icon={Hand} label="Adoptable" value={metrics?.adoptable ?? 0} colorClass="text-green-600" />
                     </div>
+                    <Separator />
                     <div className="grid grid-cols-2 gap-4">
                         <StatItem icon={Clock} label="Pending" value={metrics?.pending ?? 0} colorClass="text-amber-600" />
                         <StatItem icon={ShieldCheck} label="Approved" value={metrics?.approved ?? 0} colorClass="text-green-600" />
