@@ -61,7 +61,7 @@ export function AdoptionRequestListItem({ request, onUpdate, onDelete, isUpdatin
                 </Link>
             </div>
             
-            <div className="flex-grow grid grid-cols-1 md:grid-cols-3 items-center gap-4 w-full">
+            <div className="flex-grow grid grid-cols-1 md:grid-cols-3 items-start gap-4 w-full">
                 <div className="md:col-span-2 space-y-2">
                     <div>
                          <h3 className="text-lg font-bold">
@@ -78,7 +78,7 @@ export function AdoptionRequestListItem({ request, onUpdate, onDelete, isUpdatin
                                 : "Date not available"}
                         </p>
                     </div>
-                     <p className="text-sm text-muted-foreground italic bg-muted/50 p-2 rounded-md">"{request.message}"</p>
+                     <p className="text-sm text-muted-foreground italic bg-muted/50 p-3 rounded-md">"{request.message}"</p>
                 </div>
                 
                  <div className="flex flex-col items-start md:items-end gap-2 self-start md:self-center">

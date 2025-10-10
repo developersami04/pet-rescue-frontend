@@ -39,21 +39,16 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
     return (
         <Card className="flex flex-col h-full overflow-hidden transition-shadow duration-300 hover:shadow-xl">
             <CardHeader className="p-4">
-                <div className="flex justify-between items-start gap-2">
-                    <div>
-                        <CardTitle className="text-lg">
-                            <Link href={`/pets/${request.pet}`} className="hover:underline">{request.pet_name}</Link>
-                        </CardTitle>
-                        <CardDescription className="text-xs">
-                           by {request.owner_name}
-                        </CardDescription>
-                    </div>
-                    <Badge variant={getStatusVariant(request.status)} className="capitalize whitespace-nowrap">
-                        {request.status || 'pending'}
-                    </Badge>
+                <div>
+                    <CardTitle className="text-lg">
+                        <Link href={`/pets/${request.pet}`} className="hover:underline">{request.pet_name}</Link>
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                       by {request.owner_name}
+                    </CardDescription>
                 </div>
-                {isValidDate && (
-                    <CardDescription className="pt-1">
+                 {isValidDate && (
+                    <CardDescription className="pt-1 text-xs">
                         Requested {formatDistanceToNow(requestedDate, { addSuffix: true })}
                     </CardDescription>
                 )}
@@ -66,6 +61,9 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
                         fill
                         className="object-cover"
                     />
+                    <Badge variant={getStatusVariant(request.status)} className="capitalize whitespace-nowrap absolute top-2 right-2">
+                        {request.status || 'pending'}
+                    </Badge>
                 </div>
                 <div className="flex items-center gap-3">
                     <Avatar>
@@ -79,9 +77,9 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
                         <p className="text-xs text-muted-foreground">Requester</p>
                     </div>
                 </div>
-                <p className="text-sm text-muted-foreground italic bg-muted/50 p-2 rounded-md line-clamp-3">"{request.message}"</p>
+                <p className="text-sm text-muted-foreground italic bg-muted/50 p-3 rounded-md line-clamp-3">"{request.message}"</p>
             </CardContent>
-             <CardFooter className="p-4 pt-0 mt-auto">
+             <CardFooter className="p-4 pt-0 mt-auto flex flex-col gap-2">
                  {request.status === 'pending' ? (
                     <div className="flex w-full gap-2">
                         <NotifyUserDialog
@@ -90,7 +88,7 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
                             onConfirm={(message) => onUpdate(request.id, 'rejected', message)}
                             isUpdating={isUpdating}
                         >
-                            <Button size="sm" variant="destructive" className="w-full" disabled={isUpdating}>
+                            <Button size="sm" variant="outline" className="w-full" disabled={isUpdating}>
                                 {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ThumbsDown className="mr-2 h-4 w-4" />}
                                 Reject
                             </Button>
@@ -108,30 +106,29 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
                             </Button>
                         </NotifyUserDialog>
                     </div>
-                ) : (
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button size="sm" variant="destructive" className="w-full" disabled={isUpdating}>
-                                {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
-                                Delete
-                            </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete this adoption request.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => onDelete(request.id)} disabled={isUpdating}>
-                                    Continue
-                                </AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
-                )}
+                ) : null}
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="destructive" className="w-full" disabled={isUpdating}>
+                            {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+                            Delete Request
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete this adoption request.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => onDelete(request.id)} disabled={isUpdating}>
+                                Continue
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </CardFooter>
         </Card>
     )
