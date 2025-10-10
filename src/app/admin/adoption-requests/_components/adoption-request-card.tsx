@@ -40,15 +40,20 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
         <Card className="flex flex-col h-full overflow-hidden transition-shadow duration-300 hover:shadow-xl">
             <CardHeader className="p-4">
                 <div className="flex justify-between items-start gap-2">
-                    <CardTitle className="text-lg">
-                        <Link href={`/pets/${request.pet}`} className="hover:underline">{request.pet_name}</Link>
-                    </CardTitle>
+                    <div>
+                        <CardTitle className="text-lg">
+                            <Link href={`/pets/${request.pet}`} className="hover:underline">{request.pet_name}</Link>
+                        </CardTitle>
+                        <CardDescription className="text-xs">
+                           by {request.owner_name}
+                        </CardDescription>
+                    </div>
                     <Badge variant={getStatusVariant(request.status)} className="capitalize whitespace-nowrap">
                         {request.status || 'pending'}
                     </Badge>
                 </div>
                 {isValidDate && (
-                    <CardDescription>
+                    <CardDescription className="pt-1">
                         Requested {formatDistanceToNow(requestedDate, { addSuffix: true })}
                     </CardDescription>
                 )}
@@ -71,7 +76,7 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
                         <p className="font-semibold text-sm">
                             <Link href={`/profile/${request.requester_id}`} className="hover:underline">{request.requester_name}</Link>
                         </p>
-                        <p className="text-xs text-muted-foreground">Owner: {request.owner_name}</p>
+                        <p className="text-xs text-muted-foreground">Requester</p>
                     </div>
                 </div>
                 <p className="text-sm text-muted-foreground italic bg-muted/50 p-2 rounded-md line-clamp-3">"{request.message}"</p>
