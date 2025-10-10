@@ -6,6 +6,7 @@ import { Users, PawPrint, FileText, Handshake, Eye } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminStatDetailsDialog } from "./admin-stat-details-dialog";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export type UserMetrics = {
     total: number;
@@ -72,6 +73,8 @@ function StatCard({ title, value, icon, isLoading, details, detailsTitle }: { ti
         )
     }
 
+    const isUserCard = title === "Total Users";
+
     const cardContent = (
          <Card className="flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -83,16 +86,25 @@ function StatCard({ title, value, icon, isLoading, details, detailsTitle }: { ti
             </CardContent>
             {details && (
                 <CardFooter className="p-2 pt-0 border-t mt-auto">
-                    <AdminStatDetailsDialog
-                        trigger={
-                            <Button variant="ghost" size="sm" className="w-full">
+                    {isUserCard ? (
+                        <Button asChild variant="ghost" size="sm" className="w-full">
+                            <Link href="/admin/manage-users">
                                 <Eye className="mr-2 h-4 w-4" />
                                 View Details
-                            </Button>
-                        }
-                        title={detailsTitle || `Details for ${title}`}
-                        data={details}
-                    />
+                            </Link>
+                        </Button>
+                    ) : (
+                        <AdminStatDetailsDialog
+                            trigger={
+                                <Button variant="ghost" size="sm" className="w-full">
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    View Details
+                                </Button>
+                            }
+                            title={detailsTitle || `Details for ${title}`}
+                            data={details}
+                        />
+                    )}
                 </CardFooter>
             )}
         </Card>
