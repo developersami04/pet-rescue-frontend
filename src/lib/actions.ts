@@ -973,7 +973,7 @@ export async function getAdminAdoptionRequests(token: string, status?: 'pending'
         // Transform the data to match the AdoptionRequest type
         const transformedData: AdoptionRequest[] = result.data.map((item: any) => ({
             id: item.id,
-            pet: item.pet, // Assuming pet id is in the response now
+            pet: item.pet_id,
             pet_name: item.pet_name,
             pet_image: item.pet_image,
             message: item.message,
@@ -1027,5 +1027,25 @@ export async function updateAdoptionRequestStatus(token: string, requestId: numb
            throw new Error(error.message);
         }
         throw new Error(`An unknown error occurred while updating the request status.`);
+    }
+}
+
+export async function deleteAdminAdoptionRequest(token: string, requestId: number) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.adminAdoptionRequests}${requestId}/`;
+
+    try {
+        const response = await fetchWithAuth(url, { method: 'DELETE' }, token);
+        if (!response.ok && response.status !== 204) {
+            const result = await response.json();
+            throw new Error(getErrorMessage(result, 'Failed to delete adoption request.'));
+        }
+        return { message: 'Adoption request deleted successfully.' };
+    } catch (error) {
+        console.error('Error deleting adoption request:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred.');
     }
 }

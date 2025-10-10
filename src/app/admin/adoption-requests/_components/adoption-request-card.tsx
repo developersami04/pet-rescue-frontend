@@ -1,0 +1,120 @@
+
+'use client';
+
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { AdoptionRequest } from "@/lib/data";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { formatDistanceToNow } from "date-fns";
+import { Loader2, ThumbsDown, ThumbsUp, MoreVertical, Trash2 } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useState } from "react";
+
+type RequestStatus = 'approved' | 'rejected';
+
+type AdoptionRequestCardProps = {
+    request: AdoptionRequest;
+    onUpdate: (requestId: number, status: RequestStatus) => void;
+    onDelete: (requestId: number) => void;
+    isUpdating: boolean;
+}
+
+export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }: AdoptionRequestCardProps) {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const petImageUrl = request.pet_image || `https://picsum.photos/seed/${request.pet}/300/300`;
+    
+    const requestedDate = request.created_at ? new Date(request.created_at) : null;
+    const isValidDate = requestedDate && !isNaN(requestedDate.getTime());
+    
+    const getStatusVariant = (status: string | undefined | null) => {
+        switch (status?.toLowerCase()) {
+            case 'approved': return 'default';
+            case 'rejected': return 'destructive';
+            case 'pending': default: return 'secondary';
+        }
+    };
+
+    return (
+        <Card className="flex flex-col h-full overflow-hidden transition-shadow duration-300 hover:shadow-xl">
+            <CardHeader className="p-4">
+                <div className="flex justify-between items-start gap-2">
+                    <CardTitle className="text-lg">
+                        <Link href={`/pets/${request.pet}`} className="hover:underline">{request.pet_name}</Link>
+                    </CardTitle>
+                    <Badge variant={getStatusVariant(request.status)} className="capitalize whitespace-nowrap">
+                        {request.status || 'pending'}
+                    </Badge>
+                </div>
+                {isValidDate && (
+                    <CardDescription>
+                        Requested {formatDistanceToNow(requestedDate, { addSuffix: true })}
+                    </CardDescription>
+                )}
+            </CardHeader>
+            <CardContent className="p-4 pt-0 flex-grow space-y-4">
+                <div className="relative w-full aspect-square rounded-md overflow-hidden">
+                    <Image
+                        src={petImageUrl}
+                        alt={request.pet_name}
+                        fill
+                        className="object-cover"
+                    />
+                </div>
+                <div className="flex items-center gap-3">
+                    <Avatar>
+                        <AvatarImage src={request.requester_profile_image || `https://picsum.photos/seed/${request.requester_name}/100/100`} alt={request.requester_name} />
+                        <AvatarFallback>{request.requester_name?.[0] ?? 'U'}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <p className="font-semibold text-sm">
+                            <Link href={`/profile/${request.requester_id}`} className="hover:underline">{request.requester_name}</Link>
+                        </p>
+                        <p className="text-xs text-muted-foreground">Owner: {request.owner_name}</p>
+                    </div>
+                </div>
+                <p className="text-sm text-muted-foreground italic bg-muted/50 p-2 rounded-md line-clamp-3">"{request.message}"</p>
+            </CardContent>
+             <CardFooter className="p-4 pt-0 mt-auto">
+                 {request.status === 'pending' ? (
+                    <div className="flex w-full gap-2">
+                        <Button size="sm" variant="destructive" className="w-full" onClick={() => onUpdate(request.id, 'rejected')} disabled={isUpdating}>
+                            {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ThumbsDown className="mr-2 h-4 w-4" />}
+                            Reject
+                        </Button>
+                        <Button size="sm" className="w-full bg-green-600 hover:bg-green-700" onClick={() => onUpdate(request.id, 'approved')} disabled={isUpdating}>
+                           {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ThumbsUp className="mr-2 h-4 w-4" />}
+                            Approve
+                        </Button>
+                    </div>
+                ) : (
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button size="sm" variant="destructive" className="w-full" disabled={isUpdating}>
+                                {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+                                Delete
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete this adoption request.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => onDelete(request.id)} disabled={isUpdating}>
+                                    Continue
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                )}
+            </CardFooter>
+        </Card>
+    )
+}

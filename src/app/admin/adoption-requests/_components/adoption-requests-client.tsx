@@ -1,14 +1,15 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback, Suspense } from 'react';
-import { getAdminAdoptionRequests, updateAdoptionRequestStatus } from '@/lib/actions';
+import { getAdminAdoptionRequests, updateAdoptionRequestStatus, deleteAdminAdoptionRequest } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AdoptionRequest } from '@/lib/data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { AdoptionRequestsTabs } from './adoption-requests-tabs';
@@ -120,6 +121,28 @@ function AdoptionRequestsClientContent() {
         }
     }, [toast, activeTab, fetchRequests]);
 
+    const handleDeleteRequest = useCallback(async (requestId: number) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            toast({ variant: 'destructive', title: 'Authentication Error' });
+            return;
+        }
+
+        setUpdatingRequests(prev => ({ ...prev, [requestId]: true }));
+
+        try {
+            await deleteAdminAdoptionRequest(token, requestId);
+            toast({ title: 'Request Deleted', description: `The request has been successfully deleted.` });
+            setRequests(prevRequests => 
+                prevRequests.filter(r => r.id !== requestId)
+            );
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Deletion Failed', description: error.message });
+        } finally {
+            setUpdatingRequests(prev => ({ ...prev, [requestId]: false }));
+        }
+    }, [toast]);
+
 
     useEffect(() => {
         fetchRequests(activeTab);
@@ -149,7 +172,12 @@ function AdoptionRequestsClientContent() {
                             <AlertDescription>{error}</AlertDescription>
                         </Alert>
                     ) : (
-                        <AdoptionRequestList requests={requests} onUpdate={handleUpdateRequest} updatingRequests={updatingRequests} />
+                        <AdoptionRequestList 
+                            requests={requests} 
+                            onUpdate={handleUpdateRequest}
+                            onDelete={handleDeleteRequest}
+                            updatingRequests={updatingRequests}
+                        />
                     )}
                 </div>
             </Tabs>

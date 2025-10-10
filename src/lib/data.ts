@@ -23,9 +23,9 @@ export type AdoptionRequest = {
     status: 'pending' | 'approved' | 'rejected';
     requester_id: number;
     requester_profile_image: string | null;
-    requester_name: string; // From requester_username
+    requester_name: string;
     owner_id: number;
-    owner_name: string; // From owner_username
+    owner_name: string;
     created_at: string;
 };
 
