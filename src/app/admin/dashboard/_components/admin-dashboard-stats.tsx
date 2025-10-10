@@ -108,7 +108,7 @@ export function AdminDashboardStats({ metrics, isLoading }: AdminDashboardStatsP
             title: "Total Pets",
             value: metrics?.pets?.total ?? 0,
             icon: <PawPrint className="h-6 w-6" />,
-            link: "/admin/approve-reports" // Changed from manage-pets as it doesn't exist
+            link: "/admin/manage-pets"
         },
         {
             title: "Total Reports",
