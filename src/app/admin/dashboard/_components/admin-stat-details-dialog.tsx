@@ -35,19 +35,19 @@ type BarChartData = {
 const CHART_COLORS = ["hsl(var(--chart-1))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))", "hsl(var(--chart-1))", "hsl(var(--chart-2))"];
 
 function isUserMetrics(data: any): data is UserMetrics {
-    return 'active' in data && 'inactive' in data;
+    return data && 'active' in data && 'inactive' in data;
 }
 
 function isPetMetrics(data: any): data is PetMetrics {
-    return 'current' in data && 'deleted' in data;
+    return data && 'current' in data && 'deleted' in data;
 }
 
 function isReportMetrics(data: any): data is ReportMetrics {
-    return 'found' in data && 'lost' in data && 'approved' in data;
+    return data && 'found' in data && 'lost' in data && 'approved' in data;
 }
 
 function isAdoptionMetrics(data: any): data is AdoptionMetrics {
-    return 'pending_from_admin' in data && 'successful' in data;
+    return data && 'pending_from_admin' in data && 'successful' in data;
 }
 
 function CustomTooltip({ active, payload, label }: any) {
@@ -115,7 +115,7 @@ function BarChartComponent({ data, bars, title }: { data: BarChartData[], bars: 
     );
 }
 
-function renderContent(data: any) {
+function DialogChartContent({ data }: { data: any }) {
     if (isUserMetrics(data)) {
         return (
             <div className="space-y-6">
@@ -231,7 +231,7 @@ export function AdminStatDetailsDialog({ trigger, title, data }: AdminStatDetail
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
-            {data ? renderContent(data) : <p>No data available.</p>}
+            <DialogChartContent data={data} />
         </div>
       </DialogContent>
     </Dialog>
