@@ -21,7 +21,7 @@ type AdoptionRequestListItemProps = {
 
 export function AdoptionRequestListItem({ request, onUpdate, isUpdating }: AdoptionRequestListItemProps) {
     const petImageUrl = request.pet_image || `https://picsum.photos/seed/${request.pet}/100/100`;
-    const requesterImageUrl = `https://picsum.photos/seed/${request.requester_name}/100/100`;
+    const requesterImageUrl = request.requester_profile_image || `https://picsum.photos/seed/${request.requester_name}/100/100`;
 
     const requestedDate = request.created_at ? new Date(request.created_at) : null;
     const isValidDate = requestedDate && !isNaN(requestedDate.getTime());

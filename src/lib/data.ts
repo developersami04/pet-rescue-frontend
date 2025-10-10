@@ -18,13 +18,15 @@ export type AdoptionRequest = {
     id: number;
     pet: number;
     pet_name: string;
-    owner_name: string;
-    requester_id: number;
-    requester_name: string;
-    created_at: string;
+    pet_image: string | null;
     message: string;
     status: 'pending' | 'approved' | 'rejected';
-    pet_image?: string | null;
+    requester_id: number;
+    requester_profile_image: string | null;
+    requester_name: string; // From requester_username
+    owner_id: number;
+    owner_name: string; // From owner_username
+    created_at: string;
 };
 
 export type MyAdoptionRequest = {

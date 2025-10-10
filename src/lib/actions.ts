@@ -969,8 +969,24 @@ export async function getAdminAdoptionRequests(token: string, status?: 'pending'
         if (!response.ok) {
             throw new Error(getErrorMessage(result, 'Failed to fetch adoption requests.'));
         }
+        
+        // Transform the data to match the AdoptionRequest type
+        const transformedData: AdoptionRequest[] = result.data.map((item: any) => ({
+            id: item.id,
+            pet: item.pet, // Assuming pet id is in the response now
+            pet_name: item.pet_name,
+            pet_image: item.pet_image,
+            message: item.message,
+            status: item.status,
+            requester_id: item.requester_id,
+            requester_profile_image: item.requester_profile_image,
+            requester_name: item.requester_username, // Map from requester_username
+            owner_id: item.owner_id,
+            owner_name: item.owner_username, // Map from owner_username
+            created_at: item.created_at, // Assuming created_at is present
+        }));
 
-        return result.data || [];
+        return transformedData;
     } catch (error) {
         if ((error as any).name === 'AbortError') {
             throw new Error('Request for adoption requests timed out.');
