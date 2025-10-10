@@ -62,7 +62,7 @@ export function AdoptionRequestList({ requests, onUpdate, onDelete, updatingRequ
                             request={request}
                             onUpdate={onUpdate}
                             onDelete={onDelete}
-                            isUpdating={updatingRequests[request.id]}
+                            isUpdating={updatingRequests[request.id] ?? false}
                         />
                     ))}
                 </div>
@@ -74,7 +74,7 @@ export function AdoptionRequestList({ requests, onUpdate, onDelete, updatingRequ
                             request={request}
                             onUpdate={onUpdate}
                             onDelete={onDelete}
-                            isUpdating={updatingRequests[request.id]}
+                            isUpdating={updatingRequests[request.id] ?? false}
                         />
                     ))}
                 </div>

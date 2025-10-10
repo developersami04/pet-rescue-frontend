@@ -112,6 +112,8 @@ export function AdoptionRequestListItem({ request, onUpdate, onDelete, isUpdatin
                         </div>
                     )}
                 </div>
+            </div>
+            <div className="ml-auto self-start sm:self-center">
                  <AlertDialog>
                     <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                         <DropdownMenuTrigger asChild>
