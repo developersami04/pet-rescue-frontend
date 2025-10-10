@@ -38,7 +38,7 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
 
     return (
         <Card className="flex flex-col h-full overflow-hidden transition-shadow duration-300 hover:shadow-xl">
-            <CardHeader className="p-4">
+            <CardHeader className="p-4 flex flex-row justify-between items-start">
                 <div>
                     <CardTitle className="text-lg">
                         <Link href={`/pets/${request.pet}`} className="hover:underline">{request.pet_name}</Link>
@@ -48,8 +48,8 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
                     </CardDescription>
                 </div>
                  {isValidDate && (
-                    <CardDescription className="pt-1 text-xs">
-                        Requested {formatDistanceToNow(requestedDate, { addSuffix: true })}
+                    <CardDescription className="pt-1 text-xs whitespace-nowrap">
+                        {formatDistanceToNow(requestedDate, { addSuffix: true })}
                     </CardDescription>
                 )}
             </CardHeader>
