@@ -75,7 +75,7 @@ function StatCard({ title, value, icon, isLoading, details, detailsTitle }: { ti
 
     const isUserCard = title === "Total Users";
 
-    const cardContent = (
+    return (
          <Card className="flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{title}</CardTitle>
@@ -109,8 +109,6 @@ function StatCard({ title, value, icon, isLoading, details, detailsTitle }: { ti
             )}
         </Card>
     );
-
-    return cardContent;
 }
 
 export function AdminDashboardStats({ metrics, isLoading }: AdminDashboardStatsProps) {
@@ -121,7 +119,6 @@ export function AdminDashboardStats({ metrics, isLoading }: AdminDashboardStatsP
                 value={metrics?.users?.total ?? 0}
                 icon={<Users className="h-6 w-6" />}
                 isLoading={isLoading}
-                detailsTitle="User Statistics"
                 details={metrics?.users}
              />
              <StatCard 
