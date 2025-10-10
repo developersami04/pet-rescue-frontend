@@ -86,32 +86,30 @@ export function AdoptionRequestListItem({ request, onUpdate, onDelete, isUpdatin
                     <Badge variant={getStatusVariant(request.report_status)} className="capitalize mb-2">
                         {request.report_status || 'pending'}
                     </Badge>
-                     {request.report_status === 'pending' && (
-                        <div className="flex gap-2">
-                             <NotifyUserDialog
-                                action="rejected"
-                                request={request}
-                                onConfirm={(message) => onUpdate(request.id, 'rejected', message)}
-                                isUpdating={isUpdating}
-                            >
-                                <Button size="sm" variant="destructive" disabled={isUpdating}>
-                                    <ThumbsDown className="mr-2 h-4 w-4" />
-                                    Reject
-                                </Button>
-                            </NotifyUserDialog>
+                    <div className="flex gap-2">
                             <NotifyUserDialog
-                                action="approved"
-                                request={request}
-                                onConfirm={(message) => onUpdate(request.id, 'approved', message)}
-                                isUpdating={isUpdating}
-                            >
-                                <Button size="sm" className="bg-green-600 hover:bg-green-700" disabled={isUpdating}>
-                                    <ThumbsUp className="mr-2 h-4 w-4" />
-                                    Approve
-                                </Button>
-                            </NotifyUserDialog>
-                        </div>
-                    )}
+                            action="rejected"
+                            request={request}
+                            onConfirm={(message) => onUpdate(request.id, 'rejected', message)}
+                            isUpdating={isUpdating}
+                        >
+                            <Button size="sm" variant="destructive" disabled={isUpdating || request.report_status === 'rejected'}>
+                                <ThumbsDown className="mr-2 h-4 w-4" />
+                                Reject
+                            </Button>
+                        </NotifyUserDialog>
+                        <NotifyUserDialog
+                            action="approved"
+                            request={request}
+                            onConfirm={(message) => onUpdate(request.id, 'approved', message)}
+                            isUpdating={isUpdating}
+                        >
+                            <Button size="sm" className="bg-green-600 hover:bg-green-700" disabled={isUpdating || request.report_status === 'approved'}>
+                                <ThumbsUp className="mr-2 h-4 w-4" />
+                                Approve
+                            </Button>
+                        </NotifyUserDialog>
+                    </div>
                 </div>
             </div>
             <div className="ml-auto self-start sm:self-center">

@@ -81,33 +81,31 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
                 <p className="text-sm text-muted-foreground italic bg-muted/50 p-3 rounded-md line-clamp-3">"{request.message}"</p>
             </CardContent>
              <CardFooter className="p-4 pt-0 mt-auto flex flex-col gap-2">
-                 {request.report_status === 'pending' ? (
-                    <div className="flex w-full gap-2">
-                        <NotifyUserDialog
-                            action="rejected"
-                            request={request}
-                            onConfirm={(message) => onUpdate(request.id, 'rejected', message)}
-                            isUpdating={isUpdating}
-                        >
-                            <Button size="sm" variant="outline" className="w-full" disabled={isUpdating}>
-                                {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ThumbsDown className="mr-2 h-4 w-4" />}
-                                Reject
-                            </Button>
-                        </NotifyUserDialog>
+                <div className="flex w-full gap-2">
+                    <NotifyUserDialog
+                        action="rejected"
+                        request={request}
+                        onConfirm={(message) => onUpdate(request.id, 'rejected', message)}
+                        isUpdating={isUpdating}
+                    >
+                        <Button size="sm" variant="outline" className="w-full" disabled={isUpdating || request.report_status === 'rejected'}>
+                            {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ThumbsDown className="mr-2 h-4 w-4" />}
+                            Reject
+                        </Button>
+                    </NotifyUserDialog>
 
-                        <NotifyUserDialog
-                            action="approved"
-                            request={request}
-                            onConfirm={(message) => onUpdate(request.id, 'approved', message)}
-                            isUpdating={isUpdating}
-                        >
-                            <Button size="sm" className="w-full bg-green-600 hover:bg-green-700" disabled={isUpdating}>
-                            {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ThumbsUp className="mr-2 h-4 w-4" />}
-                                Approve
-                            </Button>
-                        </NotifyUserDialog>
-                    </div>
-                ) : null}
+                    <NotifyUserDialog
+                        action="approved"
+                        request={request}
+                        onConfirm={(message) => onUpdate(request.id, 'approved', message)}
+                        isUpdating={isUpdating}
+                    >
+                        <Button size="sm" className="w-full bg-green-600 hover:bg-green-700" disabled={isUpdating || request.report_status === 'approved'}>
+                        {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ThumbsUp className="mr-2 h-4 w-4" />}
+                            Approve
+                        </Button>
+                    </NotifyUserDialog>
+                </div>
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
                         <Button size="sm" variant="destructive" className="w-full" disabled={isUpdating}>
