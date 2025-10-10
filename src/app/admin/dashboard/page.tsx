@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { getAdminDashboardMetrics } from "@/lib/actions";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { UserStats } from "./_components/user-stats";
 
 function StatsSkeleton() {
   return (
@@ -82,7 +83,10 @@ function DashboardContent() {
              {error ? (
                 <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>
             ) : (
-                <AdminDashboardStats metrics={metrics} isLoading={isLoading} />
+                <>
+                    <AdminDashboardStats metrics={metrics} isLoading={isLoading} />
+                    <UserStats metrics={metrics?.users ?? null} isLoading={isLoading} />
+                </>
             )}
         </div>
     );
