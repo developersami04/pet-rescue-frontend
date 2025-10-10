@@ -1,5 +1,4 @@
 
-
 'use server';
 
 import { z } from "zod";
@@ -999,7 +998,7 @@ export async function getAdminAdoptionRequests(token: string, status?: 'pending'
     }
 }
 
-export async function updateAdoptionRequestStatus(token: string, requestId: number, status: 'approved' | 'rejected') {
+export async function updateAdoptionRequestStatus(token: string, requestId: number, status: 'approved' | 'rejected', message?: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
@@ -1008,7 +1007,7 @@ export async function updateAdoptionRequestStatus(token: string, requestId: numb
     try {
         const response = await fetchWithAuth(url, {
             method: 'PATCH',
-            body: JSON.stringify({ status: status }),
+            body: JSON.stringify({ status: status, message: message }),
         }, token);
         
         const result = await response.json();

@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { AdoptionRequest } from "@/lib/data";
@@ -13,7 +12,7 @@ type RequestStatus = 'approved' | 'rejected';
 
 type AdoptionRequestListProps = {
     requests: AdoptionRequest[];
-    onUpdate: (requestId: number, status: RequestStatus) => void;
+    onUpdate: (requestId: number, status: RequestStatus, message?: string) => void;
     onDelete: (requestId: number) => void;
     updatingRequests: Record<number, boolean>;
 };

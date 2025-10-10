@@ -8,23 +8,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
-import { Loader2, ThumbsDown, ThumbsUp, MoreVertical, Trash2 } from 'lucide-react';
+import { Loader2, ThumbsDown, ThumbsUp, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { useState } from "react";
+import { NotifyUserDialog } from "./notify-user-dialog";
 
 type RequestStatus = 'approved' | 'rejected';
 
 type AdoptionRequestCardProps = {
     request: AdoptionRequest;
-    onUpdate: (requestId: number, status: RequestStatus) => void;
+    onUpdate: (requestId: number, status: RequestStatus, message?: string) => void;
     onDelete: (requestId: number) => void;
     isUpdating: boolean;
 }
 
 export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }: AdoptionRequestCardProps) {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const petImageUrl = request.pet_image || `https://picsum.photos/seed/${request.pet}/300/300`;
     
     const requestedDate = request.created_at ? new Date(request.created_at) : null;
@@ -81,14 +79,29 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
              <CardFooter className="p-4 pt-0 mt-auto">
                  {request.status === 'pending' ? (
                     <div className="flex w-full gap-2">
-                        <Button size="sm" variant="destructive" className="w-full" onClick={() => onUpdate(request.id, 'rejected')} disabled={isUpdating}>
-                            {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ThumbsDown className="mr-2 h-4 w-4" />}
-                            Reject
-                        </Button>
-                        <Button size="sm" className="w-full bg-green-600 hover:bg-green-700" onClick={() => onUpdate(request.id, 'approved')} disabled={isUpdating}>
-                           {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ThumbsUp className="mr-2 h-4 w-4" />}
-                            Approve
-                        </Button>
+                        <NotifyUserDialog
+                            action="rejected"
+                            request={request}
+                            onConfirm={(message) => onUpdate(request.id, 'rejected', message)}
+                            isUpdating={isUpdating}
+                        >
+                            <Button size="sm" variant="destructive" className="w-full" disabled={isUpdating}>
+                                {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ThumbsDown className="mr-2 h-4 w-4" />}
+                                Reject
+                            </Button>
+                        </NotifyUserDialog>
+
+                        <NotifyUserDialog
+                            action="approved"
+                            request={request}
+                            onConfirm={(message) => onUpdate(request.id, 'approved', message)}
+                            isUpdating={isUpdating}
+                        >
+                            <Button size="sm" className="w-full bg-green-600 hover:bg-green-700" disabled={isUpdating}>
+                            {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ThumbsUp className="mr-2 h-4 w-4" />}
+                                Approve
+                            </Button>
+                        </NotifyUserDialog>
                     </div>
                 ) : (
                     <AlertDialog>

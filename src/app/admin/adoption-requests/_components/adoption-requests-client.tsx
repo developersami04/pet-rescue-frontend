@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, useCallback, Suspense } from 'react';
@@ -91,7 +90,7 @@ function AdoptionRequestsClientContent() {
         setIsRefreshing(false);
     }
     
-    const handleUpdateRequest = useCallback(async (requestId: number, status: RequestStatus) => {
+    const handleUpdateRequest = useCallback(async (requestId: number, status: RequestStatus, message?: string) => {
         const token = localStorage.getItem('authToken');
         if (!token) {
             toast({ variant: 'destructive', title: 'Authentication Error' });
@@ -101,7 +100,7 @@ function AdoptionRequestsClientContent() {
         setUpdatingRequests(prev => ({ ...prev, [requestId]: true }));
 
         try {
-            await updateAdoptionRequestStatus(token, requestId, status);
+            await updateAdoptionRequestStatus(token, requestId, status, message);
             toast({ title: 'Request Updated', description: `The request has been successfully ${status}.` });
             
             // Optimistically remove the request from the list if it's pending

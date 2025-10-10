@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { Card } from "@/components/ui/card";
@@ -14,12 +13,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { NotifyUserDialog } from "./notify-user-dialog";
 
 type RequestStatus = 'approved' | 'rejected';
 
 type AdoptionRequestListItemProps = {
     request: AdoptionRequest;
-    onUpdate: (requestId: number, status: RequestStatus) => void;
+    onUpdate: (requestId: number, status: RequestStatus, message?: string) => void;
     onDelete: (requestId: number) => void;
     isUpdating: boolean;
 }
@@ -32,7 +32,7 @@ export function AdoptionRequestListItem({ request, onUpdate, onDelete, isUpdatin
     const requestedDate = request.created_at ? new Date(request.created_at) : null;
     const isValidDate = requestedDate && !isNaN(requestedDate.getTime());
     
-    const getStatusVariant = (status: string | undefined | null) => {
+    const getStatusVariant = (status?: string | null) => {
         switch (status?.toLowerCase()) {
             case 'approved':
                 return 'default';
@@ -87,14 +87,28 @@ export function AdoptionRequestListItem({ request, onUpdate, onDelete, isUpdatin
                     </Badge>
                      {request.status === 'pending' && (
                         <div className="flex gap-2">
-                            <Button size="sm" variant="destructive" onClick={() => onUpdate(request.id, 'rejected')} disabled={isUpdating}>
-                                <ThumbsDown className="mr-2 h-4 w-4" />
-                                Reject
-                            </Button>
-                            <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => onUpdate(request.id, 'approved')} disabled={isUpdating}>
-                                <ThumbsUp className="mr-2 h-4 w-4" />
-                                Approve
-                            </Button>
+                             <NotifyUserDialog
+                                action="rejected"
+                                request={request}
+                                onConfirm={(message) => onUpdate(request.id, 'rejected', message)}
+                                isUpdating={isUpdating}
+                            >
+                                <Button size="sm" variant="destructive" disabled={isUpdating}>
+                                    <ThumbsDown className="mr-2 h-4 w-4" />
+                                    Reject
+                                </Button>
+                            </NotifyUserDialog>
+                            <NotifyUserDialog
+                                action="approved"
+                                request={request}
+                                onConfirm={(message) => onUpdate(request.id, 'approved', message)}
+                                isUpdating={isUpdating}
+                            >
+                                <Button size="sm" className="bg-green-600 hover:bg-green-700" disabled={isUpdating}>
+                                    <ThumbsUp className="mr-2 h-4 w-4" />
+                                    Approve
+                                </Button>
+                            </NotifyUserDialog>
                         </div>
                     )}
                 </div>
