@@ -6,8 +6,7 @@ import type { Pet } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { formatDistanceToNow } from "date-fns";
-import { BadgeCheck, MoreVertical, Pen, Trash2 } from 'lucide-react';
+import { BadgeCheck, Loader2, MoreVertical, Pen, Trash2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,12 +17,17 @@ import { cn } from "@/lib/utils";
 import { getPlaceholderImage } from "@/lib/placeholder-images";
 import { PetTypeIcon } from "@/components/pet-icons";
 import Link from "next/link";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useState } from "react";
 
 type AdminPetListItemProps = {
     pet: Pet;
+    onDelete: (petId: number) => void;
+    isDeleting: boolean;
 }
 
-export function AdminPetListItem({ pet }: AdminPetListItemProps) {
+export function AdminPetListItem({ pet, onDelete, isDeleting }: AdminPetListItemProps) {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const placeholder = getPlaceholderImage(pet.type_name);
     const imageUrl = pet.pet_image || placeholder.url;
     const imageHint = pet.pet_image ? pet.type_name : placeholder.hint;
@@ -44,7 +48,6 @@ export function AdminPetListItem({ pet }: AdminPetListItemProps) {
         }
     };
     const statusInfo = getStatusInfo(petStatus);
-
 
     return (
         <Card className={cn("p-4 flex items-center gap-4 transition-all duration-300 hover:shadow-md hover:border-primary/50")}>
@@ -88,19 +91,40 @@ export function AdminPetListItem({ pet }: AdminPetListItemProps) {
                             <Pen className="mr-2 h-4 w-4" /> Edit
                         </Link>
                     </Button>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <MoreVertical className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                                <Trash2 className="mr-2 h-4 w-4 text-destructive" />
-                                <span className="text-destructive">Delete</span>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <AlertDialog>
+                        <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isDeleting}>
+                                    {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreVertical className="h-4 w-4" />}
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        <span>Delete</span>
+                                    </DropdownMenuItem>
+                                </AlertDialogTrigger>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete {pet.name}.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => {
+                                    onDelete(pet.id);
+                                    setIsMenuOpen(false);
+                                }} disabled={isDeleting}>
+                                    Continue
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </div>
         </Card>

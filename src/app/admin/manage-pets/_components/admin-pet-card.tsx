@@ -6,19 +6,21 @@ import { Button } from '@/components/ui/button';
 import type { Pet } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { Award, BadgeCheck, Loader2, Pen, Trash2 } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { getPlaceholderImage } from '@/lib/placeholder-images';
 import { PetTypeIcon } from '@/components/pet-icons';
 import Link from 'next/link';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 type AdminPetCardProps = {
   pet: Pet;
+  onDelete: (petId: number) => void;
+  isDeleting: boolean;
 };
 
-export function AdminPetCard({ pet }: AdminPetCardProps) {
+export function AdminPetCard({ pet, onDelete, isDeleting }: AdminPetCardProps) {
     const placeholder = getPlaceholderImage(pet.type_name);
     const imageUrl = pet.pet_image || placeholder.url;
     const imageHint = pet.pet_image ? pet.type_name : placeholder.hint;
@@ -81,9 +83,28 @@ export function AdminPetCard({ pet }: AdminPetCardProps) {
                     <Pen className="mr-2 h-4 w-4" /> Edit
                 </Link>
             </Button>
-            <Button variant="destructive" className="w-full">
-                <Trash2 className="mr-2 h-4 w-4" /> Delete
-            </Button>
+            <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <Button variant="destructive" className="w-full" disabled={isDeleting}>
+                        {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+                        Delete
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete {pet.name}.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => onDelete(pet.id)} disabled={isDeleting}>
+                            Continue
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </CardFooter>
     </Card>
   );

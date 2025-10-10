@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { getAllPets } from '@/lib/actions';
+import { deletePetRequest, getAllPets } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Pet } from '@/lib/data';
@@ -49,6 +49,7 @@ export function ManagePetsClient() {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [view, setView] = useState<'grid' | 'list'>('grid');
+    const [deletingPets, setDeletingPets] = useState<Record<number, boolean>>({});
     const router = useRouter();
     const { toast } = useToast();
 
@@ -79,6 +80,28 @@ export function ManagePetsClient() {
         await fetchPets();
         setIsRefreshing(false);
     }
+
+    const handleDeletePet = useCallback(async (petId: number) => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            toast({ variant: 'destructive', title: 'Authentication Error' });
+            return;
+        }
+
+        setDeletingPets(prev => ({ ...prev, [petId]: true }));
+
+        try {
+            await deletePetRequest(token, String(petId));
+            toast({ title: 'Pet Deleted', description: 'The pet has been successfully removed.' });
+            
+            setPets(prevPets => prevPets.filter(p => p.id !== petId));
+
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Deletion Failed', description: error.message });
+        } finally {
+            setDeletingPets(prev => ({ ...prev, [petId]: false }));
+        }
+    }, [toast]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -128,7 +151,9 @@ export function ManagePetsClient() {
                     {pets.map((pet) => (
                         <AdminPetCard 
                             key={pet.id} 
-                            pet={pet} 
+                            pet={pet}
+                            onDelete={handleDeletePet}
+                            isDeleting={deletingPets[pet.id]}
                         />
                     ))}
                 </div>
@@ -138,6 +163,8 @@ export function ManagePetsClient() {
                         <AdminPetListItem 
                             key={pet.id} 
                             pet={pet}
+                            onDelete={handleDeletePet}
+                            isDeleting={deletingPets[pet.id]}
                         />
                     ))}
                 </div>
