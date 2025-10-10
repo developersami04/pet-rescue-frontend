@@ -252,7 +252,7 @@ export function UpdatePetForm({ petId }: UpdatePetFormProps) {
     try {
       const result = await updatePetRequest(token, petId, formData);
       toast({ title: 'Request Updated!', description: result.message || `Your request for ${values.name} has been updated.` });
-      router.push('/dashboard');
+      router.back();
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Update Failed', description: error.message });
     }
