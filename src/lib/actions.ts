@@ -606,7 +606,7 @@ export async function deleteAdoptionRequest(token: string, requestId: number) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
-    const url = `${API_BASE_URL}${API_ENDPOINTS.petAdoptions}${requestId}/`;
+    const url = `${API_BASE_URL}${API_ENDPOINTS.petAdoptions}${requestId}`;
 
     try {
         const response = await fetchWithAuth(url, {
@@ -1008,7 +1008,7 @@ export async function updateAdoptionRequestStatus(token: string, requestId: numb
     try {
         const response = await fetchWithAuth(url, {
             method: 'PATCH',
-            body: JSON.stringify({ status: status, message: message }),
+            body: JSON.stringify({ report_status: status, message: message }),
         }, token);
         
         const result = await response.json();
@@ -1034,7 +1034,7 @@ export async function deleteAdminAdoptionRequest(token: string, requestId: numbe
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
-    const url = `${API_BASE_URL}${API_ENDPOINTS.adminAdoptionRequests}${requestId}/`;
+    const url = `${API_BASE_URL}${API_ENDPOINTS.petAdoptions}${requestId}/`;
 
     try {
         const response = await fetchWithAuth(url, { method: 'DELETE' }, token);
