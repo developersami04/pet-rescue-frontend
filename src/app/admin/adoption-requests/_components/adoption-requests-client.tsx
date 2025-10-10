@@ -14,7 +14,7 @@ import { Loader2 } from 'lucide-react';
 import { AdoptionRequestsTabs } from './adoption-requests-tabs';
 import { AdoptionRequestList } from './adoption-request-list';
 
-type TabValue = 'pending' | 'last50' | 'rejected';
+type TabValue = 'pending' | 'recents' | 'rejected';
 type RequestStatus = 'approved' | 'rejected';
 
 function RequestsSkeleton() {
@@ -38,13 +38,13 @@ function AdoptionRequestsClientContent() {
     const tabFromUrl = searchParams.get('tab');
 
     const [activeTab, setActiveTab] = useState<TabValue>(
-        tabFromUrl === 'last50' || tabFromUrl === 'rejected' ? tabFromUrl : 'pending'
+        tabFromUrl === 'recents' || tabFromUrl === 'rejected' ? tabFromUrl : 'pending'
     );
     const { toast } = useToast();
 
     useEffect(() => {
         const newTab = searchParams.get('tab');
-        if (newTab === 'pending' || newTab === 'last50' || newTab === 'rejected') {
+        if (newTab === 'pending' || newTab === 'recents' || newTab === 'rejected') {
             setActiveTab(newTab);
         }
     }, [searchParams]);
@@ -62,10 +62,10 @@ function AdoptionRequestsClientContent() {
         }
 
         try {
-            let status: 'pending' | 'rejected' | 'last50' | undefined = undefined;
+            let status: 'pending' | 'rejected' | 'recents' | undefined = undefined;
              if (tab === 'pending') status = 'pending';
              if (tab === 'rejected') status = 'rejected';
-             if (tab === 'last50') status = 'last50';
+             if (tab === 'recents') status = 'recents';
 
             const requestsData = await getAdminAdoptionRequests(token, status);
             setRequests(requestsData);

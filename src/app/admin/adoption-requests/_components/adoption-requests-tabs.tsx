@@ -8,13 +8,13 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 const tabInfo = [
     { value: "pending", label: "Pending Requests", icon: Clock },
-    { value: "last50", label: "Last 50 Requests", icon: History },
+    { value: "recents", label: "Last 50 Requests", icon: History },
     { value: "rejected", label: "Rejected Requests", icon: ThumbsDown },
 ];
 
 type AdoptionRequestsTabsProps = {
     activeTab: string;
-    onTabChange: (tab: 'pending' | 'last50' | 'rejected') => void;
+    onTabChange: (tab: 'pending' | 'recents' | 'rejected') => void;
 };
 
 export function AdoptionRequestsTabs({ activeTab, onTabChange }: AdoptionRequestsTabsProps) {
