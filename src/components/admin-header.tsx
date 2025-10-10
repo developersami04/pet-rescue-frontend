@@ -57,7 +57,8 @@ const navItems = {
   ],
   records: [
     { href: "/admin/manage-users", icon: Users, label: "Manage Users" },
-    { href: "/admin/approve-reports", icon: PawPrint, label: "Manage Pets & Reports" },
+    { href: "/admin/manage-pets", icon: PawPrint, label: "Manage Pets" },
+    { href: "/admin/approve-reports", icon: ShieldCheck, label: "Manage Reports" },
     { href: "/admin/adoption-requests", icon: Hand, label: "Manage Adoptions" },
   ],
   general: [
