@@ -4,7 +4,6 @@
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Users, PawPrint, FileText, Handshake, Eye } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AdminStatDetailsDialog } from "./admin-stat-details-dialog";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -58,7 +57,7 @@ type AdminDashboardStatsProps = {
     isLoading: boolean;
 };
 
-function StatCard({ title, value, icon, isLoading, details, detailsTitle }: { title: string, value: number, icon: React.ReactNode, isLoading: boolean, details?: any, detailsTitle?: string }) {
+function StatCard({ title, value, icon, isLoading, link }: { title: string, value: number, icon: React.ReactNode, isLoading: boolean, link: string }) {
     if (isLoading) {
         return (
             <Card>
@@ -69,12 +68,13 @@ function StatCard({ title, value, icon, isLoading, details, detailsTitle }: { ti
                 <CardContent>
                     <Skeleton className="h-8 w-1/2" />
                 </CardContent>
+                 <CardFooter className="p-2 pt-0 border-t mt-auto">
+                    <Skeleton className="h-9 w-full" />
+                 </CardFooter>
             </Card>
         )
     }
-
-    const isUserCard = title === "Total Users";
-
+    
     return (
          <Card className="flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -84,67 +84,58 @@ function StatCard({ title, value, icon, isLoading, details, detailsTitle }: { ti
             <CardContent className="pb-2">
                 <div className="text-2xl font-bold">{value}</div>
             </CardContent>
-            {details && (
-                <CardFooter className="p-2 pt-0 border-t mt-auto">
-                    {isUserCard ? (
-                        <Button asChild variant="ghost" size="sm" className="w-full">
-                            <Link href="/admin/manage-users">
-                                <Eye className="mr-2 h-4 w-4" />
-                                View Details
-                            </Link>
-                        </Button>
-                    ) : (
-                        <AdminStatDetailsDialog
-                            trigger={
-                                <Button variant="ghost" size="sm" className="w-full">
-                                    <Eye className="mr-2 h-4 w-4" />
-                                    View Details
-                                </Button>
-                            }
-                            title={detailsTitle || `Details for ${title}`}
-                            data={details}
-                        />
-                    )}
-                </CardFooter>
-            )}
+            <CardFooter className="p-2 pt-0 border-t mt-auto">
+                <Button asChild variant="ghost" size="sm" className="w-full">
+                    <Link href={link}>
+                        <Eye className="mr-2 h-4 w-4" />
+                        View Details
+                    </Link>
+                </Button>
+            </CardFooter>
         </Card>
     );
 }
 
 export function AdminDashboardStats({ metrics, isLoading }: AdminDashboardStatsProps) {
+    const cardData = [
+        {
+            title: "Total Users",
+            value: metrics?.users?.total ?? 0,
+            icon: <Users className="h-6 w-6" />,
+            link: "/admin/manage-users"
+        },
+        {
+            title: "Total Pets",
+            value: metrics?.pets?.total ?? 0,
+            icon: <PawPrint className="h-6 w-6" />,
+            link: "/admin/approve-reports" // Changed from manage-pets as it doesn't exist
+        },
+        {
+            title: "Total Reports",
+            value: metrics?.reports?.total ?? 0,
+            icon: <FileText className="h-6 w-6" />,
+            link: "/admin/approve-reports"
+        },
+        {
+            title: "Total Adoptions",
+            value: metrics?.adoptions?.total ?? 0,
+            icon: <Handshake className="h-6 w-6" />,
+            link: "/admin/adoption-requests"
+        },
+    ]
+
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-             <StatCard 
-                title="Total Users" 
-                value={metrics?.users?.total ?? 0}
-                icon={<Users className="h-6 w-6" />}
-                isLoading={isLoading}
-                details={metrics?.users}
-             />
-             <StatCard 
-                title="Total Pets" 
-                value={metrics?.pets?.total ?? 0}
-                icon={<PawPrint className="h-6 w-6" />}
-                isLoading={isLoading}
-                detailsTitle="Pet Statistics"
-                details={metrics?.pets}
-             />
-             <StatCard 
-                title="Total Reports" 
-                value={metrics?.reports?.total ?? 0}
-                icon={<FileText className="h-6 w-6" />}
-                isLoading={isLoading}
-                detailsTitle="Report Statistics"
-                details={metrics?.reports}
-             />
-             <StatCard 
-                title="Total Adoptions" 
-                value={metrics?.adoptions?.total ?? 0}
-                icon={<Handshake className="h-6 w-6" />}
-                isLoading={isLoading}
-                detailsTitle="Adoption Statistics"
-                details={metrics?.adoptions}
-             />
+             {cardData.map(card => (
+                <StatCard 
+                    key={card.title}
+                    title={card.title} 
+                    value={card.value}
+                    icon={card.icon}
+                    isLoading={isLoading}
+                    link={card.link}
+                />
+             ))}
         </div>
     );
 }
