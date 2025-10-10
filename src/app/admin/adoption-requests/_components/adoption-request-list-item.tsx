@@ -44,13 +44,13 @@ export function AdoptionRequestListItem({ request, onUpdate, isUpdating }: Adopt
                 <Link href={`/pets/${request.pet}`}>
                     <Avatar className="h-20 w-20">
                         <AvatarImage src={petImageUrl} alt={request.pet_name} />
-                        <AvatarFallback>{request.pet_name[0]}</AvatarFallback>
+                        <AvatarFallback>{request.pet_name?.[0] ?? 'P'}</AvatarFallback>
                     </Avatar>
                 </Link>
                 <Link href={`/profile/${request.requester_id}`}>
                     <Avatar className="h-20 w-20">
                         <AvatarImage src={requesterImageUrl} alt={request.requester_name} />
-                        <AvatarFallback>{request.requester_name[0]}</AvatarFallback>
+                        <AvatarFallback>{request.requester_name?.[0] ?? 'U'}</AvatarFallback>
                     </Avatar>
                 </Link>
             </div>
