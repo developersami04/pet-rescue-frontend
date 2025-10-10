@@ -4,7 +4,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { UserMetrics } from "./admin-dashboard-stats";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, UserCheck, UserX, ShieldCheck, ShieldAlert } from "lucide-react";
+import { Users, UserCheck, UserX, ShieldCheck, ShieldAlert, UserCog } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
 
@@ -100,6 +100,12 @@ export function UserStats({ metrics, isLoading }: { metrics: UserMetrics | null,
                         label="Unverified Users"
                         value={metrics?.unverified ?? 0}
                         colorClass="text-amber-600"
+                    />
+                    <StatItem
+                        icon={UserCog}
+                        label="Staff Users"
+                        value={metrics?.staff ?? 0}
+                        colorClass="text-purple-600"
                     />
                 </div>
                  <ChartContainer config={{}} className="h-[250px] w-full">

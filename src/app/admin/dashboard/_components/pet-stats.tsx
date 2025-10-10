@@ -4,7 +4,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { PetMetrics } from "./admin-dashboard-stats";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PawPrint, CheckCircle, XCircle, Trash2, ShieldCheck, ShieldAlert } from "lucide-react";
+import { PawPrint, CheckCircle, Trash2, ShieldCheck, ShieldAlert } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
 
