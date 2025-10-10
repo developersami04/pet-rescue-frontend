@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
 
 function ProfileSkeleton() {
     return (
@@ -62,6 +63,8 @@ export function UserProfileCard() {
     const usernameInitial = user.username ? user.username.charAt(0).toUpperCase() : '';
     const avatarFallback = `${firstInitial}${lastInitial}` || usernameInitial || 'U';
 
+    const defaultImage = getRandomDefaultProfileImage(user.username);
+
 
     return (
         <Card className="overflow-hidden shadow-lg">
@@ -71,7 +74,7 @@ export function UserProfileCard() {
             <CardContent className="p-6 pt-0">
                 <div className="flex items-end -mt-16">
                      <Avatar className="h-28 w-28 rounded-full border-4 border-background bg-background shadow-md">
-                        <AvatarImage src={user.profile_image || `https://picsum.photos/seed/${user.username}/200`} alt={user.username} />
+                        <AvatarImage src={user.profile_image || defaultImage} alt={user.username} />
                         <AvatarFallback className="text-4xl">{avatarFallback}</AvatarFallback>
                     </Avatar>
                      <div className="ml-4 flex items-center gap-2">

@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils";
+import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
 
 type UserListItemProps = {
     user: RegisteredUser;
@@ -27,11 +28,12 @@ export function UserListItem({ user, onUpdate, isUpdating }: UserListItemProps) 
     const fullName = `${user.first_name} ${user.last_name}`;
     const avatarFallback = (user.first_name?.[0] ?? '') + (user.last_name?.[0] ?? '');
     const joinedDate = new Date(user.date_joined);
+    const defaultImage = getRandomDefaultProfileImage(user.username);
 
     return (
         <Card className={cn("p-4 flex items-center gap-4 transition-all duration-300 hover:shadow-md hover:border-primary/50", user.is_staff && "bg-primary/5 border-primary/50")}>
             <Avatar className="h-12 w-12">
-                <AvatarImage src={user.profile_image ?? ''} alt={fullName} />
+                <AvatarImage src={user.profile_image ?? defaultImage} alt={fullName} />
                 <AvatarFallback>{avatarFallback || user.username[0].toUpperCase()}</AvatarFallback>
             </Avatar>
             <div className="flex-grow grid grid-cols-1 sm:grid-cols-4 items-center gap-4">

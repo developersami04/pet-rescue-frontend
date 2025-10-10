@@ -9,6 +9,7 @@ import { useUserDetails } from "@/hooks/use-user-details";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ChangeProfilePictureDialog } from "./change-profile-picture-dialog";
+import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
 
 
 export function ProfileCard() {
@@ -45,6 +46,8 @@ export function ProfileCard() {
     const usernameInitial = user.username ? user.username.charAt(0).toUpperCase() : '';
     const avatarFallback = `${firstInitial}${lastInitial}` || usernameInitial || 'U';
 
+    const defaultImage = getRandomDefaultProfileImage(user.username);
+
 
     return (
         <Card>
@@ -53,7 +56,7 @@ export function ProfileCard() {
                     <ChangeProfilePictureDialog user={user} onUpdate={refreshUserDetails}>
                         <div className="group relative">
                              <Avatar className="h-24 w-24">
-                                <AvatarImage src={user.profile_image || `https://picsum.photos/seed/${user.username}/200/200`} alt={user.username} />
+                                <AvatarImage src={user.profile_image || defaultImage} alt={user.username} />
                                 <AvatarFallback>{avatarFallback}</AvatarFallback>
                             </Avatar>
                             <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">

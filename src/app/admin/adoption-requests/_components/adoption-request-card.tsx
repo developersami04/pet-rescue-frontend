@@ -13,6 +13,7 @@ import { Loader2, ThumbsDown, ThumbsUp, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { NotifyUserDialog } from "./notify-user-dialog";
+import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
 
 type RequestStatus = 'approved' | 'rejected';
 
@@ -36,6 +37,8 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
             case 'pending': default: return 'secondary';
         }
     };
+    
+    const defaultRequesterImage = getRandomDefaultProfileImage(request.requester_name);
 
     return (
         <Card className="flex flex-col h-full overflow-hidden transition-shadow duration-300 hover:shadow-xl">
@@ -68,7 +71,7 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
                 </div>
                 <div className="flex items-center gap-3">
                     <Avatar>
-                        <AvatarImage src={request.requester_profile_image || `https://picsum.photos/seed/${request.requester_name}/100/100`} alt={request.requester_name} />
+                        <AvatarImage src={request.requester_profile_image || defaultRequesterImage} alt={request.requester_name} />
                         <AvatarFallback>{request.requester_name?.[0] ?? 'U'}</AvatarFallback>
                     </Avatar>
                     <div>

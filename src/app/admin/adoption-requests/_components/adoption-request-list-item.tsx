@@ -15,6 +15,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { NotifyUserDialog } from "./notify-user-dialog";
+import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
 
 type RequestStatus = 'approved' | 'rejected';
 
@@ -28,7 +29,8 @@ type AdoptionRequestListItemProps = {
 export function AdoptionRequestListItem({ request, onUpdate, onDelete, isUpdating }: AdoptionRequestListItemProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const petImageUrl = request.pet_image || `https://picsum.photos/seed/${request.pet}/100/100`;
-    const requesterImageUrl = request.requester_profile_image || `https://picsum.photos/seed/${request.requester_name}/100/100`;
+    const defaultRequesterImage = getRandomDefaultProfileImage(request.requester_name);
+    const requesterImageUrl = request.requester_profile_image || defaultRequesterImage;
 
     const requestedDate = request.created_at ? new Date(request.created_at) : null;
     const isValidDate = requestedDate && !isNaN(requestedDate.getTime());

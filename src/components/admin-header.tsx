@@ -50,6 +50,7 @@ import { useAuth } from '@/lib/auth.tsx';
 import { Skeleton } from "./ui/skeleton";
 import { NotificationPopover } from "./notification-popover";
 import { Separator } from "./ui/separator";
+import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
 
 const navItems = {
   admin: [
@@ -177,7 +178,8 @@ export function AdminHeader() {
 
   const displayName = user?.full_name || user?.username;
   const avatarFallback = user?.full_name ? user.full_name.charAt(0) : user?.username?.charAt(0).toUpperCase();
-  const avatarSeed = user?.username;
+  const avatarSeed = user?.username || 'default';
+  const defaultImage = getRandomDefaultProfileImage(avatarSeed);
 
 
   return (
@@ -236,7 +238,7 @@ export function AdminHeader() {
                  <Skeleton className="h-9 w-9 rounded-full" />
                ) : (
                 <Avatar className="h-9 w-9 cursor-pointer">
-                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${avatarSeed}/100`} />
+                    <AvatarImage src={user?.profile_image ?? defaultImage} />
                     <AvatarFallback>{avatarFallback}</AvatarFallback>
                 </Avatar>
                )}
@@ -385,7 +387,7 @@ export function AdminHeader() {
                                 <Skeleton className="h-9 w-9 rounded-full" />
                              ) : (
                                 <Avatar className="h-9 w-9">
-                                    <AvatarImage src={user?.profile_image ?? `https://picsum.photos/seed/${avatarSeed}/100`} />
+                                    <AvatarImage src={user?.profile_image ?? defaultImage} />
                                     <AvatarFallback>{avatarFallback}</AvatarFallback>
                                 </Avatar>
                              )}

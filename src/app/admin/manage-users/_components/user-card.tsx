@@ -10,6 +10,7 @@ import { Award, BadgeCheck, Loader2, Mail, User, UserCheck, UserCog, UserX, XCir
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { getRandomDefaultProfileImage } from '@/lib/page-data/user-data';
 
 type UserCardProps = {
   user: RegisteredUser;
@@ -21,12 +22,13 @@ export function UserCard({ user, onUpdate, isUpdating }: UserCardProps) {
   const fullName = `${user.first_name} ${user.last_name}`;
   const avatarFallback = (user.first_name?.[0] ?? '') + (user.last_name?.[0] ?? '');
   const joinedDate = new Date(user.date_joined);
+  const defaultImage = getRandomDefaultProfileImage(user.username);
 
   return (
     <Card className={cn("flex flex-col h-full overflow-hidden transition-shadow duration-300 hover:shadow-xl", user.is_staff && "bg-primary/5 border-primary/50")}>
         <CardHeader className="p-4 items-center gap-4 flex-row">
             <Avatar className="h-16 w-16">
-                <AvatarImage src={user.profile_image ?? ''} alt={fullName} />
+                <AvatarImage src={user.profile_image ?? defaultImage} alt={fullName} />
                 <AvatarFallback>{avatarFallback || user.username[0].toUpperCase()}</AvatarFallback>
             </Avatar>
             <div>
