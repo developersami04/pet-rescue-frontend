@@ -8,7 +8,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 const tabInfo = [
     { value: "pending", label: "Pending Requests", icon: Clock },
-    { value: "recents", label: "Last 50 Requests", icon: History },
+    { value: "recents", label: "Recents", icon: History },
     { value: "rejected", label: "Rejected Requests", icon: ThumbsDown },
 ];
 
