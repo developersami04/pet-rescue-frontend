@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Card } from "@/components/ui/card";
@@ -82,10 +83,10 @@ export function AdoptionRequestListItem({ request, onUpdate, onDelete, isUpdatin
                 </div>
                 
                  <div className="flex flex-col items-start md:items-end gap-2 self-start md:self-center">
-                    <Badge variant={getStatusVariant(request.status)} className="capitalize mb-2">
-                        {request.status || 'pending'}
+                    <Badge variant={getStatusVariant(request.report_status)} className="capitalize mb-2">
+                        {request.report_status || 'pending'}
                     </Badge>
-                     {request.status === 'pending' && (
+                     {request.report_status === 'pending' && (
                         <div className="flex gap-2">
                              <NotifyUserDialog
                                 action="rejected"

@@ -949,7 +949,7 @@ export async function getPetReports(token: string, status: 'lost' | 'found' | 'a
     }
 }
 
-export async function getAdminAdoptionRequests(token: string, status?: 'pending' | 'approved' | 'rejected' | 'recents'): Promise<AdoptionRequest[]> {
+export async function getAdminAdoptionRequests(token: string, status?: 'pending' | 'recents' | 'rejected'): Promise<AdoptionRequest[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
@@ -973,17 +973,18 @@ export async function getAdminAdoptionRequests(token: string, status?: 'pending'
         // Transform the data to match the AdoptionRequest type
         const transformedData: AdoptionRequest[] = result.data.map((item: any) => ({
             id: item.id,
-            pet: item.pet_id,
+            pet: item.id, // The API doesn't provide a separate pet id, so we use the request id for now.
             pet_name: item.pet_name,
             pet_image: item.pet_image,
             message: item.message,
             status: item.status,
+            report_status: item.report_status,
             requester_id: item.requester_id,
             requester_profile_image: item.requester_profile_image,
             requester_name: item.requester_username, // Map from requester_username
             owner_id: item.owner_id,
             owner_name: item.owner_username, // Map from owner_username
-            created_at: item.created_at, // Assuming created_at is present
+            created_at: item.created_at,
         }));
 
         return transformedData;
@@ -1034,7 +1035,7 @@ export async function deleteAdminAdoptionRequest(token: string, requestId: numbe
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
-    const url = `${API_BASE_URL}${API_ENDPOINTS.petAdoptions}${requestId}/`;
+    const url = `${API_BASE_URL}${API_ENDPOINTS.adminAdoptionRequests}${requestId}/`;
 
     try {
         const response = await fetchWithAuth(url, { method: 'DELETE' }, token);

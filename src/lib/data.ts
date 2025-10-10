@@ -21,6 +21,7 @@ export type AdoptionRequest = {
     pet_image: string | null;
     message: string;
     status: 'pending' | 'approved' | 'rejected';
+    report_status?: 'pending' | 'approved' | 'rejected';
     requester_id: number;
     requester_profile_image: string | null;
     requester_name: string;

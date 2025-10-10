@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -61,8 +62,8 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
                         fill
                         className="object-cover"
                     />
-                    <Badge variant={getStatusVariant(request.status)} className="capitalize whitespace-nowrap absolute top-2 right-2">
-                        {request.status || 'pending'}
+                    <Badge variant={getStatusVariant(request.report_status)} className="capitalize whitespace-nowrap absolute top-2 right-2">
+                        {request.report_status || 'pending'}
                     </Badge>
                 </div>
                 <div className="flex items-center gap-3">
@@ -80,7 +81,7 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
                 <p className="text-sm text-muted-foreground italic bg-muted/50 p-3 rounded-md line-clamp-3">"{request.message}"</p>
             </CardContent>
              <CardFooter className="p-4 pt-0 mt-auto flex flex-col gap-2">
-                 {request.status === 'pending' ? (
+                 {request.report_status === 'pending' ? (
                     <div className="flex w-full gap-2">
                         <NotifyUserDialog
                             action="rejected"
