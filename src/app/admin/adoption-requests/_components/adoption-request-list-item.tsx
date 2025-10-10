@@ -26,8 +26,8 @@ export function AdoptionRequestListItem({ request, onUpdate, isUpdating }: Adopt
     const requestedDate = request.created_at ? new Date(request.created_at) : null;
     const isValidDate = requestedDate && !isNaN(requestedDate.getTime());
     
-    const getStatusVariant = (status: string) => {
-        switch (status.toLowerCase()) {
+    const getStatusVariant = (status: string | undefined | null) => {
+        switch (status?.toLowerCase()) {
             case 'approved':
                 return 'default';
             case 'rejected':
@@ -77,7 +77,7 @@ export function AdoptionRequestListItem({ request, onUpdate, isUpdating }: Adopt
                 
                  <div className="flex flex-col items-start md:items-end gap-2 self-start">
                     <Badge variant={getStatusVariant(request.status)} className="capitalize mb-2">
-                        {request.status}
+                        {request.status || 'pending'}
                     </Badge>
                      {request.status === 'pending' && (
                         <div className="flex gap-2">
