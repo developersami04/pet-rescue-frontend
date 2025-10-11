@@ -1173,7 +1173,7 @@ export async function createUserStory(token: string, petId: number, title: strin
     try {
         const response = await fetchWithAuth(url, {
             method: 'POST',
-            body: JSON.stringify({ pet: petId, title, content }),
+            body: JSON.stringify({ pet: [petId], title, content }),
         }, token);
 
         const result = await response.json();
