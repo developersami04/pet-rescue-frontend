@@ -8,11 +8,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 const tabInfo = [
     { value: "my-pets", label: "My Pets", icon: PawPrint },
+    { value: "favorites", label: "Favorites", icon: Heart },
     { value: "lost-pets", label: "Lost Pets", icon: AlertTriangle },
     { value: "found-pets", label: "Found Pets", icon: Search },
     { value: "adoptable-pets", label: "Adoptable", icon: Hand },
     { value: "my-requests", label: "My Requests", icon: FileText },
-    { value: "favorites", label: "Favorites", icon: Heart },
     { value: "adoption-requests-received", label: "Requests Received", icon: Inbox },
 ]
 
