@@ -4,7 +4,7 @@
 import { z } from "zod";
 import API_ENDPOINTS from "./endpoints";
 import { fetchWithAuth, fetchWithTimeout } from "./api";
-import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport, PetReport, AdoptionRequest, FavoritePet } from "./data";
+import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport, PetReport, AdoptionRequest, FavoritePet, UserStory } from "./data";
 // import { format } from "date-fns";
 
 // Import the backend Host Address from .env file
@@ -1129,5 +1129,36 @@ export async function removeFavoritePet(token: string, petId: number) {
         console.error('Error removing favorite:', error);
         if (error instanceof Error) throw error;
         throw new Error('An unknown error occurred.');
+    }
+}
+
+export async function getUserStories(token: string): Promise<UserStory[]> {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.userStories}`;
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'GET',
+            cache: 'no-store'
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(getErrorMessage(result, 'Failed to fetch user stories.'));
+        }
+        
+        return result.data || [];
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request for user stories timed out.');
+        }
+        console.error('Error fetching user stories:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching user stories.');
     }
 }

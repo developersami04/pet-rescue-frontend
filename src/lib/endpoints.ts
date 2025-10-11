@@ -23,6 +23,7 @@ const API_ENDPOINTS = {
   myPetData: '/api/pet-data/my-pet-data/',
   petProfile: '/api/pet-data/pet-profile/',
   favouritePets: '/api/pet-data/favourite-pets/',
+  userStories: '/api/pet-data/user-stories/',
 
 
   // Report and Adoption Endpoints

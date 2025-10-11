@@ -1,3 +1,4 @@
+
 export type MedicalHistory = {
     id: number;
     pet: number;
@@ -172,6 +173,19 @@ export type Notification = {
   pet_name: string;
   pet_image: string | null;
   pet_status: 'lost' | 'found' | 'adoptable' | 'adoption-request';
+};
+
+export type UserStory = {
+  id: number;
+  title: string;
+  user: number;
+  user_image: string | null;
+  username: string;
+  pet: number;
+  pet_image: string | null;
+  content: string;
+  created_at: string;
+  modified_at: string;
 };
 
 
@@ -433,4 +447,3 @@ export const resources: Resource[] = [
     content: 'Owning a pet can lower blood pressure, reduce stress, and even boost your immune system.'
   }
 ];
-
