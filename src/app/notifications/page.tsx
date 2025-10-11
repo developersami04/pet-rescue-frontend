@@ -70,7 +70,7 @@ export default function NotificationsPage() {
 
 
   return (
-    <div className="container mx-auto py-8 px-4 md:px-6">
+    <div className="container mx-auto py-8 px-4 md:px-6 pb-16">
       <div className="flex items-center justify-between mb-6">
         <PageHeader
           title="Notifications"
