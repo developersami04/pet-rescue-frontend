@@ -2,7 +2,6 @@
 
 'use server';
 
-import { checkUserAuth } from "./actions";
 import API_ENDPOINTS, { API_REQUEST_TIMEOUT } from "./endpoints";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -106,16 +105,23 @@ export async function refreshAccessToken(): Promise<string | null> {
     }
 
     try {
-        const { isAuthenticated, newAccessToken, error } = await checkUserAuth(refreshToken);
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.refreshToken}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh: refreshToken }),
+        });
 
-        if (!isAuthenticated || !newAccessToken) {
-            console.error('Failed to refresh access token:', error);
+        const result = await response.json();
+
+        if (!response.ok || result.status === 'Failed') {
+            console.error('Failed to refresh access token:', result.message || 'Invalid refresh token.');
             localStorage.removeItem('authToken');
             localStorage.removeItem('refreshToken');
             window.dispatchEvent(new Event('storage'));
             return null;
         }
         
+        const newAccessToken = result.access_token;
         localStorage.setItem('authToken', newAccessToken);
         window.dispatchEvent(new Event('storage'));
         
