@@ -15,7 +15,7 @@ const API_ENDPOINTS = {
 
   sendVerificationEmail: '/api/user-auth/verify-email',    // GET
   verifyEmail: '/api/user-auth/verify-email',              // POST
-  // deleteAccount: '/api/user-auth/delete-account',
+
 
   // Pet Data endpoints
   petTypes: '/api/pet-data/pet-types/',

@@ -1,12 +1,9 @@
-
-
 'use server';
 
 import { z } from "zod";
 import API_ENDPOINTS from "./endpoints";
 import { fetchWithAuth, fetchWithTimeout } from "./api";
 import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport, PetReport, AdoptionRequest, FavoritePet, UserStory } from "./data";
-// import { format } from "date-fns";
 
 // Import the backend Host Address from .env file
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
