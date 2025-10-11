@@ -14,10 +14,9 @@ type NotificationItemProps = {
   notification: Notification;
   onMarkAsRead: (id: number) => Promise<void>;
   onDelete: (id: number) => Promise<void>;
-  isLast?: boolean;
 };
 
-export function NotificationItem({ notification, onMarkAsRead, onDelete, isLast = false }: NotificationItemProps) {
+export function NotificationItem({ notification, onMarkAsRead, onDelete }: NotificationItemProps) {
     const router = useRouter();
     const { toast } = useToast();
 
@@ -52,15 +51,14 @@ export function NotificationItem({ notification, onMarkAsRead, onDelete, isLast 
     <div
       onClick={handleNavigate}
       className={cn(
-        'group relative flex cursor-pointer items-start gap-3 p-4 transition-colors hover:bg-muted/50',
-        !isLast && 'border-b',
+        'group relative flex cursor-pointer items-start gap-3 p-4 transition-colors hover:bg-muted/50 border rounded-lg',
         !notification.is_read && 'bg-primary/5'
       )}
     >
       {!notification.is_read && (
-        <span className="absolute left-1 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-primary" />
+        <span className="absolute left-1.5 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-primary" />
       )}
-      <Avatar className="h-10 w-10">
+      <Avatar className="h-10 w-10 ml-3">
         <AvatarImage src={notification.pet_image || `https://picsum.photos/seed/${notification.pet_id}/100`} />
         <AvatarFallback>{notification.pet_name.charAt(0)}</AvatarFallback>
       </Avatar>

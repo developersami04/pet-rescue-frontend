@@ -1,7 +1,6 @@
 
 'use client';
 
-import { ScrollArea } from './ui/scroll-area';
 import { NotificationItem } from './notification-item';
 import type { Notification } from '@/lib/data';
 import { Bell } from 'lucide-react';
@@ -15,7 +14,7 @@ type NotificationListProps = {
 export function NotificationList({ notifications, onMarkAsRead, onDelete }: NotificationListProps) {
   if (notifications.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground">
+      <div className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground border-2 border-dashed rounded-lg h-64">
         <Bell className="h-10 w-10 mb-4" />
         <p className="font-medium">No new notifications</p>
         <p className="text-sm">You're all caught up!</p>
@@ -24,18 +23,15 @@ export function NotificationList({ notifications, onMarkAsRead, onDelete }: Noti
   }
 
   return (
-    <ScrollArea className="h-auto max-h-[60vh] md:max-h-96">
-      <div className="flex flex-col">
-        {notifications.map((notification, index) => (
-          <NotificationItem
-            key={notification.id}
-            notification={notification}
-            onMarkAsRead={onMarkAsRead}
-            onDelete={onDelete}
-            isLast={index === notifications.length - 1}
-          />
-        ))}
-      </div>
-    </ScrollArea>
+    <div className="flex flex-col gap-2">
+      {notifications.map((notification) => (
+        <NotificationItem
+          key={notification.id}
+          notification={notification}
+          onMarkAsRead={onMarkAsRead}
+          onDelete={onDelete}
+        />
+      ))}
+    </div>
   );
 }
