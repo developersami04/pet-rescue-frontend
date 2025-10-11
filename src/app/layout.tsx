@@ -13,6 +13,7 @@ import { NotificationProvider } from '@/hooks/use-notifications';
 import { BottomNavBar } from '@/components/bottom-nav-bar';
 import { usePathname } from 'next/navigation';
 import { AdminHeader } from '@/components/admin-header';
+import { Footer } from './landing/_components/footer';
 
 function AppLayoutClient({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -33,6 +34,7 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
   }
 
   const isAuthPage = isAuthenticated && pathname !== '/';
+  const showLandingFooter = !isAuthenticated && pathname === '/';
 
   let HeaderComponent = <UnauthenticatedHeader />;
   if (isAuthPage) {
@@ -50,7 +52,8 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
       {HeaderComponent}
-      <main className="flex-1 pb-20">{children}</main>
+      <main className={cn("flex-1", isAuthenticated && "pb-20")}>{children}</main>
+      {showLandingFooter && <Footer />}
       {isAuthenticated && <BottomNavBar />}
     </div>
   )
