@@ -9,7 +9,7 @@ import { User } from './data';
 import { useRouter } from 'next/navigation';
 import { refreshAccessToken } from './api';
 
-const TOKEN_REFRESH_INTERVAL = 20 * 60 * 1000; // 20 minutes
+const TOKEN_REFRESH_INTERVAL = 10 * 1000; // 20 minutes
 
 type AuthContextType = {
   isAuthenticated: boolean;
