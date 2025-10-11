@@ -3,15 +3,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutGrid, PawPrint, Plus, User, Shapes, Bell } from 'lucide-react';
+import { LayoutGrid, PawPrint, Plus, User, Bell, FilePenLine, Film } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { useNotifications } from '@/hooks/use-notifications';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { useState } from 'react';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
   { href: '/pets', icon: PawPrint, label: 'Pets' },
-  { href: '/submit-request', icon: Plus, label: 'Request', isCenter: true },
+  { href: '/submit-request', icon: Plus, label: 'Add', isCenter: true },
   { href: '/notifications', icon: Bell, label: 'Updates' },
   { href: '/profile', icon: User, label: 'Profile' },
 ];
@@ -19,6 +21,7 @@ const navItems = [
 export function BottomNavBar() {
   const pathname = usePathname();
   const { unreadCount } = useNotifications();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t z-50">
@@ -30,11 +33,27 @@ export function BottomNavBar() {
           if (item.isCenter) {
             return (
               <div key={item.href} className="-mt-6">
-                <Button asChild size="icon" className="h-14 w-14 rounded-full shadow-lg">
-                  <Link href={item.href} aria-label={item.label}>
-                    <Icon className="h-7 w-7" />
-                  </Link>
-                </Button>
+                 <Popover open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                  <PopoverTrigger asChild>
+                     <Button size="icon" className="h-14 w-14 rounded-full shadow-lg" aria-label="Add new item">
+                       <Icon className="h-7 w-7" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent side="top" align="center" className="w-auto p-2 rounded-full mb-2">
+                     <div className="flex items-center gap-2">
+                         <Button asChild variant="secondary" className="rounded-full h-12 w-28 flex-col gap-1" onClick={() => setIsMenuOpen(false)}>
+                           <Link href="/submit-request">
+                            <FilePenLine className="h-5 w-5"/>
+                             <span className="text-xs">Pet Request</span>
+                           </Link>
+                         </Button>
+                         <Button variant="secondary" className="rounded-full h-12 w-28 flex-col gap-1" onClick={() => setIsMenuOpen(false)}>
+                            <Film className="h-5 w-5"/>
+                            <span className="text-xs">Post Story</span>
+                         </Button>
+                     </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             );
           }
