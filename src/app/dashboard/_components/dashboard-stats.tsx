@@ -2,9 +2,9 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PawPrint, AlertTriangle, Search, FileText, Hand, Inbox } from "lucide-react";
+import { PawPrint, AlertTriangle, Search, FileText, Hand, Inbox, Heart } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getMyPets, getMyPetData } from "@/lib/actions";
+import { getMyPets, getMyPetData, getFavoritePets } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -50,6 +50,7 @@ export function DashboardStats() {
         adoptablePetsCount: null as number | null,
         myRequestsCount: null as number | null,
         adoptionRequestsReceivedCount: null as number | null,
+        favoritePetsCount: null as number | null,
     });
     const [isLoading, setIsLoading] = useState(true);
 
@@ -68,6 +69,7 @@ export function DashboardStats() {
                 adoptablePetsCount: () => getMyPetData(token, 'adopt'),
                 myRequestsCount: () => getMyPetData(token, 'my-adoption-requests'),
                 adoptionRequestsReceivedCount: () => getMyPetData(token, 'adoption-requests-received'),
+                favoritePetsCount: () => getFavoritePets(token),
             };
 
             const newCounts = { ...counts };
@@ -121,11 +123,11 @@ export function DashboardStats() {
         { title: "Found Pets", value: counts.foundPetsCount, icon: <Search className="h-6 w-6" /> },
         { title: "Adoptable Pets", value: counts.adoptablePetsCount, icon: <Hand className="h-6 w-6" /> },
         { title: "My Requests", value: counts.myRequestsCount, icon: <FileText className="h-6 w-6" /> },
-        { title: "Requests Received", value: counts.adoptionRequestsReceivedCount, icon: <Inbox className="h-6 w-6" /> },
+        { title: "Favorites", value: counts.favoritePetsCount, icon: <Heart className="h-6 w-6" /> },
     ];
 
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             {stats.map(stat => (
                  <StatCard 
                     key={stat.title}

@@ -13,12 +13,13 @@ import { FoundPetsTab } from "./tabs/found-pets-tab";
 import { AdoptablePetsTab } from "./tabs/adoptable-pets-tab";
 import { MyRequestsTab } from "./tabs/my-requests-tab";
 import { AdoptionRequestsReceivedTab } from "./tabs/adoption-requests-received-tab";
-import { Pet, PetReport, MyAdoptionRequest, AdoptionRequest } from "@/lib/data";
-import { getMyPets, getMyPetData } from "@/lib/actions";
+import { Pet, PetReport, MyAdoptionRequest, AdoptionRequest, FavoritePet } from "@/lib/data";
+import { getMyPets, getMyPetData, getFavoritePets } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { FavoritesTab } from "./tabs/favorites-tab";
 
 
 type TabData = {
@@ -28,6 +29,7 @@ type TabData = {
     'adoptable-pets': PetReport[] | null;
     'my-requests': MyAdoptionRequest[] | null;
     'adoption-requests-received': AdoptionRequest[] | null;
+    'favorites': FavoritePet[] | null;
 };
 
 type LoadingStates = {
@@ -66,6 +68,7 @@ export function DashboardClient() {
       'adoptable-pets': null,
       'my-requests': null,
       'adoption-requests-received': null,
+      'favorites': null,
   });
 
   const [loading, setLoading] = useState<LoadingStates>({
@@ -75,6 +78,7 @@ export function DashboardClient() {
       'adoptable-pets': false,
       'my-requests': false,
       'adoption-requests-received': false,
+      'favorites': false,
   });
 
   const [errors, setErrors] = useState<ErrorStates>({
@@ -84,6 +88,7 @@ export function DashboardClient() {
       'adoptable-pets': null,
       'my-requests': null,
       'adoption-requests-received': null,
+      'favorites': null,
   });
 
   const fetchTabData = useCallback(async (tab: string) => {
@@ -106,6 +111,8 @@ export function DashboardClient() {
         let result;
         if (tab === 'my-pets') {
             result = await getMyPets(token);
+        } else if (tab === 'favorites') {
+            result = await getFavoritePets(token);
         } else if (tabApiMap[tab]) {
             result = await getMyPetData(token, tabApiMap[tab]);
         }
@@ -157,6 +164,8 @@ export function DashboardClient() {
               return <MyRequestsTab requests={data as MyAdoptionRequest[] ?? []} onUpdate={() => handleDataRefresh(tab)} />;
           case 'adoption-requests-received':
               return <AdoptionRequestsReceivedTab requests={data as AdoptionRequest[] ?? []} onUpdate={() => handleDataRefresh(tab)} />;
+          case 'favorites':
+              return <FavoritesTab favoritePets={data as FavoritePet[] ?? []} onUpdate={() => handleDataRefresh(tab)} />;
           default:
               return null;
       }
@@ -177,6 +186,7 @@ export function DashboardClient() {
                 <TabsContent value="adoptable-pets">{renderTabContent('adoptable-pets')}</TabsContent>
                 <TabsContent value="my-requests">{renderTabContent('my-requests')}</TabsContent>
                 <TabsContent value="adoption-requests-received">{renderTabContent('adoption-requests-received')}</TabsContent>
+                <TabsContent value="favorites">{renderTabContent('favorites')}</TabsContent>
             </div>
         </Tabs>
     </>
