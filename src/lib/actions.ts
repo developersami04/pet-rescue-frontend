@@ -283,7 +283,7 @@ export async function deactivateAccount(token: string, password: string) {
 
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.deleteAccount}`, {
-            method: 'POST',
+            method: 'DELETE',
             body: JSON.stringify({ password }),
         }, token);
         

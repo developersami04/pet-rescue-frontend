@@ -2,7 +2,7 @@
 'use client';
 
 import Link from "next/link";
-import { Sun, Moon, Laptop } from "lucide-react";
+import { Sun, Moon, Laptop, ChevronDown, Info, Phone, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import {
@@ -12,6 +12,52 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Logo } from "@/components/logo";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+
+const moreNavItems = [
+    { href: "/about-us", icon: Info, label: "About Us" },
+    { href: "/contact-us", icon: Phone, label: "Contact Us" },
+    { href: "/resources", icon: BookOpen, label: "Resources" },
+];
+
+function DropdownNav({
+  label,
+  items,
+}: {
+  label: string;
+  items: { href: string; icon: React.ElementType; label: string }[];
+}) {
+  const pathname = usePathname();
+  const isActive = items.some((item) => pathname.startsWith(item.href));
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className={cn(
+              "text-sm font-medium",
+               isActive ? "text-primary" : "text-foreground"
+            )}
+        >
+          {label}
+          <ChevronDown className="ml-1 h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        {items.map((item) => (
+          <DropdownMenuItem key={item.href} asChild>
+            <Link href={item.href} className="flex items-center gap-2">
+              <item.icon className="h-4 w-4" />
+              <span>{item.label}</span>
+            </Link>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 
 export function UnauthenticatedHeader() {
@@ -23,6 +69,7 @@ export function UnauthenticatedHeader() {
           <Logo />
         </Link>
         <nav className="flex items-center gap-2">
+            <DropdownNav label="More" items={moreNavItems} />
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon">
