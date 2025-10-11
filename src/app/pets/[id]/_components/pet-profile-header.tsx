@@ -5,13 +5,14 @@ import { Pet } from "@/lib/data";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Hand, MessageSquareQuote, Expand, Heart, Loader2 } from "lucide-react";
+import { Hand, MessageSquareQuote, Expand, Heart, Loader2, Film } from "lucide-react";
 import { AdoptionRequestDialog } from "./adoption-request-dialog";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { getPlaceholderImage } from "@/lib/placeholder-images";
 import { addFavoritePet, removeFavoritePet } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { PostStoryDialog } from "./post-story-dialog";
 
 
 type PetProfileHeaderProps = {
@@ -145,6 +146,14 @@ export function PetProfileHeader({ pet, isFavorited, onUpdate }: PetProfileHeade
                                 Request to Adopt
                             </Button>
                         </AdoptionRequestDialog>
+                    )}
+                    {pet.is_verified && (
+                        <PostStoryDialog petId={pet.id} petName={pet.name}>
+                             <Button>
+                                <Film className="mr-2 h-4 w-4" />
+                                Post Story
+                            </Button>
+                        </PostStoryDialog>
                     )}
                     <Button variant="secondary">
                         <MessageSquareQuote className="mr-2 h-4 w-4" />

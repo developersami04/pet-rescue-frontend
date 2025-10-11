@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { z } from "zod";
@@ -1160,5 +1161,29 @@ export async function getUserStories(token: string): Promise<UserStory[]> {
            throw new Error(error.message);
         }
         throw new Error('An unknown error occurred while fetching user stories.');
+    }
+}
+
+export async function createUserStory(token: string, petId: number, title: string, content: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.userStories}`;
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'POST',
+            body: JSON.stringify({ pet: petId, title, content }),
+        }, token);
+
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(getErrorMessage(result, 'Failed to create user story.'));
+        }
+        return result;
+    } catch (error) {
+        console.error('Error creating user story:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred while creating the user story.');
     }
 }
