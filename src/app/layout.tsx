@@ -28,7 +28,7 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
                     <Skeleton className="h-9 w-9 rounded-full" />
                 </div>
             </header>
-            <main className="flex-1 pt-16">{children}</main>
+            <main className="flex-1">{children}</main>
         </div>
       )
   }

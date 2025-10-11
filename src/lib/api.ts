@@ -108,7 +108,7 @@ export async function refreshAccessToken(): Promise<string | null> {
         const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.refreshToken}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ refresh: refreshToken }),
+            body: JSON.stringify({ refresh_token: refreshToken }),
         });
 
         const result = await response.json();
