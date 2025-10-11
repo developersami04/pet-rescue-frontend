@@ -25,6 +25,7 @@ import {
   Users,
   Bell,
   Hand,
+  Film,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -218,6 +219,12 @@ export function AdminHeader() {
                     Pet Request
                 </Link>
             </Button>
+             <Button asChild size="sm">
+                <Link href="/post-story">
+                    <Film className="mr-2 h-4 w-4" />
+                    Post Story
+                </Link>
+            </Button>
           </nav>
         </div>
 
@@ -325,12 +332,20 @@ export function AdminHeader() {
               </SheetHeader>
               <div className="flex h-full flex-col">
                 <div className="flex-1 overflow-y-auto p-4">
-                  <Button asChild className="w-full mb-4">
-                    <Link href="/submit-request" onClick={closeMobileMenu}>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Pet Request Form
-                    </Link>
-                  </Button>
+                  <div className="flex flex-col gap-2 mb-4">
+                    <Button asChild className="w-full">
+                      <Link href="/submit-request" onClick={closeMobileMenu}>
+                          <PlusCircle className="mr-2 h-4 w-4" />
+                          Pet Request Form
+                      </Link>
+                    </Button>
+                    <Button asChild className="w-full">
+                      <Link href="/post-story" onClick={closeMobileMenu}>
+                          <Film className="mr-2 h-4 w-4" />
+                          Post a Story
+                      </Link>
+                    </Button>
+                  </div>
                   <div className="relative mb-4">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
