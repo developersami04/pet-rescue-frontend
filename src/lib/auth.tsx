@@ -17,7 +17,7 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const TOKEN_REFRESH_INTERVAL = 10 * 1000; // 20 minutes
+const TOKEN_REFRESH_INTERVAL = 20 * 60 * 1000; // 20 minutes
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
