@@ -1,27 +1,27 @@
 
-export const featuredPetsPng = [
+export const heroImages = [
     {
-        id: 'pet1',
-        src: 'https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png',
-        alt: 'A happy golden retriever',
+        id: 'hero1',
+        src: 'https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=1924&auto=format&fit=crop',
+        alt: 'A happy golden retriever smiling',
         hint: 'golden retriever'
     },
     {
-        id: 'pet2',
-        src: 'https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png',
-        alt: 'A playful siamese cat',
-        hint: 'siamese cat'
+        id: 'hero2',
+        src: 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?q=80&w=2080&auto=format&fit=crop',
+        alt: 'A playful cat with sunglasses',
+        hint: 'cat sunglasses'
     },
     {
-        id: 'pet3',
-        src: 'https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png',
-        alt: 'A cute beagle puppy',
-        hint: 'beagle puppy'
+        id: 'hero3',
+        src: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1974&auto=format&fit=crop',
+        alt: 'A person holding a small puppy',
+        hint: 'person puppy'
     },
     {
-        id: 'pet4',
-        src: 'https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png',
-        alt: 'A fluffy maine coon cat',
-        hint: 'maine coon'
+        id: 'hero4',
+        src: 'https://images.unsplash.com/photo-1529429617124-95b109e86bb8?q=80&w=1935&auto=format&fit=crop',
+        alt: 'A black and white cat looking at the camera',
+        hint: 'black white cat'
     }
 ];
