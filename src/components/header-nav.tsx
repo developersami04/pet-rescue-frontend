@@ -55,9 +55,11 @@ import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
 const navItems = {
   main: [
       { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
+    ],
+  pets: [
       { href: "/pets", icon: PawPrint, label: "All Pets" },
       { href: "/pet-categories", icon: Shapes, label: "Categories" },
-    ],
+  ],
   reports: [
     { href: "/reports", icon: FileText, label: "All Reports" },
   ],
@@ -184,6 +186,7 @@ export function HeaderNav() {
                   </Link>
               </Button>
             )})}
+            <DropdownNav label="Pets" items={navItems.pets} />
             <DropdownNav label="Reports" items={navItems.reports} />
             <DropdownNav label="More" items={navItems.more} />
              <Button asChild size="sm" className="ml-4">
@@ -322,6 +325,12 @@ export function HeaderNav() {
                                     {item.label}
                                 </NavLink>
                             ))}
+                            {navItems.pets.map((item) => (
+                                <NavLink key={item.href} href={item.href} className="text-base" closeMenu={closeMobileMenu}>
+                                    <item.icon className="h-5 w-5" />
+                                    {item.label}
+                                </NavLink>
+                            ))}
                         </div>
                     </div>
                     
@@ -393,3 +402,5 @@ export function HeaderNav() {
     </header>
   );
 }
+
+    
