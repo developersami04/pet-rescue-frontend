@@ -47,9 +47,11 @@ export function BottomNavBar() {
                              <span className="text-xs">Pet Request</span>
                            </Link>
                          </Button>
-                         <Button variant="secondary" className="rounded-full h-12 w-28 flex-col gap-1" onClick={() => setIsMenuOpen(false)}>
-                            <Film className="h-5 w-5"/>
-                            <span className="text-xs">Post Story</span>
+                         <Button asChild variant="secondary" className="rounded-full h-12 w-28 flex-col gap-1" onClick={() => setIsMenuOpen(false)}>
+                            <Link href="/post-story">
+                                <Film className="h-5 w-5"/>
+                                <span className="text-xs">Post Story</span>
+                            </Link>
                          </Button>
                      </div>
                   </PopoverContent>
