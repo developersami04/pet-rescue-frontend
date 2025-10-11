@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { motion } from 'framer-motion';
+import { featuredPetsPng } from '@/lib/page-data/home';
+import { useEffect, useState } from 'react';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -28,12 +30,17 @@ const itemVariants = {
   },
 };
 
-
 export function HeroSection() {
   const heroImage = placeholderImages.placeholderImages.find((p) => p.id === 'hero-background');
+  const [randomPet, setRandomPet] = useState<{ id: string, src: string, alt: string, hint: string } | null>(null);
+
+  useEffect(() => {
+    const selectedPet = featuredPetsPng[Math.floor(Math.random() * featuredPetsPng.length)];
+    setRandomPet(selectedPet);
+  }, []);
 
   return (
-    <section className="relative h-[80vh] min-h-[500px] w-full flex items-center justify-center">
+    <section className="relative h-[80vh] min-h-[500px] w-full flex items-center justify-center overflow-hidden">
       {heroImage && (
         <Image
           src={heroImage.imageUrl}
@@ -81,6 +88,39 @@ export function HeroSection() {
           </Button>
         </motion.div>
       </motion.div>
+
+      {randomPet && (
+        <motion.div
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 z-20"
+            initial={{ y: 200, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 50, damping: 15, delay: 0.8 }}
+        >
+            <motion.div
+                animate={{
+                    filter: [
+                        'drop-shadow(0 0 10px hsl(var(--primary)/0.5))',
+                        'drop-shadow(0 0 25px hsl(var(--primary)/0.7))',
+                        'drop-shadow(0 0 10px hsl(var(--primary)/0.5))',
+                    ]
+                }}
+                transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: 'easeInOut'
+                }}
+            >
+                <Image
+                    src={randomPet.src}
+                    alt={randomPet.alt}
+                    width={320}
+                    height={320}
+                    className="object-contain w-full h-full"
+                    data-ai-hint={randomPet.hint}
+                />
+            </motion.div>
+        </motion.div>
+      )}
     </section>
   );
 }
