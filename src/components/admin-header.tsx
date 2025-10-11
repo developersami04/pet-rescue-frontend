@@ -65,6 +65,7 @@ const navItems = {
   ],
   general: [
     { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
+    { href: "/stories", icon: Film, label: "Stories" },
     { href: "/pets", icon: PawPrint, label: "All Pets" },
     { href: "/pet-categories", icon: Shapes, label: "Categories" },
     { href: "/reports", icon: ShieldCheck, label: "All Reports" },

@@ -56,6 +56,7 @@ import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
 const navItems = {
   main: [
       { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
+      { href: "/stories", icon: Film, label: "Stories" },
     ],
   pets: [
       { href: "/pets", icon: PawPrint, label: "All Pets" },
