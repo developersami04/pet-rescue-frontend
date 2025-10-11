@@ -211,7 +211,7 @@ export function AdminHeader() {
                   </Link>
               </Button>
             )})}
-            <DropdownNav label="Records" items={navItems.records} />
+            <DropdownNav label="Manage" items={navItems.records} />
             <DropdownNav label="General" items={navItems.general} />
             <DropdownNav label="More" items={navItems.more} />
              <Button asChild size="sm" className="ml-4">
