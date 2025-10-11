@@ -101,6 +101,7 @@ export async function refreshAccessToken(): Promise<string | null> {
 
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken || !API_BASE_URL) {
+        console.log("No refresh token found for auto-refresh.");
         return null;
     }
 
@@ -113,7 +114,7 @@ export async function refreshAccessToken(): Promise<string | null> {
 
         const result = await response.json();
 
-        if (!response.ok || result.status === 'Failed') {
+        if (!response.ok) {
             console.error('Failed to refresh access token:', result.message || 'Invalid refresh token.');
             localStorage.removeItem('authToken');
             localStorage.removeItem('refreshToken');
@@ -122,16 +123,16 @@ export async function refreshAccessToken(): Promise<string | null> {
         }
         
         const newAccessToken = result.access_token;
-        localStorage.setItem('authToken', newAccessToken);
-        window.dispatchEvent(new Event('storage'));
+        if (newAccessToken) {
+            localStorage.setItem('authToken', newAccessToken);
+            console.log('Token refreshed automatically.');
+            window.dispatchEvent(new Event('storage'));
+        }
         
         return newAccessToken;
     } catch (error) {
-        console.error('Error during token refresh:', error);
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('refreshToken');
-        window.dispatchEvent(new Event('storage'));
+        console.error('Error during token auto-refresh:', error);
+        // Don't logout on network error, just fail silently and retry later
         return null;
     }
 }
-
