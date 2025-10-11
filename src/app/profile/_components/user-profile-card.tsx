@@ -2,7 +2,7 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Award, BadgeCheck, Mail, MapPin, Phone, User as UserIcon } from "lucide-react";
 import { useUserDetails } from "@/hooks/use-user-details";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,6 +10,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
+import { DeactivateAccountDialog } from "@/app/account-settings/_components/deactivate-account-dialog";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 function ProfileSkeleton() {
     return (
@@ -120,8 +123,13 @@ export function UserProfileCard() {
                     <p className="font-medium text-foreground">{user.address}</p>
                     <p className="text-muted-foreground">{user.city}, {user.state} - {user.pin_code}</p>
                 </div>
-
             </CardContent>
+            <CardFooter className="p-4 bg-muted/30 border-t flex justify-end gap-2">
+                <Button variant="outline" asChild>
+                    <Link href="/account-settings">Edit Profile</Link>
+                </Button>
+                <DeactivateAccountDialog />
+            </CardFooter>
         </Card>
     );
 }

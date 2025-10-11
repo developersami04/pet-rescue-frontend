@@ -29,6 +29,7 @@ import { ChangePasswordDialog } from './change-password-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { VerifyEmailDialog } from './verify-email-dialog';
+import { DeactivateAccountDialog } from './deactivate-account-dialog';
 
 const profileFormSchema = z.object({
     first_name: z.string().min(1, 'First name is required.'),
@@ -376,12 +377,15 @@ export function ProfileForm() {
                             />
                         </div>
                     </CardContent>
-                    <CardFooter className="flex justify-between">
+                    <CardFooter className="flex flex-wrap justify-between gap-2">
                         <Button type="submit" disabled={isSubmitting}>
                             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Save Changes
                         </Button>
-                         <ChangePasswordDialog />
+                         <div className="flex gap-2">
+                            <ChangePasswordDialog />
+                            <DeactivateAccountDialog />
+                         </div>
                     </CardFooter>
                 </form>
             </Form>

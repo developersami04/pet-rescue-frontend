@@ -1,3 +1,4 @@
+
 'use server';
 
 import { z } from "zod";
@@ -272,6 +273,35 @@ export async function verifyOtp(token: string, otp: string) {
            throw new Error(error.message);
         }
         throw new Error('An unknown error occurred during OTP verification.');
+    }
+}
+
+export async function deactivateAccount(token: string, password: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.deleteAccount}`, {
+            method: 'POST',
+            body: JSON.stringify({ password }),
+        }, token);
+        
+        if (!response.ok) {
+            const result = await response.json();
+            throw new Error(getErrorMessage(result, 'Failed to deactivate account.'));
+        }
+
+        return { message: 'Account deactivated successfully.' };
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Account deactivation request timed out.');
+        }
+        console.error('Error deactivating account:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while deactivating the account.');
     }
 }
 

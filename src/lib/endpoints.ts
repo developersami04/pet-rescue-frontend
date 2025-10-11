@@ -1,3 +1,4 @@
+
 const API_ENDPOINTS = {
   // User Auth and Account endpoints
   userCheck: '/api/home/user-check',
@@ -9,7 +10,7 @@ const API_ENDPOINTS = {
   userDetails: '/api/user-auth/user-details',
   updateUserDetails: '/api/user-auth/update-account',
   changePassword: '/api/user-auth/change-password',
-  // forgetPassword: '/api/user-auth/forget-password',
+  deleteAccount: '/api/user-auth/delete-account',
 
   sendVerificationEmail: '/api/user-auth/verify-email',    // GET
   verifyEmail: '/api/user-auth/verify-email',              // POST
