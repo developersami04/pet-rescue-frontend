@@ -129,27 +129,34 @@ export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
 }
 
 
-export async function checkUserAuth(token: string) {
+export async function checkUserAuth(refreshToken: string) {
     if (!API_BASE_URL) {
-        return { isAuthenticated: false, user: null, error: 'API not configured.' };
+        return { isAuthenticated: false, user: null, error: 'API not configured.', newAccessToken: null };
     }
     
     try {
         const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.userCheck}`, {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${token}` },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh_token: refreshToken })
         });
 
         const result = await response.json();
         
-        if (!response.ok) {
-            return { isAuthenticated: false, user: null, error: getErrorMessage(result, 'Token validation failed.') };
+        if (!response.ok || result.status === 'Failed') {
+            return { isAuthenticated: false, user: null, error: getErrorMessage(result, 'Token validation failed.'), newAccessToken: null };
         }
 
-        return { isAuthenticated: true, user: result.user, message: result.message, error: null };
+        return { 
+            isAuthenticated: true, 
+            user: result.data, 
+            message: result.message, 
+            error: null,
+            newAccessToken: result.access_token 
+        };
     } catch (error: any) {
         console.error('Error checking auth:', error);
-        return { isAuthenticated: false, user: null, error: error.message || 'An unknown error occurred.' };
+        return { isAuthenticated: false, user: null, error: error.message || 'An unknown error occurred.', newAccessToken: null };
     }
 }
 

@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, useContext, createContext, useCallback } from 'react';
@@ -35,8 +36,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const verifyAuth = useCallback(async (isLoginEvent = false) => {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
       setIsAuthenticated(false);
       setUser(null);
       setIsLoading(false);
@@ -46,10 +47,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!isLoginEvent) setIsLoading(true);
     
     try {
-        const { isAuthenticated: authStatus, user: userData, error, message } = await checkUserAuth(token);
-        if (authStatus && userData) {
+        const { isAuthenticated: authStatus, user: userData, error, message, newAccessToken } = await checkUserAuth(refreshToken);
+        if (authStatus && userData && newAccessToken) {
             setIsAuthenticated(true);
             setUser(userData);
+            localStorage.setItem('authToken', newAccessToken);
             if (isLoginEvent) {
                 toast({ title: "Login Successful", description: message });
             }
