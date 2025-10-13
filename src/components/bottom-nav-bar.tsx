@@ -9,6 +9,7 @@ import { Button } from './ui/button';
 import { useNotifications } from '@/hooks/use-notifications';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { useState } from 'react';
+import { useAuth } from '@/lib/auth.tsx';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
@@ -20,6 +21,7 @@ const navItems = [
 
 export function BottomNavBar() {
   const pathname = usePathname();
+  const { user } = useAuth();
   const { unreadCount } = useNotifications();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -31,33 +33,38 @@ export function BottomNavBar() {
           const Icon = item.icon;
 
           if (item.isCenter) {
-            return (
-              <div key={item.href} className="-mt-6">
-                 <Popover open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-                  <PopoverTrigger asChild>
-                     <Button size="icon" className="h-14 w-14 rounded-full shadow-lg" aria-label="Add new item">
-                       <Icon className="h-7 w-7" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent side="top" align="center" className="w-auto p-2 rounded-full mb-2">
-                     <div className="flex items-center gap-2">
-                         <Button asChild variant="secondary" className="rounded-full h-12 w-28 flex-col gap-1" onClick={() => setIsMenuOpen(false)}>
-                           <Link href="/submit-request">
-                            <FilePenLine className="h-5 w-5"/>
-                             <span className="text-xs">Pet Request</span>
-                           </Link>
-                         </Button>
-                         <Button asChild variant="secondary" className="rounded-full h-12 w-28 flex-col gap-1" onClick={() => setIsMenuOpen(false)}>
-                            <Link href="/post-story">
-                                <Film className="h-5 w-5"/>
-                                <span className="text-xs">Post Story</span>
-                            </Link>
-                         </Button>
-                     </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            );
+            // Conditionally render the center button for non-admin users
+            if (user && !user.is_admin) {
+              return (
+                <div key={item.href} className="-mt-6">
+                   <Popover open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                    <PopoverTrigger asChild>
+                       <Button size="icon" className="h-14 w-14 rounded-full shadow-lg" aria-label="Add new item">
+                         <Icon className="h-7 w-7" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent side="top" align="center" className="w-auto p-2 rounded-full mb-2">
+                       <div className="flex items-center gap-2">
+                           <Button asChild variant="secondary" className="rounded-full h-12 w-28 flex-col gap-1" onClick={() => setIsMenuOpen(false)}>
+                             <Link href="/submit-request">
+                              <FilePenLine className="h-5 w-5"/>
+                               <span className="text-xs">Pet Request</span>
+                             </Link>
+                           </Button>
+                           <Button asChild variant="secondary" className="rounded-full h-12 w-28 flex-col gap-1" onClick={() => setIsMenuOpen(false)}>
+                              <Link href="/post-story">
+                                  <Film className="h-5 w-5"/>
+                                  <span className="text-xs">Post Story</span>
+                              </Link>
+                           </Button>
+                       </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              );
+            }
+            // For admin users, render a placeholder to maintain layout if needed, or just null
+            return <div key="center-placeholder" className="w-14" />;
           }
 
           return (
