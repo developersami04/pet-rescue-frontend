@@ -193,7 +193,7 @@ export function AdminHeader() {
           <Link href="/" className="flex items-center gap-2 mr-4">
             <Logo className="h-7 w-7 text-primary" />
             <span className="text-lg font-semibold tracking-wider font-headline">
-              Petrescue
+              Pet Rescue
             </span>
           </Link>
           {/* Desktop Navigation */}
@@ -215,18 +215,6 @@ export function AdminHeader() {
             )})}
             <DropdownNav label="Manage" items={navItems.records} />
             <DropdownNav label="Overview" items={navItems.general} />
-             <Button asChild size="sm" className="ml-4">
-                <Link href="/submit-request">
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Pet Request
-                </Link>
-            </Button>
-             <Button asChild size="sm">
-                <Link href="/post-story">
-                    <Film className="mr-2 h-4 w-4" />
-                    Post Story
-                </Link>
-            </Button>
           </nav>
         </div>
 
@@ -329,26 +317,12 @@ export function AdminHeader() {
                 >
                   <Logo className="h-7 w-7 text-primary" />
                   <span className="text-lg font-semibold tracking-wider font-headline">
-                    Petrescue
+                    Pet Rescue
                   </span>
                 </Link>
               </SheetHeader>
               <div className="flex h-full flex-col">
                 <div className="flex-1 overflow-y-auto p-4">
-                  <div className="flex flex-col gap-2 mb-4">
-                    <Button asChild className="w-full">
-                      <Link href="/submit-request" onClick={closeMobileMenu}>
-                          <PlusCircle className="mr-2 h-4 w-4" />
-                          Pet Request Form
-                      </Link>
-                    </Button>
-                    <Button asChild className="w-full">
-                      <Link href="/post-story" onClick={closeMobileMenu}>
-                          <Film className="mr-2 h-4 w-4" />
-                          Post a Story
-                      </Link>
-                    </Button>
-                  </div>
                   <form onSubmit={handleSearch} className="relative mb-4">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input

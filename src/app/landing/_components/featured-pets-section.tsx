@@ -43,7 +43,7 @@ const featuredPets = [
     name: 'Rocky',
     breed: 'Boxer',
     imageHint: 'boxer dog',
-    imageUrl: 'https://images.unsplash.com/photo-1516371294522-b6c22889c200?q=80&w=870&auto=format&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1504826260979-242151ee45b7?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687ttps://images.unsplash.com/photo-1516371294522-b6c22889c200?q=80&w=870&auto=format&fit=crop'
   },
   {
     id: 'pet-smokey',
