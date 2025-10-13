@@ -20,17 +20,10 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   
   if (isLoading) {
-      return (
-        <div className="flex min-h-screen flex-col">
-            <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="container flex h-16 items-center justify-between px-4 md:px-6">
-                    <Skeleton className="h-8 w-24" />
-                    <Skeleton className="h-9 w-9 rounded-full" />
-                </div>
-            </header>
-            <main className="flex-1">{children}</main>
-        </div>
-      )
+    // While the initial authentication is loading, we render a minimal layout.
+    // This prevents other components from rendering and making API calls
+    // before we know if the user is logged in.
+    return <main className="flex-1">{children}</main>;
   }
 
   const isAuthPage = isAuthenticated && pathname !== '/';
