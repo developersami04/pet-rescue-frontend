@@ -58,11 +58,11 @@ export function HeroSection() {
         src={backgroundImage.src}
         alt={backgroundImage.alt}
         fill
-        className="object-cover blur-sm brightness-75"
+        className="object-cover brightness-75"
         data-ai-hint={backgroundImage.hint}
         priority
       />
-      <div className="absolute inset-0 bg-background/50" />
+      <div className="absolute inset-0 bg-black/50" />
       <div className="container relative z-10 mx-auto px-4 md:px-6">
         <div className="grid items-center gap-8 md:grid-cols-2">
           <motion.div
