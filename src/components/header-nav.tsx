@@ -155,6 +155,16 @@ export function HeaderNav() {
     router.push('/');
   };
 
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const query = formData.get('search') as string;
+    if(query) {
+      router.push(`/search?q=${encodeURIComponent(query)}`);
+      if(mobileMenuOpen) closeMobileMenu();
+    }
+  }
+
   const displayName = user?.full_name || user?.username;
   const avatarFallback = user?.full_name ? user.full_name.charAt(0) : user?.username?.charAt(0).toUpperCase();
   const avatarSeed = user?.username || 'default';
@@ -207,13 +217,14 @@ export function HeaderNav() {
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="relative hidden md:block">
+          <form onSubmit={handleSearch} className="relative hidden md:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
+              name="search"
               placeholder="Search..."
               className="w-48 rounded-lg bg-background pl-10"
             />
-          </div>
+          </form>
           
           <NotificationPopover />
 
@@ -324,13 +335,14 @@ export function HeaderNav() {
                       </Link>
                     </Button>
                   </div>
-                  <div className="relative mb-4">
+                  <form onSubmit={handleSearch} className="relative mb-4">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
+                      name="search"
                       placeholder="Search..."
                       className="w-full rounded-lg bg-muted pl-10"
                     />
-                  </div>
+                  </form>
                   <nav className="flex flex-col gap-4">
                      <div>
                         <h4 className="px-3 py-2 text-xs font-semibold uppercase text-muted-foreground/80 tracking-wider">Main</h4>
@@ -418,5 +430,3 @@ export function HeaderNav() {
     </header>
   );
 }
-
-    
