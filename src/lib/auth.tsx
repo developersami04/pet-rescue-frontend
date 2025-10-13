@@ -18,7 +18,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // 15 minutes in milliseconds
-const REFRESH_INTERVAL = 15 * 60 * 1000;
+const REFRESH_INTERVAL = 10 * 1000;
 
 async function silentTokenRefresh() {
     const refreshToken = localStorage.getItem('refreshToken');
