@@ -8,7 +8,7 @@ export type SocialLinks = {
 export type TeamMemberData = {
   name: string;
   role: string;
-  imageUrl: string;
+  imageUrl?: string;
   socials: SocialLinks;
 };
 
@@ -49,7 +49,6 @@ export const mentorsData: TeamMemberData[] = [
   { 
     name: "Mentor One", 
     role: "Project Mentor", 
-    imageUrl: "https://picsum.photos/seed/mentor1/200/200", 
     socials: { 
       linkedin: "#", 
       twitter: "#" 
@@ -58,7 +57,6 @@ export const mentorsData: TeamMemberData[] = [
   { 
     name: "Mentor Two", 
     role: "Technical Mentor", 
-    imageUrl: "https://picsum.photos/seed/mentor2/200/200", 
     socials: { 
       github: "#", 
       linkedin: "#" 
@@ -78,10 +76,10 @@ export const leadData: TeamMemberData = {
 };
 
 export const membersData: TeamMemberData[] = [
-  { name: "Member One", role: "Frontend Developer", imageUrl: "https://picsum.photos/seed/member1/200/200", socials: { github: "#", linkedin: "#", twitter: "#" } },
-  { name: "Member Two", role: "Backend Developer", imageUrl: "https://picsum.photos/seed/member2/200/200", socials: { github: "#", linkedin: "#" } },
-  { name: "Member Three", role: "UI/UX Designer", imageUrl: "https://picsum.photos/seed/member3/200/200", socials: { linkedin: "#", twitter: "#" } },
-  { name: "Member Four", role: "AI Specialist", imageUrl: "https://picsum.photos/seed/member4/200/200", socials: { github: "#", linkedin: "#" } },
-  { name: "Member Five", role: "QA Tester", imageUrl: "https://picsum.photos/seed/member5/200/200", socials: { linkedin: "#" } },
-  { name: "Member Six", role: "DevOps Engineer", imageUrl: "https://picsum.photos/seed/member6/200/200", socials: { github: "#", linkedin: "#", twitter: "#" } },
+  { name: "Member One", role: "Frontend Developer", socials: { github: "#", linkedin: "#", twitter: "#" } },
+  { name: "Member Two", role: "Backend Developer", socials: { github: "#", linkedin: "#" } },
+  { name: "Member Three", role: "UI/UX Designer", socials: { linkedin: "#", twitter: "#" } },
+  { name: "Member Four", role: "AI Specialist", socials: { github: "#", linkedin: "#" } },
+  { name: "Member Five", role: "QA Tester", socials: { linkedin: "#" } },
+  { name: "Member Six", role: "DevOps Engineer", socials: { github: "#", linkedin: "#", twitter: "#" } },
 ];

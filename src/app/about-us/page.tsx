@@ -1,4 +1,5 @@
 
+
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { aboutUsStory, mentorsData, leadData, membersData, type TeamMemberData, techStackData } from "@/lib/page-data/about-us";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
 
 function SocialLink({ href, children }: { href: string, children: React.ReactNode }) {
   return (
@@ -20,10 +22,11 @@ function SocialLink({ href, children }: { href: string, children: React.ReactNod
 }
 
 function TeamMember({ member }: { member: TeamMemberData }) {
+    const avatarImage = member.imageUrl ?? getRandomDefaultProfileImage(member.name);
   return (
     <div className="flex flex-col items-center text-center gap-4 p-4 border rounded-lg hover:shadow-lg transition-shadow">
       <Avatar className="h-24 w-24">
-        <AvatarImage src={member.imageUrl} alt={member.name} />
+        <AvatarImage src={avatarImage} alt={member.name} />
         <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
       </Avatar>
       <div>
