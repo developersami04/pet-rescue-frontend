@@ -312,6 +312,56 @@ export async function deactivateAccount(token: string, password: string) {
     }
 }
 
+export async function requestPasswordReset(email: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.requestPasswordReset}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+        });
+        
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(getErrorMessage(result, 'Failed to request password reset.'));
+        }
+
+        return result;
+    } catch (error) {
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred.');
+    }
+}
+
+export async function confirmPasswordReset(otp: string, password: string, confirm_password: string) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.confirmPasswordReset}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ otp, password, confirm_password }),
+        });
+        
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(getErrorMessage(result, 'Failed to confirm password reset.'));
+        }
+
+        return result;
+    } catch (error) {
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred.');
+    }
+}
+
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------

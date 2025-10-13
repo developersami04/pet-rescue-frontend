@@ -7,6 +7,8 @@ const API_ENDPOINTS = {
   register: '/api/user-auth/register',
   login: '/api/user-auth/login',
   refreshToken: '/api/home/refresh-token',
+  requestPasswordReset: '/api/user-auth/password-reset-request/',
+  confirmPasswordReset: '/api/user-auth/password-reset-confirm/',
 
   userDetails: '/api/user-auth/user-details',
   updateUserDetails: '/api/user-auth/update-account',

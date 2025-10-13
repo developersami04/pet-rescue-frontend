@@ -103,6 +103,12 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
+             <div className="flex items-center justify-between">
+                <div />
+                <Link href="/forgot-password" passHref className="text-sm text-primary hover:underline">
+                    Forgot password?
+                </Link>
+             </div>
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Login
