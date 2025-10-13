@@ -38,13 +38,27 @@ const featuredPets = [
     imageHint: 'ginger cat',
     imageUrl: 'https://images.unsplash.com/photo-1561948955-570b270e7c36?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=601'
   },
+  {
+    id: 'pet-rocky',
+    name: 'Rocky',
+    breed: 'Boxer',
+    imageHint: 'boxer dog',
+    imageUrl: 'https://images.unsplash.com/photo-1516371294522-b6c22889c200?q=80&w=870&auto=format&fit=crop'
+  },
+  {
+    id: 'pet-smokey',
+    name: 'Smokey',
+    breed: 'Russian Blue',
+    imageHint: 'grey cat',
+    imageUrl: 'https://images.unsplash.com/photo-1511044568932-338cba0ad803?q=80&w=870&auto=format&fit=crop'
+  }
 ];
 
 const containerVariants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.15,
+      staggerChildren: 0.1,
     },
   },
 };
@@ -74,8 +88,42 @@ export function FeaturedPetsSection() {
                 </Link>
             </Button>
         </div>
+        <div className="md:hidden">
+          <motion.div
+            className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+          >
+            {featuredPets.map((pet) => (
+              <motion.div key={pet.id} variants={cardVariants} className="flex-shrink-0 w-3/4 sm:w-2/5">
+                <Link href="/pets" className="group h-full">
+                    <Card className="overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <div className="relative aspect-square w-full">
+                        <Image
+                        src={pet.imageUrl}
+                        alt={pet.name}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        data-ai-hint={pet.imageHint}
+                        sizes="(max-width: 768px) 75vw, 25vw"
+                        />
+                    </div>
+                    <CardHeader>
+                        <CardTitle>{pet.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground">{pet.breed}</p>
+                    </CardContent>
+                    </Card>
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"

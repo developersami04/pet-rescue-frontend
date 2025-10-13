@@ -1,4 +1,6 @@
 
+'use client';
+
 import { Button } from "@/components/ui/button";
 import { getHomeUserStories } from "@/lib/actions";
 import { HomeUserStory } from "@/lib/data";
@@ -6,16 +8,37 @@ import { ArrowRight, BookHeart } from "lucide-react";
 import Link from "next/link";
 import { HomeStoryCard } from "./home-story-card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
-export async function HomeStoriesSection() {
-    let stories: HomeUserStory[] = [];
-    let error: string | null = null;
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 
-    try {
-        stories = await getHomeUserStories();
-    } catch (e: any) {
-        error = e.message || "Failed to load stories.";
-    }
+
+export function HomeStoriesSection() {
+    const [stories, setStories] = useState<HomeUserStory[]>([]);
+    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchStories() {
+            try {
+                const fetchedStories = await getHomeUserStories();
+                setStories(fetchedStories);
+            } catch (e: any) {
+                setError(e.message || "Failed to load stories.");
+            } finally {
+                setIsLoading(false);
+            }
+        }
+        fetchStories();
+    }, []);
 
     return (
         <section className="py-12 md:py-24">
@@ -29,6 +52,8 @@ export async function HomeStoriesSection() {
                     </Button>
                 </div>
 
+                {isLoading && <p>Loading stories...</p>}
+
                 {error && (
                     <Alert variant="destructive">
                         <AlertTitle>Error Loading Stories</AlertTitle>
@@ -36,7 +61,7 @@ export async function HomeStoriesSection() {
                     </Alert>
                 )}
 
-                {!error && stories.length === 0 && (
+                {!isLoading && !error && stories.length === 0 && (
                      <div className="flex flex-col items-center justify-center text-center p-8 h-64 border-2 border-dashed rounded-lg text-muted-foreground">
                         <BookHeart className="h-12 w-12 mb-4" />
                         <h3 className="text-xl font-semibold">No Stories to Share Yet</h3>
@@ -44,12 +69,18 @@ export async function HomeStoriesSection() {
                     </div>
                 )}
 
-                {!error && stories.length > 0 && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {!isLoading && !error && stories.length > 0 && (
+                    <motion.div 
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                        variants={containerVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, amount: 0.2 }}
+                    >
                         {stories.map((story) => (
                             <HomeStoryCard key={story.id} story={story} />
                         ))}
-                    </div>
+                    </motion.div>
                 )}
             </div>
         </section>
