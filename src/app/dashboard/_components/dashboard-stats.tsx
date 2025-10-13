@@ -9,9 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Pet, PetReport, MyAdoptionRequest, AdoptionRequest } from "@/lib/data";
+import { cn } from "@/lib/utils";
 
 
-function StatCard({ title, value, icon, isLoading }: { title: string, value: number | null, icon: React.ReactNode, isLoading: boolean }) {
+function StatCard({ title, value, icon, isLoading, colorClass }: { title: string, value: number | null, icon: React.ReactNode, isLoading: boolean, colorClass?: string }) {
     if (isLoading || value === null) {
         return (
             <Card>
@@ -30,7 +31,7 @@ function StatCard({ title, value, icon, isLoading }: { title: string, value: num
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{title}</CardTitle>
-                <div className="text-muted-foreground">{icon}</div>
+                <div className={cn("text-muted-foreground", colorClass)}>{icon}</div>
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">{value}</div>
@@ -118,12 +119,12 @@ export function DashboardStats() {
 
 
     const stats = [
-        { title: "My Pets", value: counts.myPetsCount, icon: <PawPrint className="h-6 w-6" /> },
-        { title: "Favorites", value: counts.favoritePetsCount, icon: <Heart className="h-6 w-6" /> },
-        { title: "Lost Pets", value: counts.lostPetsCount, icon: <AlertTriangle className="h-6 w-6" /> },
-        { title: "Found Pets", value: counts.foundPetsCount, icon: <Search className="h-6 w-6" /> },
-        { title: "Adoptable Pets", value: counts.adoptablePetsCount, icon: <Hand className="h-6 w-6" /> },
-        { title: "My Requests", value: counts.myRequestsCount, icon: <FileText className="h-6 w-6" /> },
+        { title: "My Pets", value: counts.myPetsCount, icon: <PawPrint className="h-6 w-6" />, color: "text-sky-500" },
+        { title: "Favorites", value: counts.favoritePetsCount, icon: <Heart className="h-6 w-6" />, color: "text-red-500" },
+        { title: "Lost Pets", value: counts.lostPetsCount, icon: <AlertTriangle className="h-6 w-6" />, color: "text-orange-500" },
+        { title: "Found Pets", value: counts.foundPetsCount, icon: <Search className="h-6 w-6" />, color: "text-blue-500" },
+        { title: "Adoptable Pets", value: counts.adoptablePetsCount, icon: <Hand className="h-6 w-6" />, color: "text-green-500" },
+        { title: "My Requests", value: counts.myRequestsCount, icon: <FileText className="h-6 w-6" />, color: "text-purple-500" },
     ];
 
     return (
@@ -135,6 +136,7 @@ export function DashboardStats() {
                     value={stat.value}
                     icon={stat.icon}
                     isLoading={isLoading && stat.value === null}
+                    colorClass={stat.color}
                  />
             ))}
         </div>
