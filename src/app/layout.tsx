@@ -52,7 +52,7 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
       {HeaderComponent}
-      <main className={cn("flex-1 pt-16", isAuthenticated && "pb-20")}>{children}</main>
+      <main className={cn("flex-1", isAuthenticated && "pb-20")}>{children}</main>
       {showLandingFooter && <Footer />}
       {isAuthenticated && <BottomNavBar />}
     </div>

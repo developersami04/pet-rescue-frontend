@@ -1,36 +1,113 @@
 
 'use client';
 
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { heroImages } from '@/lib/page-data/home';
-import { useEffect, useState } from 'react';
+import Link from 'next/link';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: 'spring',
+    },
+  },
+};
+
+const features = [
+  {
+    title: 'Find',
+    imageUrl:
+      'https://images.unsplash.com/photo-1552053831-71594a27632d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxkb2d8ZW58MHx8fHwxNzU5MDM2ODMyfDA&ixlib=rb-4.1.0&q=80&w=1080',
+    imageHint: 'dog happy',
+  },
+  {
+    title: 'Rescue',
+    imageUrl:
+      'https://images.unsplash.com/photo-1596492784533-2c70a2b5d81e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjYXR8ZW58MHx8fHwxNzU5MDUxOTQwfDA&ixlib=rb-4.1.0&q=80&w=1080',
+    imageHint: 'cat curious',
+    className: 'md:mt-16',
+  },
+  {
+    title: 'Adopt',
+    imageUrl:
+      'https://images.unsplash.com/photo-1543466835-00a7907e9de1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwZXRzfGVufDB8fHx8fDE3NTg5NzM4NjZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    imageHint: 'puppy cute',
+  },
+];
 
 export function HeroSection() {
-  const [randomPet, setRandomPet] = useState<{ id: string, src: string, alt: string, hint: string } | null>(null);
-
-  useEffect(() => {
-    const selectedPet = heroImages[Math.floor(Math.random() * heroImages.length)];
-    setRandomPet(selectedPet);
-  }, []);
-
   return (
-    <section className="relative h-[80vh] min-h-[500px] w-full flex items-center justify-center overflow-hidden">
-      {randomPet && (
-        <Image
-          src={randomPet.src}
-          alt={randomPet.alt}
-          fill
-          className="object-cover"
-          data-ai-hint={randomPet.hint}
-          priority
-        />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
-      <div className="relative z-10 text-center text-white p-4">
-        <h1 className="text-4xl md:text-6xl font-bold font-headline drop-shadow-lg">Find Your Forever Friend</h1>
-        <p className="mt-4 text-lg md:text-xl max-w-2xl mx-auto drop-shadow-md">
-          Connecting loving homes with pets in need. Start your adoption journey today.
-        </p>
+    <section className="relative w-full overflow-hidden bg-background py-16 md:py-24">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="grid items-center gap-8 md:grid-cols-2">
+          <motion.div
+            className="space-y-6 text-center md:text-left"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-4xl font-bold tracking-tight font-headline md:text-5xl lg:text-6xl">
+              Welcome to{' '}
+              <span className="relative inline-block">
+                Petopia
+                <span className="absolute bottom-0 left-0 h-1 w-full bg-primary/80" />
+              </span>
+            </h1>
+            <p className="max-w-xl text-lg text-muted-foreground mx-auto md:mx-0">
+              Your one-stop destination for finding a new furry friend. Browse
+              pets, report lost animals, and connect with a community of pet
+              lovers.
+            </p>
+            <Button size="lg" asChild>
+              <Link href="/pets">Explore Pets</Link>
+            </Button>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-3 gap-4"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {features.map((feature) => (
+              <motion.div
+                key={feature.title}
+                className="relative space-y-2 text-center"
+                variants={itemVariants}
+              >
+                <div
+                  className={
+                    'relative mx-auto aspect-square w-full max-w-48 overflow-hidden rounded-full border-4 border-secondary shadow-lg'
+                  }
+                >
+                  <Image
+                    src={feature.imageUrl}
+                    alt={feature.title}
+                    fill
+                    className="object-cover"
+                    data-ai-hint={feature.imageHint}
+                  />
+                </div>
+                <h3 className="text-xl font-semibold font-headline">
+                  {feature.title}
+                </h3>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
     </section>
   );
