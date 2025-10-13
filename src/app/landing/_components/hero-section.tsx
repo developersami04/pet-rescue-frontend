@@ -32,19 +32,19 @@ const features = [
   {
     title: 'Find',
     imageUrl:
-      'https://images.unsplash.com/photo-1552053831-71594a27632d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxkb2d8ZW58MHx8fHwxNzU5MDM2ODMyfDA&ixlib=rb-4.1.0&q=80&w=1080',
-    imageHint: 'dog happy',
+      'https://res.cloudinary.com/dev-supriya/image/upload/v1760342184/sample-cat-2_fjoohh.jpg',
+    imageHint: 'cat happy',
   },
   {
     title: 'Rescue',
     imageUrl:
-      'https://images.unsplash.com/photo-1596492784533-2c70a2b5d81e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjYXR8ZW58MHx8fHwxNzU5MDUxOTQwfDA&ixlib=rb-4.1.0&q=80&w=1080',
+      'https://images.unsplash.com/photo-1552053831-71594a27632d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=662',
     imageHint: 'cat curious',
   },
   {
     title: 'Adopt',
     imageUrl:
-      'https://images.unsplash.com/photo-1543466835-00a7907e9de1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwZXRzfGVufDB8fHx8fDE3NTg5NzM4NjZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
+      'https://res.cloudinary.com/dev-supriya/image/upload/v1760342183/sample-cat-1_bfmsg0.jpg',
     imageHint: 'puppy cute',
   },
 ];
