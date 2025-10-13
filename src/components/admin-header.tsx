@@ -7,7 +7,6 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutGrid,
   PawPrint,
-  BookOpen,
   Search,
   Menu,
   ChevronDown,
@@ -18,15 +17,12 @@ import {
   Sun,
   Moon,
   Laptop,
-  Info,
-  Phone,
   Shapes,
   ShieldCheck,
   Users,
   Bell,
   Hand,
   Film,
-  Image,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -71,12 +67,6 @@ const navItems = {
     { href: "/pet-categories", icon: Shapes, label: "Categories" },
     { href: "/reports", icon: ShieldCheck, label: "All Reports" },
   ],
-  more: [
-      { href: "/about-us", icon: Info, label: "About Us" },
-      { href: "/contact-us", icon: Phone, label: "Contact Us" },
-      { href: "/resources", icon: BookOpen, label: "Resources" },
-      { href: "/explore-pet-images", icon: Image, label: "Explore Pet Images" },
-  ]
 };
 
 function NavLink({
@@ -225,7 +215,6 @@ export function AdminHeader() {
             )})}
             <DropdownNav label="Manage" items={navItems.records} />
             <DropdownNav label="Overview" items={navItems.general} />
-            <DropdownNav label="More" items={navItems.more} />
              <Button asChild size="sm" className="ml-4">
                 <Link href="/submit-request">
                     <PlusCircle className="mr-2 h-4 w-4" />
@@ -387,20 +376,6 @@ export function AdminHeader() {
                         <h4 className="px-3 py-2 text-xs font-semibold uppercase text-muted-foreground/80 tracking-wider">Overview</h4>
                         <div className="flex flex-col gap-1">
                             {navItems.general.map((item) => (
-                                <NavLink key={item.href} href={item.href} className="text-base" closeMenu={closeMobileMenu}>
-                                    <item.icon className="h-5 w-5" />
-                                    {item.label}
-                                </NavLink>
-                            ))}
-                        </div>
-                    </div>
-                    
-                    <Separator />
-
-                     <div>
-                        <h4 className="px-3 py-2 text-xs font-semibold uppercase text-muted-foreground/80 tracking-wider">More</h4>
-                        <div className="flex flex-col gap-1">
-                            {navItems.more.map((item) => (
                                 <NavLink key={item.href} href={item.href} className="text-base" closeMenu={closeMobileMenu}>
                                     <item.icon className="h-5 w-5" />
                                     {item.label}

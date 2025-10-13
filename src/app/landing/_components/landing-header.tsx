@@ -2,7 +2,7 @@
 'use client';
 
 import Link from "next/link";
-import { Sun, Moon, Laptop, Info, Phone, BookOpen } from "lucide-react";
+import { Sun, Moon, Laptop } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import {
@@ -12,19 +12,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Logo } from "@/components/logo";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 
 const navItems = [
-    { href: "/about-us", label: "About Us" },
-    { href: "/contact-us", label: "Contact Us" },
-    { href: "/resources", label: "Resources" },
+    // All items removed as per request
 ];
 
 
 export function LandingHeader() {
     const { setTheme } = useTheme();
-    const pathname = usePathname();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
@@ -34,7 +29,7 @@ export function LandingHeader() {
         </Link>
         <nav className="flex items-center gap-1">
             {navItems.map((item) => (
-                <Button key={item.href} variant="ghost" asChild className={cn(pathname === item.href && "text-primary")}>
+                <Button key={item.href} variant="ghost" asChild>
                     <Link href={item.href}>{item.label}</Link>
                 </Button>
             ))}

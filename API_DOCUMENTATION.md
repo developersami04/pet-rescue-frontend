@@ -1,6 +1,6 @@
-# Petrescue API Documentation
+# Pet Rescue API Documentation
 
-This document provides a comprehensive overview of the Petrescue API endpoints, including request/response schemas and usage examples.
+This document provides a comprehensive overview of the Pet Rescue API endpoints, including request/response schemas and usage examples.
 
 **Base URL**: `https://pet-rescue-and-management.onrender.com`
 

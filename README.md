@@ -1,4 +1,4 @@
-# Petrescue Project Structure
+# Pet Rescue Project Structure
 
 This document provides an overview of the project's file structure. The application is built with Next.js using the App Router, TypeScript, and Tailwind CSS.
 

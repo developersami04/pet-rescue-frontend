@@ -87,7 +87,7 @@ export function CreateAccountForm() {
     <Card className="w-full max-w-lg mx-auto">
       <CardHeader className="text-center">
         <CardTitle>Create an Account</CardTitle>
-        <CardDescription>Join Petrescue to find your new best friend.</CardDescription>
+        <CardDescription>Join Pet Rescue to find your new best friend.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>

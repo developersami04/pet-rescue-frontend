@@ -8,14 +8,6 @@ import Link from "next/link";
 
 const footerNav = [
     {
-        title: "About",
-        links: [
-            { label: "About Us", href: "/about-us" },
-            { label: "Contact", href: "/contact-us" },
-            { label: "Resources", href: "/resources" },
-        ]
-    },
-    {
         title: "Pets",
         links: [
             { label: "Find a Pet", href: "/pets" },

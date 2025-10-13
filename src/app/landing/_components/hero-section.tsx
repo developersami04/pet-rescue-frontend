@@ -74,7 +74,7 @@ export function HeroSection() {
             <h1 className="text-4xl font-bold tracking-tight text-white font-headline md:text-5xl lg:text-6xl">
               Welcome to{' '}
               <span className="relative inline-block">
-                Petrescue
+                Pet Rescue
                 <span className="absolute bottom-0 left-0 h-1 w-full bg-primary/80" />
               </span>
             </h1>
