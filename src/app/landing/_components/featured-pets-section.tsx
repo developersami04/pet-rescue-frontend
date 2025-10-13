@@ -3,18 +3,41 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getPlaceholderImage } from '@/lib/placeholder-images';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-// Dummy data for featured pets
+// Dummy data for featured pets with Unsplash images
 const featuredPets = [
-  { id: 'pet-buddy', name: 'Buddy', breed: 'Golden Retriever', imageHint: 'golden retriever' },
-  { id: 'pet-luna', name: 'Luna', breed: 'Siamese Cat', imageHint: 'siamese cat' },
-  { id: 'pet-daisy', name: 'Daisy', breed: 'Terrier Mix', imageHint: 'terrier dog' },
-  { id: 'pet-milo', name: 'Milo', breed: 'Ginger Tabby', imageHint: 'ginger cat' },
+  { 
+    id: 'pet-buddy', 
+    name: 'Buddy', 
+    breed: 'Golden Retriever', 
+    imageHint: 'golden retriever',
+    imageUrl: 'https://images.unsplash.com/photo-1611250282006-4484dd3f214b?q=80&w=870&auto=format&fit=crop'
+  },
+  { 
+    id: 'pet-luna', 
+    name: 'Luna', 
+    breed: 'Siamese Cat', 
+    imageHint: 'siamese cat',
+    imageUrl: 'https://images.unsplash.com/photo-1543852786-1cf6624b9987?q=80&w=870&auto=format&fit=crop'
+  },
+  { 
+    id: 'pet-daisy', 
+    name: 'Daisy', 
+    breed: 'Terrier Mix', 
+    imageHint: 'terrier dog',
+    imageUrl: 'https://images.unsplash.com/photo-1588722838248-a72a153229c8?q=80&w=870&auto=format&fit=crop'
+  },
+  { 
+    id: 'pet-milo', 
+    name: 'Milo', 
+    breed: 'Ginger Tabby', 
+    imageHint: 'ginger cat',
+    imageUrl: 'https://images.unsplash.com/photo-1596724033623-64b5f4d36b94?q=80&w=870&auto=format&fit=crop'
+  },
 ];
 
 const containerVariants = {
@@ -59,15 +82,13 @@ export function FeaturedPetsSection() {
           viewport={{ once: true, amount: 0.2 }}
         >
           {featuredPets.map((pet) => {
-            const placeholder = getPlaceholderImage(pet.breed);
-            const imageUrl = `https://picsum.photos/seed/${pet.id}/400/400`; // Using picsum for variety
             return (
               <motion.div key={pet.id} variants={cardVariants}>
                 <Link href="/pets" className="group">
                     <Card className="overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                     <div className="relative aspect-square w-full">
                         <Image
-                        src={imageUrl}
+                        src={pet.imageUrl}
                         alt={pet.name}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
