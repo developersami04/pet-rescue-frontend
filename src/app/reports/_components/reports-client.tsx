@@ -11,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { ReportTabs } from './report-tabs';
 import { ReportPetList } from './report-pet-list';
+import { LoginPromptDialog } from '@/components/login-prompt-dialog';
 
 function ReportsSkeleton() {
     return (
@@ -35,6 +36,7 @@ function ReportsClientContent() {
     const [reports, setReports] = useState<PetReport[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabFromUrl = searchParams.get('tab');
@@ -56,7 +58,7 @@ function ReportsClientContent() {
             setIsLoading(true);
             const token = localStorage.getItem('authToken');
             if (!token) {
-                setError('You must be logged in to view reports.');
+                setShowLoginPrompt(true);
                 setIsLoading(false);
                 return;
             }
@@ -86,6 +88,10 @@ function ReportsClientContent() {
         setActiveTab(tab);
         router.push(`/reports?tab=${tab}`, { scroll: false });
     };
+    
+    if (showLoginPrompt) {
+        return <LoginPromptDialog isOpen={showLoginPrompt} />;
+    }
 
     if (isLoading && reports.length === 0) {
         return <ReportsSkeleton />;

@@ -11,6 +11,7 @@ import { PageHeader } from '@/components/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { StoryCard } from './_components/story-card';
+import { LoginPromptDialog } from '@/components/login-prompt-dialog';
 
 function StoriesPageSkeleton() {
     return (
@@ -43,13 +44,14 @@ function StoriesClient() {
     const [stories, setStories] = useState<UserStory[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false);
     const { toast } = useToast();
     const router = useRouter();
 
     const fetchStories = useCallback(async () => {
         const token = localStorage.getItem('authToken');
         if (!token) {
-            setError('You must be logged in to view stories.');
+            setShowLoginPrompt(true);
             setIsLoading(false);
             return;
         }
@@ -73,6 +75,11 @@ function StoriesClient() {
     useEffect(() => {
         fetchStories();
     }, [fetchStories]);
+    
+    if (showLoginPrompt) {
+        return <LoginPromptDialog isOpen={showLoginPrompt} />;
+    }
+
 
     if (isLoading) {
         return <StoriesPageSkeleton />;

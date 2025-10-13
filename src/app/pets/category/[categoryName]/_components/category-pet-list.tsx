@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Search, LayoutGrid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PetListItem } from '@/app/pets/_components/pet-list-item';
+import { LoginPromptDialog } from '@/components/login-prompt-dialog';
 
 function PetListSkeleton({ view }: { view: 'grid' | 'list' }) {
     const CardSkeleton = () => (
@@ -51,6 +52,7 @@ export function CategoryPetList({ categoryName }: CategoryPetListProps) {
   const [pets, setPets] = useState<Pet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -62,7 +64,7 @@ export function CategoryPetList({ categoryName }: CategoryPetListProps) {
     setError(null);
     const token = localStorage.getItem('authToken');
     if (!token) {
-      setError('You must be logged in to view pets.');
+      setShowLoginPrompt(true);
       setIsLoading(false);
       return;
     }
@@ -109,6 +111,9 @@ export function CategoryPetList({ categoryName }: CategoryPetListProps) {
     });
   }, [search, pets]);
   
+    if (showLoginPrompt) {
+        return <LoginPromptDialog isOpen={showLoginPrompt} />;
+    }
 
   return (
     <>
