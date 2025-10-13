@@ -100,7 +100,7 @@ export default function AboutUsPage() {
                 <CardTitle>Meet the Team</CardTitle>
             </CardHeader>
             <CardContent>
-                <Accordion type="single" collapsible defaultValue="mentors" className="w-full">
+                <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="mentors">
                         <AccordionTrigger className="text-lg font-semibold">Our Mentors</AccordionTrigger>
                         <AccordionContent className="pt-4">
