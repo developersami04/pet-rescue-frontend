@@ -13,7 +13,7 @@ import {
     ChartLegend,
     ChartLegendContent,
 } from "@/components/ui/chart";
-import { Pie, PieChart, Cell } from "recharts";
+import { Pie, PieChart, Cell, Tooltip, TooltipProps } from "recharts";
 import { useMemo } from "react";
 import { Separator } from "@/components/ui/separator";
 
@@ -39,6 +39,20 @@ type ChartData = {
 };
 
 
+const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
+    if (active && payload && payload.length) {
+      const data = payload[0];
+      return (
+        <div className="p-2 bg-background border rounded-lg shadow-sm">
+          <p className="label font-bold">{`${data.name}`}</p>
+          <p style={{ color: data.color }}>{`Value: ${data.value}`}</p>
+        </div>
+      );
+    }
+    return null;
+};
+
+
 function PieChartComponent({ data, title }: { data: ChartData[], title: string }) {
     const chartConfig = useMemo(() => {
       const config: ChartConfig = {};
@@ -54,10 +68,10 @@ function PieChartComponent({ data, title }: { data: ChartData[], title: string }
     return (
         <div className="flex flex-col items-center">
             <h4 className="text-center font-semibold mb-2">{title}</h4>
-            <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[150px] w-full">
+            <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[200px] w-full">
                 <PieChart>
-                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                    <Pie data={data} dataKey="value" nameKey="name" innerRadius={30} strokeWidth={5}>
+                    <Tooltip content={<CustomTooltip />} />
+                    <Pie data={data} dataKey="value" nameKey="name" innerRadius={40} strokeWidth={5}>
                         {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.fill} />
                         ))}
@@ -135,7 +149,7 @@ export function ReportStats({ metrics, isLoading }: { metrics: ReportMetrics | n
                         <StatItem icon={X} label="Rejected" value={metrics?.rejected ?? 0} colorClass="text-red-600" />
                     </div>
                 </div>
-                 <div className="space-y-4">
+                 <div className="space-y-4 flex flex-col justify-around">
                     <PieChartComponent data={reportTypeData} title="Report Types" />
                     <PieChartComponent data={reportStatusData} title="Report Statuses" />
                 </div>

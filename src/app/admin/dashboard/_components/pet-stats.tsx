@@ -102,7 +102,7 @@ export function PetStats({ metrics, isLoading }: { metrics: PetMetrics | null, i
                     />
                 </div>
                  <ChartContainer config={{}} className="h-[250px] w-full">
-                    <BarChart data={chartData} layout="vertical" margin={{ left: 10, right: 30 }}>
+                    <BarChart data={chartData} layout="vertical" margin={{ left: 10, right: 30, top: 10, bottom: 10 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis type="number" />
                         <YAxis type="category" dataKey="name" width={80} tick={{ fontSize: 12 }} />
