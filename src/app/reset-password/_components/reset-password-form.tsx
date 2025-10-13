@@ -47,9 +47,17 @@ export function ResetPasswordForm() {
   });
 
   async function onSubmit(values: z.infer<typeof resetPasswordSchema>) {
+    if (!email) {
+        toast({
+            variant: 'destructive',
+            title: 'Missing Email',
+            description: 'The email address is missing from the request. Please try the "Forgot Password" process again.',
+        });
+        return;
+    }
     setIsSubmitting(true);
     try {
-      await confirmPasswordReset(values.otp, values.password, values.confirm_password);
+      await confirmPasswordReset(values.otp, values.password, values.confirm_password, email);
       toast({
         title: 'Password Reset Successful',
         description: 'You can now log in with your new password.',

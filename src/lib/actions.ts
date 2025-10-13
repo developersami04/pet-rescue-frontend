@@ -337,7 +337,7 @@ export async function requestPasswordReset(email: string) {
     }
 }
 
-export async function confirmPasswordReset(otp: string, password: string, confirm_password: string) {
+export async function confirmPasswordReset(otp: string, password: string, confirm_password: string, email: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
@@ -346,7 +346,7 @@ export async function confirmPasswordReset(otp: string, password: string, confir
         const response = await fetchWithTimeout(`${API_BASE_URL}${API_ENDPOINTS.confirmPasswordReset}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ otp, password, confirm_password }),
+            body: JSON.stringify({ otp, password, confirm_password, email }),
         });
         
         const result = await response.json();
