@@ -17,7 +17,7 @@ type NotificationContextType = {
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, isLoading: isAuthLoading, logout } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +31,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     const token = localStorage.getItem('authToken');
     if (!token) return;
+    
+    setIsLoading(true);
 
     try {
       const unreadNotifications = await getNotifications(token, { read_status: 'unread' });
@@ -42,16 +44,20 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         } else {
           console.error("Failed to fetch unread notifications", error);
         }
+    } finally {
+        setIsLoading(false);
     }
   }, [isAuthenticated, logout]);
 
-  // Initial fetch
+  // Initial fetch, depends on auth status
   useEffect(() => {
-    if(isAuthenticated) {
-      setIsLoading(true);
-      fetchUnreadNotifications().finally(() => setIsLoading(false));
+    if (!isAuthLoading && isAuthenticated) {
+      fetchUnreadNotifications();
+    } else if (!isAuthLoading && !isAuthenticated) {
+        setNotifications([]);
+        setUnreadCount(0);
     }
-  }, [isAuthenticated, fetchUnreadNotifications]);
+  }, [isAuthenticated, isAuthLoading, fetchUnreadNotifications]);
 
   const markAsRead = async (id: number) => {
     const token = localStorage.getItem('authToken');

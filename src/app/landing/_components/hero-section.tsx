@@ -30,19 +30,19 @@ const itemVariants = {
 
 const features = [
   {
-    title: 'Find',
+    title: 'Rescue',
     imageUrl:
       'https://res.cloudinary.com/dev-supriya/image/upload/v1760342184/sample-cat-2_fjoohh.jpg',
     imageHint: 'cat happy',
   },
   {
-    title: 'Rescue',
+    title: 'Adopt',
     imageUrl:
       'https://images.unsplash.com/photo-1552053831-71594a27632d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=662',
     imageHint: 'cat curious',
   },
   {
-    title: 'Adopt',
+    title: 'Lost',
     imageUrl:
       'https://res.cloudinary.com/dev-supriya/image/upload/v1760342183/sample-cat-1_bfmsg0.jpg',
     imageHint: 'puppy cute',
