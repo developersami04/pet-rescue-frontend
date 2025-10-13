@@ -26,6 +26,7 @@ const API_ENDPOINTS = {
   favouritePets: '/api/pet-data/favourite-pets/',
   userStories: '/api/pet-data/user-stories/',
   postStory: '/api/pet-data/user-stories/',
+  searchQuery: '/api/home/user-search-query/',
 
 
   // Report and Adoption Endpoints

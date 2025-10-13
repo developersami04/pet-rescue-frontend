@@ -3,7 +3,7 @@
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import type { Pet } from '@/lib/data';
-import { getAllPets } from '@/lib/actions';
+import { searchPets } from '@/lib/actions';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
@@ -55,6 +55,11 @@ export function SearchResults() {
   const query = searchParams.get('q') || '';
 
   const fetchPets = useCallback(async () => {
+    if (!query) {
+        setPets([]);
+        setIsLoading(false);
+        return;
+    }
     setIsLoading(true);
     setError(null);
     const token = localStorage.getItem('authToken');
@@ -65,8 +70,7 @@ export function SearchResults() {
     }
 
     try {
-      // Fetch all pets first
-      const petsData = await getAllPets(token, 'All');
+      const petsData = await searchPets(token, query);
       setPets(petsData);
     } catch (e: any) {
       if (e.message.includes('Session expired')) {
@@ -80,41 +84,28 @@ export function SearchResults() {
         window.dispatchEvent(new Event('storage'));
         router.push('/login');
       } else {
-        const errorMessage = e.message || 'Failed to fetch pets.';
+        const errorMessage = e.message || 'Failed to fetch search results.';
         setError(errorMessage);
         toast({
           variant: 'destructive',
-          title: 'Failed to fetch pets',
+          title: 'Search Failed',
           description: errorMessage,
         });
       }
     } finally {
       setIsLoading(false);
     }
-  }, [toast, router]);
+  }, [query, toast, router]);
 
   useEffect(() => {
     fetchPets();
   }, [fetchPets]);
-
-  const filteredPets = useMemo(() => {
-    if (!query) return pets;
-    return pets.filter((pet) => {
-      const searchLower = query.toLowerCase();
-      return (
-        pet.name.toLowerCase().includes(searchLower) ||
-        (pet.breed && pet.breed.toLowerCase().includes(searchLower)) ||
-        pet.type_name.toLowerCase().includes(searchLower) ||
-        (pet.description && pet.description.toLowerCase().includes(searchLower))
-      );
-    });
-  }, [query, pets]);
   
   return (
     <>
       <PageHeader
-        title={`Search Results for "${query}"`}
-        description={`${filteredPets.length} pet(s) found.`}
+        title={query ? `Search Results for "${query}"` : "Search"}
+        description={!isLoading && query ? `${pets.length} pet(s) found.` : (query ? 'Searching...' : 'Please enter a search term.')}
       />
       <div className="mb-8 flex justify-end">
         <div className="flex items-center gap-2">
@@ -145,7 +136,7 @@ export function SearchResults() {
         </Alert>
       ) : (
         <>
-            {filteredPets.length === 0 ? (
+            {pets.length === 0 && query ? (
                 <div className="text-center py-16 col-span-full">
                 <h3 className="text-xl font-semibold">No Pets Found</h3>
                 <p className="text-muted-foreground mt-2">
@@ -154,13 +145,13 @@ export function SearchResults() {
                 </div>
             ) : view === 'grid' ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {filteredPets.map((pet) => (
+                    {pets.map((pet) => (
                         <PetCard key={pet.id} pet={pet} />
                     ))}
                 </div>
             ) : (
                 <div className="space-y-4">
-                    {filteredPets.map((pet) => (
+                    {pets.map((pet) => (
                         <PetListItem key={pet.id} pet={pet} />
                     ))}
                 </div>

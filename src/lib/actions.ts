@@ -1,3 +1,4 @@
+
 'use server';
 
 import { z } from "zod";
@@ -1189,5 +1190,65 @@ export async function createUserStory(token: string, petId: number, title: strin
         console.error('Error creating user story:', error);
         if (error instanceof Error) throw error;
         throw new Error('An unknown error occurred while creating the user story.');
+    }
+}
+
+export async function searchPets(token: string, query: string): Promise<Pet[]> {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.searchQuery}`);
+    url.searchParams.append('query', query);
+
+    try {
+        const response = await fetchWithAuth(url.toString(), {
+            method: 'GET',
+            cache: 'no-store'
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(getErrorMessage(result, 'Failed to search for pets.'));
+        }
+
+        // The search API returns a simplified pet object. We need to map it to the full Pet type.
+        const transformedData: Pet[] = result.data.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            pet_image: item.pet_image,
+            type_name: item.pet_type,
+            // Add default values for fields not present in the search response
+            description: null,
+            gender: 'Unknown',
+            age: null,
+            weight: null,
+            breed: null,
+            color: null,
+            is_vaccinated: false,
+            is_diseased: false,
+            address: null,
+            city: null,
+            pincode: null,
+            state: null,
+            created_by: 0,
+            created_at: '',
+            modified_by: null,
+            modified_at: '',
+            medical_history: null,
+            adoption_requests: [],
+            pet_report: null,
+        }));
+
+        return transformedData;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Search request timed out.');
+        }
+        console.error('Error searching for pets:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while searching for pets.');
     }
 }
