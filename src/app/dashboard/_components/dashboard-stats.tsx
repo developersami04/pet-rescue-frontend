@@ -28,10 +28,10 @@ function StatCard({ title, value, icon, isLoading, colorClass }: { title: string
         )
     }
     return (
-        <Card>
+        <Card className={cn(colorClass)}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{title}</CardTitle>
-                <div className={cn("text-muted-foreground", colorClass)}>{icon}</div>
+                <div className={cn("text-card-foreground/80")}>{icon}</div>
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold">{value}</div>
@@ -119,12 +119,12 @@ export function DashboardStats() {
 
 
     const stats = [
-        { title: "My Pets", value: counts.myPetsCount, icon: <PawPrint className="h-6 w-6" />, color: "text-sky-500" },
-        { title: "Favorites", value: counts.favoritePetsCount, icon: <Heart className="h-6 w-6" />, color: "text-red-500" },
-        { title: "Lost Pets", value: counts.lostPetsCount, icon: <AlertTriangle className="h-6 w-6" />, color: "text-orange-500" },
-        { title: "Found Pets", value: counts.foundPetsCount, icon: <Search className="h-6 w-6" />, color: "text-blue-500" },
-        { title: "Adoptable Pets", value: counts.adoptablePetsCount, icon: <Hand className="h-6 w-6" />, color: "text-green-500" },
-        { title: "My Requests", value: counts.myRequestsCount, icon: <FileText className="h-6 w-6" />, color: "text-purple-500" },
+        { title: "My Pets", value: counts.myPetsCount, icon: <PawPrint className="h-6 w-6" />, color: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200" },
+        { title: "Favorites", value: counts.favoritePetsCount, icon: <Heart className="h-6 w-6" />, color: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200" },
+        { title: "Lost Pets", value: counts.lostPetsCount, icon: <AlertTriangle className="h-6 w-6" />, color: "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200" },
+        { title: "Found Pets", value: counts.foundPetsCount, icon: <Search className="h-6 w-6" />, color: "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200" },
+        { title: "Adoptable Pets", value: counts.adoptablePetsCount, icon: <Hand className="h-6 w-6" />, color: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200" },
+        { title: "My Requests", value: counts.myRequestsCount, icon: <FileText className="h-6 w-6" />, color: "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200" },
     ];
 
     return (
