@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import API_ENDPOINTS, { API_REQUEST_TIMEOUT } from "./endpoints";
@@ -19,6 +20,58 @@ export async function fetchWithTimeout(url: string, options: RequestInit, timeou
     return response;
 }
 
+// Token refresh logic
+let isRefreshing = false;
+let failedQueue: { resolve: (value?: any) => void; reject: (reason?: any) => void; }[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+    failedQueue.forEach(prom => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve(token);
+        }
+    });
+    failedQueue = [];
+};
+
+async function refreshAccessToken() {
+    isRefreshing = true;
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+        isRefreshing = false;
+        throw new Error('Session expired');
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.refreshToken}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh_token: refreshToken }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Session expired');
+        }
+
+        const data = await response.json();
+        const newAccessToken = data.access_token;
+        localStorage.setItem('authToken', newAccessToken);
+        processQueue(null, newAccessToken);
+        return newAccessToken;
+    } catch (error) {
+        processQueue(error, null);
+        // Clear session if refresh fails
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('refreshToken');
+        window.dispatchEvent(new Event('storage'));
+        throw error;
+    } finally {
+        isRefreshing = false;
+    }
+}
+
+
 export async function fetchWithAuth(url: string, options: RequestInit, token: string) {
     const headers: Record<string, string> = {};
 
@@ -36,17 +89,28 @@ export async function fetchWithAuth(url: string, options: RequestInit, token: st
     
     headers['Authorization'] = `Bearer ${token}`;
 
-    const response = await fetchWithTimeout(url, {
+    let response = await fetchWithTimeout(url, {
         ...options,
         headers,
     });
 
     if (response.status === 401) {
-        console.error("Authentication error: The access token is invalid or has expired.");
-        // We will no longer attempt to refresh the token here.
-        // The error will be propagated to be handled by the calling function.
-        // This often involves logging the user out.
-        throw new Error('Session expired');
+        if (isRefreshing) {
+            return new Promise((resolve, reject) => {
+                failedQueue.push({ resolve, reject });
+            }).then(newToken => {
+                 headers['Authorization'] = `Bearer ${newToken}`;
+                 return fetchWithTimeout(url, { ...options, headers });
+            });
+        }
+
+        try {
+            const newAccessToken = await refreshAccessToken();
+            headers['Authorization'] = `Bearer ${newAccessToken}`;
+            response = await fetchWithTimeout(url, { ...options, headers });
+        } catch (error) {
+            throw new Error('Session expired');
+        }
     }
 
     return response;

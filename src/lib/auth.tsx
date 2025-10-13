@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, useContext, createContext, useCallback } from 'react';
@@ -15,6 +16,32 @@ type AuthContextType = {
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// 15 minutes in milliseconds
+const REFRESH_INTERVAL = 15 * 60 * 1000;
+
+async function silentTokenRefresh() {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) return;
+    
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/home/refresh-token`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh_token: refreshToken })
+        });
+        const data = await response.json();
+        if (response.ok && data.access_token) {
+            localStorage.setItem('authToken', data.access_token);
+        } else {
+             throw new Error('Failed to refresh token silently');
+        }
+    } catch (error) {
+        console.error("Silent token refresh failed:", error);
+        // Don't log out here, let the main auth check handle it
+    }
+}
+
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -81,10 +108,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     window.addEventListener('storage', handleStorageChange);
+
+    // Set up the interval for silent token refresh
+    let intervalId: NodeJS.Timeout;
+    if (isAuthenticated) {
+        intervalId = setInterval(silentTokenRefresh, REFRESH_INTERVAL);
+    }
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+       if (intervalId) {
+            clearInterval(intervalId);
+        }
     };
-  }, [verifyAuth]);
+  }, [isAuthenticated, verifyAuth]);
 
   const login = (token: string, refreshToken: string) => {
     localStorage.setItem('authToken', token);
