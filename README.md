@@ -2,10 +2,13 @@
 
 This document provides an overview of the project's file structure. The application is built with Next.js using the App Router, TypeScript, and Tailwind CSS.
 
+For detailed information about the API, please see the [API Documentation](API_DOCUMENTATION.md).
+
 ## Root Directory
 
 -   `.env`: For storing environment variables such as API keys and database URLs.
 -   `apphosting.yaml`: Configuration file for deployment on Firebase App Hosting.
+-   `API_DOCUMENTATION.md`: A comprehensive guide to all the API endpoints used in the project.
 -   `components.json`: Configuration file for `shadcn/ui`, defining style, component paths, and Tailwind CSS settings.
 -   `next.config.js` / `next.config.ts`: Configuration file for Next.js, including settings for TypeScript, ESLint, and image optimization.
 -   `package.json`: Lists project dependencies, scripts for running, building, and linting the application.
