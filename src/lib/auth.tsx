@@ -5,7 +5,6 @@ import { useState, useEffect, useContext, createContext, useCallback } from 'rea
 import { checkUserAuth } from './actions';
 import { toast } from '@/hooks/use-toast';
 import { User } from './data';
-import { refreshAccessToken } from './api';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -16,8 +15,6 @@ type AuthContextType = {
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-const TOKEN_REFRESH_INTERVAL = 20 * 60 * 1000; // 20 minutes
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -88,22 +85,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, [verifyAuth]);
-
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-    if (isAuthenticated) {
-        intervalId = setInterval(() => {
-            console.log("Attempting to auto-refresh token...");
-            refreshAccessToken();
-        }, TOKEN_REFRESH_INTERVAL);
-    }
-
-    return () => {
-        if (intervalId) {
-            clearInterval(intervalId);
-        }
-    };
-  }, [isAuthenticated]);
 
   const login = (token: string, refreshToken: string) => {
     localStorage.setItem('authToken', token);
