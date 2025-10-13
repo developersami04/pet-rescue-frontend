@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { aboutUsStory, mentorsData, leadData, membersData, type TeamMemberData, techStackData } from "@/lib/page-data/about-us";
 import { Badge } from "@/components/ui/badge";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 function SocialLink({ href, children }: { href: string, children: React.ReactNode }) {
   return (
@@ -95,36 +96,41 @@ export default function AboutUsPage() {
         </Card>
         
         <Card>
-          <CardHeader>
-            <CardTitle>Our Mentors</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {mentorsData.map((mentor) => (
-                <TeamMember key={mentor.name} member={mentor} />
-            ))}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Team Lead</CardTitle>
-          </CardHeader>
-          <CardContent className="flex justify-center">
-              <div className="w-full max-w-xs">
-                <TeamMember member={leadData} />
-              </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Team Members</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {membersData.map((member) => (
-                <TeamMember key={member.name} member={member} />
-            ))}
-          </CardContent>
+            <CardHeader>
+                <CardTitle>Meet the Team</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Accordion type="single" collapsible defaultValue="mentors" className="w-full">
+                    <AccordionItem value="mentors">
+                        <AccordionTrigger className="text-lg font-semibold">Our Mentors</AccordionTrigger>
+                        <AccordionContent className="pt-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {mentorsData.map((mentor) => (
+                                    <TeamMember key={mentor.name} member={mentor} />
+                                ))}
+                            </div>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="lead">
+                        <AccordionTrigger className="text-lg font-semibold">Team Lead</AccordionTrigger>
+                        <AccordionContent className="pt-4 flex justify-center">
+                            <div className="w-full max-w-xs">
+                                <TeamMember member={leadData} />
+                            </div>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="members">
+                        <AccordionTrigger className="text-lg font-semibold">Team Members</AccordionTrigger>
+                        <AccordionContent className="pt-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {membersData.map((member) => (
+                                    <TeamMember key={member.name} member={member} />
+                                ))}
+                            </div>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+            </CardContent>
         </Card>
 
       </div>
