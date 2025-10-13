@@ -56,7 +56,7 @@ export function WhyAdoptSection() {
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.5 }}
         >
-          Why Adopt From Petopia?
+          Why Adopt From Petrescue?
         </motion.h2>
         <motion.div 
           className="grid gap-8 md:grid-cols-3"

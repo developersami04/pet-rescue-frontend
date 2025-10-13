@@ -1,6 +1,6 @@
-# Petopia API Documentation
+# Petrescue API Documentation
 
-This document provides a comprehensive overview of the Petopia API endpoints, including request/response schemas and usage examples.
+This document provides a comprehensive overview of the Petrescue API endpoints, including request/response schemas and usage examples.
 
 **Base URL**: `https://pet-rescue-and-management.onrender.com`
 
