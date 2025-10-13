@@ -16,6 +16,7 @@ import { format, parseISO } from "date-fns";
 import { PetTypeIcon } from "@/components/pet-icons";
 import { getPlaceholderImage } from "@/lib/placeholder-images";
 import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type StoryDialogProps = {
   story: HomeUserStory;
@@ -30,7 +31,7 @@ export function StoryDialog({ story, children }: StoryDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl grid-rows-[auto,1fr,auto] max-h-[90vh]">
         <div className="grid md:grid-cols-3 gap-6 items-start">
             <div className="md:col-span-1">
                 <div className="relative aspect-square w-full overflow-hidden rounded-lg">
@@ -42,7 +43,7 @@ export function StoryDialog({ story, children }: StoryDialogProps) {
                     />
                 </div>
             </div>
-            <div className="md:col-span-2">
+            <div className="md:col-span-2 flex flex-col h-full">
                 <DialogHeader className="space-y-2 text-left">
                     <DialogTitle className="text-2xl font-bold font-headline">{story.title}</DialogTitle>
                     <DialogDescription className="!mt-1">
@@ -50,9 +51,9 @@ export function StoryDialog({ story, children }: StoryDialogProps) {
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="my-4">
+                <ScrollArea className="my-4 flex-grow pr-4">
                     <p className="text-base text-muted-foreground leading-relaxed whitespace-pre-wrap">{story.content}</p>
-                </div>
+                </ScrollArea>
 
                 <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3 mt-4">
                     <div className="flex items-center gap-3">
