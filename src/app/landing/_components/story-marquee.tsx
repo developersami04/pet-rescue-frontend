@@ -57,7 +57,7 @@ const marqueeVariants = {
       x: {
         repeat: Infinity,
         repeatType: "loop",
-        duration: 25,
+        duration: 40,
         ease: "linear",
       },
     },
@@ -82,14 +82,17 @@ function StoryItem({ story }: { story: (typeof stories)[0] }) {
 export function StoryMarquee() {
   return (
     <section className="py-8 bg-secondary/30 overflow-hidden">
-        <div className="relative flex">
+        <motion.div
+            className="relative flex"
+            whileHover="paused"
+        >
             <motion.div className="flex" variants={marqueeVariants} animate="animate">
                 {stories.map(story => <StoryItem key={story.id} story={story} />)}
                 {stories.map(story => <StoryItem key={`${story.id}-2`} story={story} />)}
             </motion.div>
              <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-secondary/30 to-transparent" />
              <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-secondary/30 to-transparent" />
-        </div>
+        </motion.div>
     </section>
   )
 }
