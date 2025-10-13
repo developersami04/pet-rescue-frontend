@@ -7,7 +7,7 @@ export function Logo({ className }: { className?: string }) {
     <div className={cn('flex items-center gap-2', className)}>
       <PawPrint className="h-6 w-6 text-primary" />
       <span className="font-headline text-2xl font-bold text-foreground">
-        Petopia
+        Petrescue
       </span>
     </div>
   );

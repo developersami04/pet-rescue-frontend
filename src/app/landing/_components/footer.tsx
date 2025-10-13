@@ -73,7 +73,7 @@ export function Footer() {
                 </div>
                 <div className="mt-12 pt-6 border-t">
                     <p className="text-center text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} Petopia. All rights reserved.
+                        © {new Date().getFullYear()} Petrescue. All rights reserved.
                     </p>
                 </div>
             </div>

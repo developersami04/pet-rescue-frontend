@@ -13,7 +13,7 @@ function DashboardPageSkeleton() {
         <div className="container mx-auto py-8 px-4 md:px-6">
              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <PageHeader
-                title="Welcome to Petopia"
+                title="Welcome to Petrescue"
                 description="Your dashboard for finding a new companion."
                 className="pb-0"
                 />
@@ -44,7 +44,7 @@ function DashboardContent() {
         <div className="container mx-auto py-8 px-4 md:px-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <PageHeader
-                title="Welcome to Petopia"
+                title="Welcome to Petrescue"
                 description="Your dashboard for finding a new companion."
                 className="pb-0"
                 />

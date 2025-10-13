@@ -53,16 +53,16 @@ const backgroundImage = heroImages[0];
 
 export function HeroSection() {
   return (
-    <section className="relative w-full overflow-hidden bg-background py-16 md:py-24 h-screen min-h-[600px] flex items-center justify-center">
+    <section className="relative w-full overflow-hidden bg-background py-16 md:py-24 h-[90vh] min-h-[600px] flex items-center justify-center">
       <Image
         src={backgroundImage.src}
         alt={backgroundImage.alt}
         fill
-        className="object-cover brightness-75"
+        className="object-cover"
         data-ai-hint={backgroundImage.hint}
         priority
       />
-      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-black/60" />
       <div className="container relative z-10 mx-auto px-4 md:px-6">
         <div className="grid items-center gap-8 md:grid-cols-2">
           <motion.div
@@ -74,7 +74,7 @@ export function HeroSection() {
             <h1 className="text-4xl font-bold tracking-tight text-white font-headline md:text-5xl lg:text-6xl">
               Welcome to{' '}
               <span className="relative inline-block">
-                Petopia
+                Petrescue
                 <span className="absolute bottom-0 left-0 h-1 w-full bg-primary/80" />
               </span>
             </h1>

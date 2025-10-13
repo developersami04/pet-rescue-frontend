@@ -71,7 +71,7 @@ export default function AboutUsPage() {
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
       <PageHeader
-        title="About Petopia"
+        title="About Petrescue"
         description="Our mission is to connect loving homes with pets in need."
       />
       <div className="grid gap-8 lg:grid-cols-1">

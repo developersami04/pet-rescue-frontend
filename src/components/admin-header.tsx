@@ -203,7 +203,7 @@ export function AdminHeader() {
           <Link href="/" className="flex items-center gap-2 mr-4">
             <Logo className="h-7 w-7 text-primary" />
             <span className="text-lg font-semibold tracking-wider font-headline">
-              Petopia
+              Petrescue
             </span>
           </Link>
           {/* Desktop Navigation */}
@@ -340,7 +340,7 @@ export function AdminHeader() {
                 >
                   <Logo className="h-7 w-7 text-primary" />
                   <span className="text-lg font-semibold tracking-wider font-headline">
-                    Petopia
+                    Petrescue
                   </span>
                 </Link>
               </SheetHeader>
