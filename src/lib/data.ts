@@ -188,6 +188,18 @@ export type UserStory = {
   modified_at: string;
 };
 
+export type HomeUserStory = {
+    id: number;
+    title: string;
+    content: string;
+    created_at: string;
+    pet_name: string;
+    pet_image: string | null;
+    pet_type: string;
+    user_name: string;
+    user_image: string | null;
+}
+
 
 // This is now fetched from the API, but we keep it for reference or fallback.
 export const pets: Pet[] = [];

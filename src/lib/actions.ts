@@ -5,7 +5,7 @@
 import { z } from "zod";
 import API_ENDPOINTS from "./endpoints";
 import { fetchWithAuth, fetchWithTimeout } from "./api";
-import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport, PetReport, AdoptionRequest, FavoritePet, UserStory } from "./data";
+import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport, PetReport, AdoptionRequest, FavoritePet, UserStory, HomeUserStory } from "./data";
 
 // Import the backend Host Address from .env file
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -1226,6 +1226,37 @@ export async function getUserStories(token: string): Promise<UserStory[]> {
            throw new Error(error.message);
         }
         throw new Error('An unknown error occurred while fetching user stories.');
+    }
+}
+
+export async function getHomeUserStories(): Promise<HomeUserStory[]> {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.homeUserStories}`;
+
+    try {
+        const response = await fetchWithTimeout(url, {
+            method: 'GET',
+            cache: 'no-store'
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(getErrorMessage(result, 'Failed to fetch home user stories.'));
+        }
+        
+        return result.data || [];
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request for home user stories timed out.');
+        }
+        console.error('Error fetching home user stories:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching home user stories.');
     }
 }
 
