@@ -15,7 +15,7 @@ const featuredPets = [
     name: 'Buddy', 
     breed: 'Golden Retriever', 
     imageHint: 'golden retriever',
-    imageUrl: 'https://images.unsplash.com/photo-1611250282006-4484dd3f214b?q=80&w=870&auto=format&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=689'
   },
   { 
     id: 'pet-luna', 
@@ -29,14 +29,14 @@ const featuredPets = [
     name: 'Daisy', 
     breed: 'Terrier Mix', 
     imageHint: 'terrier dog',
-    imageUrl: 'https://images.unsplash.com/photo-1588722838248-a72a153229c8?q=80&w=870&auto=format&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1510771463146-e89e6e86560e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=627'
   },
   { 
     id: 'pet-milo', 
     name: 'Milo', 
     breed: 'Ginger Tabby', 
     imageHint: 'ginger cat',
-    imageUrl: 'https://images.unsplash.com/photo-1596724033623-64b5f4d36b94?q=80&w=870&auto=format&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1561948955-570b270e7c36?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=601'
   },
 ];
 
