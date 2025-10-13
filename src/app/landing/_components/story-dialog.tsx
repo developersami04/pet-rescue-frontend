@@ -31,41 +31,47 @@ export function StoryDialog({ story, children }: StoryDialogProps) {
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-3xl">
-        <DialogHeader className="space-y-4">
-          {story.pet_image && (
-            <div className="relative aspect-video w-full overflow-hidden rounded-lg">
-              <Image
-                src={petImage}
-                alt={story.pet_name}
-                fill
-                className="object-cover"
-              />
-            </div>
-          )}
-          <DialogTitle className="text-3xl font-bold font-headline">{story.title}</DialogTitle>
-          <DialogDescription className="!mt-2">
-            A story about <span className="font-semibold">{story.pet_name}</span>
-          </DialogDescription>
-        </DialogHeader>
-        <div className="my-6">
-            <p className="text-base text-muted-foreground leading-relaxed whitespace-pre-wrap">{story.content}</p>
-        </div>
-        <div className="flex items-center justify-between rounded-lg bg-muted/50 p-4">
-            <div className="flex items-center gap-3">
-                <Avatar>
-                    <AvatarImage src={userImage} alt={story.user_name} />
-                    <AvatarFallback>{story.user_name[0]}</AvatarFallback>
-                </Avatar>
-                <div>
-                    <p className="font-semibold">{story.user_name}</p>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <PetTypeIcon typeName={story.pet_type} className="h-4 w-4" />
-                        <span>{story.pet_type}</span>
-                    </div>
+        <div className="grid md:grid-cols-3 gap-6 items-start">
+            <div className="md:col-span-1">
+                <div className="relative aspect-square w-full overflow-hidden rounded-lg">
+                    <Image
+                        src={petImage}
+                        alt={story.pet_name}
+                        fill
+                        className="object-cover"
+                    />
                 </div>
             </div>
-            <div className="text-right">
-                <p className="text-sm text-muted-foreground">{format(createdAt, "PPP")}</p>
+            <div className="md:col-span-2">
+                <DialogHeader className="space-y-2 text-left">
+                    <DialogTitle className="text-2xl font-bold font-headline">{story.title}</DialogTitle>
+                    <DialogDescription className="!mt-1">
+                        A story about <span className="font-semibold">{story.pet_name}</span>
+                    </DialogDescription>
+                </DialogHeader>
+
+                <div className="my-4">
+                    <p className="text-base text-muted-foreground leading-relaxed whitespace-pre-wrap">{story.content}</p>
+                </div>
+
+                <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3 mt-4">
+                    <div className="flex items-center gap-3">
+                        <Avatar>
+                            <AvatarImage src={userImage} alt={story.user_name} />
+                            <AvatarFallback>{story.user_name[0]}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                            <p className="font-semibold text-sm">{story.user_name}</p>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <PetTypeIcon typeName={story.pet_type} className="h-3 w-3" />
+                                <span>{story.pet_type}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="text-right">
+                        <p className="text-xs text-muted-foreground">{format(createdAt, "PPP")}</p>
+                    </div>
+                </div>
             </div>
         </div>
       </DialogContent>
