@@ -26,6 +26,7 @@ import {
   Bell,
   FileText,
   Film,
+  Image,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -69,6 +70,7 @@ const navItems = {
       { href: "/about-us", icon: Info, label: "About Us" },
       { href: "/contact-us", icon: Phone, label: "Contact Us" },
       { href: "/resources", icon: BookOpen, label: "Resources" },
+      { href: "/explore-pet-images", icon: Image, label: "Explore Pet Images" },
   ]
 };
 
