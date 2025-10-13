@@ -6,6 +6,7 @@ import { useState, useEffect, useContext, createContext, useCallback } from 'rea
 import { checkUserAuth } from './actions';
 import { toast } from '@/hooks/use-toast';
 import { User } from './data';
+import API_ENDPOINTS from './endpoints';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -18,14 +19,14 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // 15 minutes in milliseconds
-const REFRESH_INTERVAL = 10 * 1000;
+const REFRESH_INTERVAL = 15 * 60 * 1000;
 
 async function silentTokenRefresh() {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) return;
     
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/home/refresh-token`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${API_ENDPOINTS.refreshToken}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refresh_token: refreshToken })
@@ -110,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     window.addEventListener('storage', handleStorageChange);
 
     // Set up the interval for silent token refresh
-    let intervalId: NodeJS.Timeout;
+    let intervalId: NodeJS.Timeout | undefined;
     if (isAuthenticated) {
         intervalId = setInterval(silentTokenRefresh, REFRESH_INTERVAL);
     }
