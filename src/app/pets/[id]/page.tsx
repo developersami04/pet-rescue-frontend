@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -16,6 +17,10 @@ import { PetReportContent } from './_components/pet-report-card';
 import { AdoptionRequestsCard } from './_components/adoption-request-card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardContent } from '@/components/ui/card';
+import { AdoptionRequestDialog } from './_components/adoption-request-dialog';
+import { PostStoryDialog } from './_components/post-story-dialog';
+import { Button } from '@/components/ui/button';
+import { Film, Hand, MessageSquareQuote } from 'lucide-react';
 
 export default function PetProfilePage() {
   const params = useParams();
@@ -78,11 +83,38 @@ export default function PetProfilePage() {
   if (!pet) {
     return null; // Or a "Pet not found" component
   }
+  
+  const petStatus = pet.pet_report?.pet_status;
+  const isResolved = pet.pet_report?.is_resolved;
+  const isAvailableForAdoption = (petStatus === 'adopt' || petStatus === 'found') && !isResolved;
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
       <div className="space-y-8">
         <PetProfileHeader pet={pet} isFavorited={isFavorited} onUpdate={fetchPetDetails} />
+
+        <div className="flex flex-wrap gap-4 items-center justify-center p-4 bg-muted/50 rounded-lg">
+            {isAvailableForAdoption && (
+                <AdoptionRequestDialog petId={pet.id} petName={pet.name} onUpdate={fetchPetDetails}>
+                    <Button>
+                        <Hand className="mr-2 h-4 w-4" />
+                        Request to Adopt
+                    </Button>
+                </AdoptionRequestDialog>
+            )}
+            {pet.is_verified && (
+                <PostStoryDialog petId={pet.id} petName={pet.name}>
+                        <Button>
+                        <Film className="mr-2 h-4 w-4" />
+                        Post Story
+                    </Button>
+                </PostStoryDialog>
+            )}
+            <Button variant="secondary">
+                <MessageSquareQuote className="mr-2 h-4 w-4" />
+                Contact Owner
+            </Button>
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-8">

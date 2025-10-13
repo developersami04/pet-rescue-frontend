@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from "@/components/ui/button";
@@ -129,7 +130,7 @@ export function PetProfileHeader({ pet, isFavorited, onUpdate }: PetProfileHeade
                     </div>
                 )}
             </div>
-            <div className="absolute top-6 right-6 flex items-start gap-2">
+             <div className="absolute top-4 right-4">
                 <Button variant="secondary" size="icon" onClick={handleFavoriteToggle} disabled={isFavoriteLoading}>
                     {isFavoriteLoading ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -138,28 +139,6 @@ export function PetProfileHeader({ pet, isFavorited, onUpdate }: PetProfileHeade
                     )}
                     <span className="sr-only">Favorite</span>
                 </Button>
-                <div className="flex flex-col gap-2">
-                    {isAvailableForAdoption && (
-                        <AdoptionRequestDialog petId={pet.id} petName={pet.name} onUpdate={onUpdate}>
-                            <Button>
-                                <Hand className="mr-2 h-4 w-4" />
-                                Request to Adopt
-                            </Button>
-                        </AdoptionRequestDialog>
-                    )}
-                    {pet.is_verified && (
-                        <PostStoryDialog petId={pet.id} petName={pet.name}>
-                             <Button>
-                                <Film className="mr-2 h-4 w-4" />
-                                Post Story
-                            </Button>
-                        </PostStoryDialog>
-                    )}
-                    <Button variant="secondary">
-                        <MessageSquareQuote className="mr-2 h-4 w-4" />
-                        Contact Owner
-                    </Button>
-                </div>
             </div>
        </div>
     );
