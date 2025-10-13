@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { z } from "zod";
@@ -719,13 +720,22 @@ export async function readNotification(token: string, notificationId: number) {
     const url = `${API_BASE_URL}${API_ENDPOINTS.notifications}${notificationId}/`;
 
     try {
-        const response = await fetchWithAuth(url, { method: 'GET' }, token);
-        const result = await response.json();
-
+        const response = await fetchWithAuth(url, { method: 'PATCH' }, token);
+        
         if (!response.ok) {
+            const result = await response.json();
             throw new Error(getErrorMessage(result, 'Failed to read notification.'));
         }
-        return result.data;
+        
+        // For PATCH, success might be a 200 with data or 204 with no data.
+        try {
+            const result = await response.json();
+            return result.data;
+        } catch (e) {
+            // Handle 204 No Content case
+            return { message: 'Notification marked as read.' };
+        }
+
     } catch (error) {
         console.error('Error reading notification:', error);
         if (error instanceof Error) throw error;
@@ -1252,3 +1262,6 @@ export async function searchPets(token: string, query: string): Promise<Pet[]> {
         throw new Error('An unknown error occurred while searching for pets.');
     }
 }
+
+
+    
