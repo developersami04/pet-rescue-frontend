@@ -47,6 +47,25 @@ export function LoginForm() {
     setIsSubmitting(true);
     try {
       const result = await loginUser(values);
+      
+      if (!result.success) {
+        let title = 'Login Failed';
+        let description = result.error || 'An unknown error occurred.';
+
+        if (result.status === 401) {
+            description = 'Invalid credentials. Please check your username and password.';
+        } else if (result.status === 403) {
+            description = 'This account is inactive. Please contact support.';
+        }
+
+        toast({
+            variant: 'destructive',
+            title: title,
+            description: description,
+        });
+        return;
+      }
+
       login(result.access_token, result.refresh_token, result.message);
       
       if (result.user && result.user.username) {
@@ -60,19 +79,12 @@ export function LoginForm() {
       }
 
     } catch (error: any) {
-        let title = 'Login Failed';
-        let description = error.message || 'An unknown error occurred.';
-
-        if (error.status === 401) {
-            description = 'Invalid credentials. Please check your username and password.';
-        } else if (error.status === 403) {
-            description = 'This account is inactive. Please contact support.';
-        }
-
+        // This catch block will now mostly handle unexpected server/network errors
+        // since the action returns a structured response for login failures.
         toast({
             variant: 'destructive',
-            title: title,
-            description: description,
+            title: 'Login Failed',
+            description: error.message || 'An unexpected error occurred.',
         });
     } finally {
         setIsSubmitting(false);

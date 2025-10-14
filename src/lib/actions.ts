@@ -104,7 +104,7 @@ const loginUserSchema = z.object({
 
 export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
     if (!API_BASE_URL) {
-        throw new ApiError('API is not configured. Please contact support.', 500);
+        return { success: false, error: 'API is not configured. Please contact support.', status: 500 };
     }
 
     try {
@@ -119,22 +119,19 @@ export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
         const result = await response.json();
         
         if (!response.ok) {
-            throw new ApiError(getErrorMessage(result, 'Failed to log in.'), response.status);
+            return { success: false, error: getErrorMessage(result, 'Failed to log in.'), status: response.status };
         }
 
-        return result;
+        return { success: true, ...result };
     } catch (error) {
-        if (error instanceof ApiError) {
-            throw error;
-        }
         if ((error as any).name === 'AbortError') {
-            throw new ApiError('Login request timed out. Please try again.', 408);
+            return { success: false, error: 'Login request timed out. Please try again.', status: 408 };
         }
         console.error('Error logging in:', error);
         if (error instanceof Error) {
-           throw new ApiError(error.message, 500);
+           return { success: false, error: error.message, status: 500 };
         }
-        throw new ApiError('An unknown error occurred during login.', 500);
+        return { success: false, error: 'An unknown error occurred during login.', status: 500 };
     }
 }
 
