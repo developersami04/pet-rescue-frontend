@@ -1,5 +1,5 @@
 export const defaultUserProfileImages = [
-    'https://res.cloudinary.com/dev-supriya/image/upload/v1760089194/avatar_m4mkr6.jpg',
+    'https://res.cloudinary.com/dev-supriya/image/upload/v1760089194/avatar_4mkr6.jpg',
 
   ];
   

@@ -9,16 +9,28 @@ import { LandingHeader } from './landing/_components/landing-header';
 import { HeaderNav } from '@/components/header-nav';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeProvider } from '@/components/theme-provider';
+import { useTheme } from 'next-themes';
 import { NotificationProvider } from '@/hooks/use-notifications';
 import { BottomNavBar } from '@/components/bottom-nav-bar';
 import { usePathname } from 'next/navigation';
 import { AdminHeader } from '@/components/admin-header';
 import { Footer } from './landing/_components/footer';
+import { useEffect } from 'react';
 
 function AppLayoutClient({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, user } = useAuth();
+  const { setTheme } = useTheme();
   const pathname = usePathname();
   
+  useEffect(() => {
+    if (user?.is_admin) {
+      setTheme('dark');
+      document.documentElement.classList.add('dark');
+    } else {
+       document.documentElement.classList.remove('dark');
+    }
+  }, [user, setTheme]);
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen flex-col">
