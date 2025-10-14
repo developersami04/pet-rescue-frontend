@@ -47,13 +47,13 @@ export function LoginForm() {
     setIsSubmitting(true);
     try {
       const result = await loginUser(values);
-      login(result.access_token, result.refresh_token);
+      login(result.access_token, result.refresh_token, result.message);
       
       if (result.user && result.user.username) {
         localStorage.setItem('username', result.user.username);
       }
       
-      if (result.user?.is_admin) {
+      if (result.user?.is_staff) {
         router.push('/admin/dashboard');
       } else {
         router.push('/dashboard');

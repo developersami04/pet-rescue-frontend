@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, useContext, createContext, useCallback } from 'react';
@@ -13,7 +12,7 @@ type AuthContextType = {
   isLoading: boolean;
   user: User | null;
   logout: () => void;
-  login: (token: string, refreshToken: string) => void;
+  login: (token: string, refreshToken: string, message?: string) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -58,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     window.dispatchEvent(new Event('storage'));
   }, []);
 
-  const verifyAuth = useCallback(async (isLoginEvent = false) => {
+  const verifyAuth = useCallback(async (isLoginEvent = false, loginMessage?: string) => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
       setIsAuthenticated(false);
@@ -67,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     
-    if (!isLoginEvent) setIsLoading(true);
+    setIsLoading(true);
     
     try {
         const { isAuthenticated: authStatus, user: userData, error, message, newAccessToken } = await checkUserAuth(refreshToken);
@@ -76,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUser(userData);
             localStorage.setItem('authToken', newAccessToken);
             if (isLoginEvent) {
-                toast({ title: "Login Successful", description: message });
+                toast({ title: "Login Successful", description: loginMessage || message });
             }
         } else {
             logout();
@@ -124,11 +123,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [isAuthenticated, verifyAuth]);
 
-  const login = (token: string, refreshToken: string) => {
+  const login = (token: string, refreshToken: string, message?: string) => {
     localStorage.setItem('authToken', token);
     localStorage.setItem('refreshToken', refreshToken);
     // Instead of dispatching event, directly call verifyAuth
-    verifyAuth(true);
+    verifyAuth(true, message);
   }
 
   return (
