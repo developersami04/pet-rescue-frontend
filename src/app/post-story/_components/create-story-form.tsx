@@ -44,7 +44,7 @@ type SelectablePet = {
 export function CreateStoryForm() {
   const { toast } = useToast();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isPetListLoading, setIsPetListLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectablePets, setSelectablePets] = useState<SelectablePet[]>([]);
 
@@ -55,12 +55,12 @@ export function CreateStoryForm() {
   const { isSubmitting } = form.formState;
 
   const fetchPets = useCallback(async () => {
-    setIsLoading(true);
+    setIsPetListLoading(true);
     setError(null);
     const token = localStorage.getItem('authToken');
     if (!token) {
         setError('You must be logged in to post a story.');
-        setIsLoading(false);
+        setIsPetListLoading(false);
         return;
     }
 
@@ -91,7 +91,7 @@ export function CreateStoryForm() {
     } catch (e: any) {
         setError(e.message || 'Failed to load pets.');
     } finally {
-        setIsLoading(false);
+        setIsPetListLoading(false);
     }
   }, []);
 
@@ -127,10 +127,6 @@ export function CreateStoryForm() {
     }
   }
 
-  if (isLoading) {
-    return <div className="text-center"><Loader2 className="h-8 w-8 animate-spin" /></div>;
-  }
-
   if (error) {
     return <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>;
   }
@@ -144,10 +140,14 @@ export function CreateStoryForm() {
             render={({ field }) => (
             <FormItem>
                 <FormLabel>Select a Pet</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={String(field.value ?? '')}>
+                <Select
+                    onValueChange={field.onChange}
+                    defaultValue={String(field.value ?? '')}
+                    disabled={isPetListLoading}
+                >
                     <FormControl>
                         <SelectTrigger>
-                            <SelectValue placeholder="Choose a pet for your story" />
+                            <SelectValue placeholder={isPetListLoading ? "Loading pets..." : "Choose a pet for your story"} />
                         </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -195,7 +195,7 @@ export function CreateStoryForm() {
           )}
         />
         <div className="flex justify-end">
-            <Button type="submit" disabled={isSubmitting || selectablePets.length === 0}>
+            <Button type="submit" disabled={isSubmitting || isPetListLoading || selectablePets.length === 0}>
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Publish Story
             </Button>
