@@ -51,7 +51,7 @@ const registerUserSchema = z.object({
 
 export async function registerUser(userData: z.infer<typeof registerUserSchema>) {
     if (!API_BASE_URL) {
-        throw new Error('API is not configured. Please contact support.');
+        return { success: false, error: 'API is not configured. Please contact support.', status: 500 };
     }
 
     const payload = {
@@ -81,19 +81,19 @@ export async function registerUser(userData: z.infer<typeof registerUserSchema>)
         const result = await response.json();
 
         if (!response.ok) {
-            throw new Error(getErrorMessage(result, 'Failed to register user.'));
+            return { success: false, error: getErrorMessage(result, 'Failed to register user.'), status: response.status };
         }
 
-        return result;
+        return { success: true, ...result };
     } catch (error) {
         if ((error as any).name === 'AbortError') {
-            throw new Error('Registration timed out. Please try again.');
+            return { success: false, error: 'Registration timed out. Please try again.', status: 408 };
         }
         console.error('Error registering user:', error);
         if (error instanceof Error) {
-           throw new Error(error.message);
+           return { success: false, error: error.message, status: 500 };
         }
-        throw new Error('An unknown error occurred during registration.');
+        return { success: false, error: 'An unknown error occurred during registration.', status: 500 };
     }
 }
 
@@ -1354,3 +1354,4 @@ export async function searchPets(token: string, query: string): Promise<Pet[]> {
 
 
     
+

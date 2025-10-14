@@ -68,18 +68,30 @@ export function CreateAccountForm() {
     setIsSubmitting(true);
     try {
       const result = await registerUser(values);
+
+      if (!result.success) {
+        toast({
+            variant: 'destructive',
+            title: 'Registration Failed',
+            description: result.error || 'An unknown error occurred.',
+        });
+        return;
+      }
+      
       toast({
         title: 'Account Created!',
         description: result.message || 'You can now log in with your new credentials.',
       });
       router.push('/login');
     } catch (error: any) {
+      // This will now mostly handle unexpected errors, not API validation errors
       toast({
         variant: 'destructive',
         title: 'Registration Failed',
-        description: error.message || 'An unknown error occurred.',
+        description: 'An unexpected error occurred. Please try again.',
       });
-      setIsSubmitting(false);
+    } finally {
+        setIsSubmitting(false);
     }
   }
 
