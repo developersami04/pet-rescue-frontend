@@ -11,19 +11,19 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth.tsx';
 
-const navItems = [
-  { href: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
-  { href: '/pets', icon: PawPrint, label: 'Pets' },
-  { href: '/submit-request', icon: Plus, label: 'Add', isCenter: true },
-  { href: '/notifications', icon: Bell, label: 'Updates' },
-  { href: '/profile', icon: User, label: 'Profile' },
-];
-
 export function BottomNavBar() {
   const pathname = usePathname();
   const { user } = useAuth();
   const { unreadCount } = useNotifications();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const navItems = [
+    { href: user?.is_admin ? '/admin/dashboard' : '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
+    { href: '/pets', icon: PawPrint, label: 'Pets' },
+    { href: '/submit-request', icon: Plus, label: 'Add', isCenter: true },
+    { href: '/notifications', icon: Bell, label: 'Updates' },
+    { href: '/profile', icon: User, label: 'Profile' },
+  ];
 
   return (
     <div className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t z-50">
