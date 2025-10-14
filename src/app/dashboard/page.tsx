@@ -1,5 +1,7 @@
 
 
+'use client';
+
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -7,6 +9,7 @@ import { PlusCircle } from "lucide-react";
 import { DashboardClient } from "./_components/dashboard-client";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/lib/auth";
 
 
 function DashboardPageSkeleton() {
@@ -20,7 +23,7 @@ function DashboardPageSkeleton() {
                 />
                 <Skeleton className="h-10 w-44" />
             </div>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
                 {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-24 w-full" />)}
             </div>
             <Skeleton className="h-px w-full my-8" />
@@ -41,6 +44,12 @@ export default function DashboardPage() {
 }
 
 function DashboardContent() {
+    const { isLoading: isAuthLoading } = useAuth();
+
+    if (isAuthLoading) {
+        return <DashboardPageSkeleton />;
+    }
+    
     return (
         <div className="container mx-auto py-8 px-4 md:px-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
