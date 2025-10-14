@@ -15,13 +15,29 @@ import { UserStats } from "./_components/user-stats";
 import { PetStats } from "./_components/pet-stats";
 import { ReportStats } from "./_components/report-stats";
 import { AdoptionStats } from "./_components/adoption-stats";
+import { useAuth } from "@/lib/auth.tsx";
 
 function StatsSkeleton() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {[...Array(4)].map((_, i) => (
-        <Skeleton key={i} className="h-40" />
-      ))}
+    <div className="container mx-auto py-8 px-4 md:px-6 space-y-8">
+       <div className="flex items-center justify-between">
+            <div className="space-y-2">
+                <Skeleton className="h-8 w-64" />
+                <Skeleton className="h-4 w-96" />
+            </div>
+            <Skeleton className="h-10 w-24" />
+        </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {[...Array(4)].map((_, i) => (
+          <Skeleton key={i} className="h-40" />
+        ))}
+      </div>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <Skeleton className="h-80" />
+        <Skeleton className="h-80" />
+        <Skeleton className="h-80" />
+        <Skeleton className="h-80" />
+      </div>
     </div>
   );
 }
@@ -29,6 +45,7 @@ function StatsSkeleton() {
 function DashboardContent() {
     const { toast } = useToast();
     const router = useRouter();
+    const { isLoading: isAuthLoading } = useAuth();
 
     const [metrics, setMetrics] = useState<Metrics | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -59,15 +76,20 @@ function DashboardContent() {
     }, [router, toast]);
 
     useEffect(() => {
+        if (isAuthLoading) return; // Wait until auth check is complete
         setIsLoading(true);
         fetchMetrics().finally(() => setIsLoading(false));
-    }, [fetchMetrics]);
+    }, [fetchMetrics, isAuthLoading]);
 
     const handleRefresh = async () => {
         setIsRefreshing(true);
         await fetchMetrics();
         setIsRefreshing(false);
     };
+
+    if (isAuthLoading) {
+      return <StatsSkeleton />;
+    }
     
     return (
         <div className="container mx-auto py-8 px-4 md:px-6 space-y-8">
