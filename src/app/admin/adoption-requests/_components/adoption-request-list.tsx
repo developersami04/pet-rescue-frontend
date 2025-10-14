@@ -35,7 +35,7 @@ export function AdoptionRequestList({ requests, onUpdate, onDelete, updatingRequ
     return (
         <>
             <div className="flex items-center justify-end mb-4">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 rounded-md border p-1">
                     <Button
                         variant={view === 'grid' ? 'secondary' : 'ghost'}
                         size="icon"

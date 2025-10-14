@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -13,6 +12,7 @@ import { UserCard } from './user-card';
 import { UserListItem } from './user-list-item';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { PageHeader } from '@/components/page-header';
 
 
 function UsersSkeleton({ view }: { view: 'grid' | 'list' }) {
@@ -120,28 +120,35 @@ export function ManageUsersClient() {
 
     return (
         <div className="mt-6">
-            <div className="flex items-center justify-end mb-4 gap-4">
-                 <Button onClick={handleRefresh} disabled={isRefreshing || isLoading}>
-                    {(isRefreshing || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Refresh
-                </Button>
-                <div className="flex items-center gap-2">
-                    <Button
-                        variant={view === 'grid' ? 'secondary' : 'ghost'}
-                        size="icon"
-                        onClick={() => setView('grid')}
-                        aria-label="Grid view"
-                    >
-                        <LayoutGrid className="h-5 w-5" />
+             <div className="flex items-center justify-between mb-4 gap-4">
+                <PageHeader
+                    title="Manage Users"
+                    description="View and manage all registered users in the system."
+                    className="pb-0"
+                />
+                 <div className="flex items-center gap-2">
+                    <Button onClick={handleRefresh} disabled={isRefreshing || isLoading} variant="outline">
+                        {(isRefreshing || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Refresh
                     </Button>
-                    <Button
-                        variant={view === 'list' ? 'secondary' : 'ghost'}
-                        size="icon"
-                        onClick={() => setView('list')}
-                        aria-label="List view"
-                    >
-                        <List className="h-5 w-5" />
-                    </Button>
+                    <div className="flex items-center gap-1 rounded-md border p-1">
+                        <Button
+                            variant={view === 'grid' ? 'secondary' : 'ghost'}
+                            size="icon"
+                            onClick={() => setView('grid')}
+                            aria-label="Grid view"
+                        >
+                            <LayoutGrid className="h-5 w-5" />
+                        </Button>
+                        <Button
+                            variant={view === 'list' ? 'secondary' : 'ghost'}
+                            size="icon"
+                            onClick={() => setView('list')}
+                            aria-label="List view"
+                        >
+                            <List className="h-5 w-5" />
+                        </Button>
+                    </div>
                 </div>
             </div>
 

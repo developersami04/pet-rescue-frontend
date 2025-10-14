@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { AdoptionRequestsTabs } from './adoption-requests-tabs';
 import { AdoptionRequestList } from './adoption-request-list';
+import { PageHeader } from '@/components/page-header';
 
 type TabValue = 'pending' | 'recents' | 'rejected';
 type RequestStatus = 'approved' | 'rejected';
@@ -154,8 +155,13 @@ function AdoptionRequestsClientContent() {
 
     return (
         <>
-            <div className="flex items-center justify-end mb-4">
-                <Button onClick={handleRefresh} disabled={isRefreshing || isLoading}>
+            <div className="flex items-center justify-between mb-4">
+                 <PageHeader
+                    title="Manage Adoption Requests"
+                    description="Review and approve adoption requests from users."
+                    className="pb-0"
+                />
+                <Button onClick={handleRefresh} disabled={isRefreshing || isLoading} variant="outline">
                     {(isRefreshing || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Refresh
                 </Button>
