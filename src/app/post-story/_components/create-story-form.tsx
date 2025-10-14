@@ -31,8 +31,8 @@ import type { Pet, FavoritePet } from '@/lib/data';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const storySchema = z.object({
-  pet: z.coerce.number().min(1, 'Please select a pet.'),
   title: z.string().min(5, 'Title must be at least 5 characters long.'),
+  pet: z.coerce.number().optional().nullable(),
   content: z.string().min(20, 'Story must be at least 20 characters long.'),
 });
 
@@ -50,6 +50,11 @@ export function CreateStoryForm() {
 
   const form = useForm<z.infer<typeof storySchema>>({
     resolver: zodResolver(storySchema),
+    defaultValues: {
+        title: '',
+        content: '',
+        pet: null,
+    }
   });
 
   const { isSubmitting } = form.formState;
@@ -134,37 +139,7 @@ export function CreateStoryForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-            control={form.control}
-            name="pet"
-            render={({ field }) => (
-            <FormItem>
-                <FormLabel>Select a Pet</FormLabel>
-                <Select
-                    onValueChange={field.onChange}
-                    defaultValue={String(field.value ?? '')}
-                    disabled={isPetListLoading}
-                >
-                    <FormControl>
-                        <SelectTrigger>
-                            <SelectValue placeholder={isPetListLoading ? "Loading pets..." : "Choose a pet for your story"} />
-                        </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                        {selectablePets.length > 0 ? (
-                            selectablePets.map(pet => (
-                                <SelectItem key={pet.id} value={String(pet.id)}>{pet.name}</SelectItem>
-                            ))
-                        ) : (
-                            <div className="p-4 text-sm text-muted-foreground text-center">No verified or favorite pets found.</div>
-                        )}
-                    </SelectContent>
-                </Select>
-                <FormMessage />
-            </FormItem>
-            )}
-        />
-        <FormField
+         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
@@ -176,6 +151,38 @@ export function CreateStoryForm() {
               <FormMessage />
             </FormItem>
           )}
+        />
+        <FormField
+            control={form.control}
+            name="pet"
+            render={({ field }) => (
+            <FormItem>
+                <FormLabel>Select a Pet (Optional)</FormLabel>
+                <Select
+                    onValueChange={(value) => field.onChange(value ? Number(value) : null)}
+                    defaultValue={String(field.value ?? '')}
+                    disabled={isPetListLoading}
+                >
+                    <FormControl>
+                        <SelectTrigger>
+                            <SelectValue placeholder={isPetListLoading ? "Loading pets..." : "Choose a pet for your story"} />
+                        </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                        <SelectItem value="">None</SelectItem>
+                        {selectablePets.length > 0 && (
+                            selectablePets.map(pet => (
+                                <SelectItem key={pet.id} value={String(pet.id)}>{pet.name}</SelectItem>
+                            ))
+                        )}
+                         {selectablePets.length === 0 && !isPetListLoading && (
+                            <div className="p-4 text-sm text-muted-foreground text-center">No verified or favorite pets found.</div>
+                        )}
+                    </SelectContent>
+                </Select>
+                <FormMessage />
+            </FormItem>
+            )}
         />
         <FormField
           control={form.control}
@@ -195,7 +202,7 @@ export function CreateStoryForm() {
           )}
         />
         <div className="flex justify-end">
-            <Button type="submit" disabled={isSubmitting || isPetListLoading || selectablePets.length === 0}>
+            <Button type="submit" disabled={isSubmitting || isPetListLoading}>
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Publish Story
             </Button>

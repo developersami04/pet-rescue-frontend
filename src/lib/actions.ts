@@ -1268,7 +1268,7 @@ export async function getHomeUserStories(): Promise<HomeUserStory[]> {
     }
 }
 
-export async function createUserStory(token: string, petId: number, title: string, content: string) {
+export async function createUserStory(token: string, petId: number | null | undefined, title: string, content: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
@@ -1354,4 +1354,5 @@ export async function searchPets(token: string, query: string): Promise<Pet[]> {
 
 
     
+
 
