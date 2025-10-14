@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -59,12 +60,22 @@ export function LoginForm() {
       }
 
     } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Login Failed',
-        description: error.message || 'Invalid username or password.',
-      });
-      setIsSubmitting(false);
+        let title = 'Login Failed';
+        let description = error.message || 'An unknown error occurred.';
+
+        if (error.status === 401) {
+            description = 'Invalid credentials. Please check your username and password.';
+        } else if (error.status === 403) {
+            description = 'This account is inactive. Please contact support.';
+        }
+
+        toast({
+            variant: 'destructive',
+            title: title,
+            description: description,
+        });
+    } finally {
+        setIsSubmitting(false);
     }
   }
 

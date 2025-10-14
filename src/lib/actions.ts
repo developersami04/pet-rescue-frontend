@@ -10,6 +10,14 @@ import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport,
 // Import the backend Host Address from .env file
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+class ApiError extends Error {
+    status: number;
+    constructor(message: string, status: number) {
+        super(message);
+        this.status = status;
+    }
+}
+
 // Helper functions
 function getErrorMessage(result: any, defaultMessage: string): string {
     if (result) {
@@ -96,7 +104,7 @@ const loginUserSchema = z.object({
 
 export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
     if (!API_BASE_URL) {
-        throw new Error('API is not configured. Please contact support.');
+        throw new ApiError('API is not configured. Please contact support.', 500);
     }
 
     try {
@@ -111,19 +119,22 @@ export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
         const result = await response.json();
         
         if (!response.ok) {
-            throw new Error(getErrorMessage(result, 'Failed to log in.'));
+            throw new ApiError(getErrorMessage(result, 'Failed to log in.'), response.status);
         }
 
         return result;
     } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
         if ((error as any).name === 'AbortError') {
-            throw new Error('Login request timed out. Please try again.');
+            throw new ApiError('Login request timed out. Please try again.', 408);
         }
         console.error('Error logging in:', error);
         if (error instanceof Error) {
-           throw new Error(error.message);
+           throw new ApiError(error.message, 500);
         }
-        throw new Error('An unknown error occurred during login.');
+        throw new ApiError('An unknown error occurred during login.', 500);
     }
 }
 
