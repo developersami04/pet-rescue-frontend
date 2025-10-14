@@ -37,7 +37,7 @@ const profilePictureSchema = z.object({
   profile_image: z
     .any()
     .refine((files) => files?.length == 1, 'Image is required.')
-    .refine((files) => files?.[0]?.size <= 5000000, `Max file size is 5MB.`)
+    .refine((files) => files?.[0]?.size <= 1000000, `Max file size is 1MB.`)
     .refine(
       (files) => ['image/jpeg', 'image/png', 'image/webp'].includes(files?.[0]?.type),
       'Only .jpg, .png, and .webp formats are supported.'
@@ -157,7 +157,7 @@ export function ChangeProfilePictureDialog({ children, user, onUpdate }: ChangeP
                              <div className="text-center space-y-2 text-muted-foreground cursor-pointer p-4">
                                 <UploadCloud className="mx-auto h-10 w-10" />
                                 <p className="text-sm">Click to upload or drag and drop</p>
-                                <p className="text-xs">PNG, JPG, or WEBP (max 5MB)</p>
+                                <p className="text-xs">PNG, JPG, or WEBP (max 1MB)</p>
                              </div>
                         )}
                         <Input
