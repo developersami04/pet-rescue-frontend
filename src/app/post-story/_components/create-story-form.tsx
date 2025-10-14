@@ -159,8 +159,8 @@ export function CreateStoryForm() {
             <FormItem>
                 <FormLabel>Select a Pet (Optional)</FormLabel>
                 <Select
-                    onValueChange={(value) => field.onChange(value ? Number(value) : null)}
-                    defaultValue={String(field.value ?? '')}
+                    onValueChange={(value) => field.onChange(value === 'none' ? null : Number(value))}
+                    defaultValue={field.value ? String(field.value) : "none"}
                     disabled={isPetListLoading}
                 >
                     <FormControl>
@@ -169,7 +169,7 @@ export function CreateStoryForm() {
                         </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                        <SelectItem value="">None</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
                         {selectablePets.length > 0 && (
                             selectablePets.map(pet => (
                                 <SelectItem key={pet.id} value={String(pet.id)}>{pet.name}</SelectItem>
