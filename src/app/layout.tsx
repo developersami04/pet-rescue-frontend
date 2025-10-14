@@ -26,8 +26,6 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
     if (user?.is_admin) {
       setTheme('dark');
       document.documentElement.classList.add('dark');
-    } else {
-       document.documentElement.classList.remove('dark');
     }
   }, [user, setTheme]);
 
