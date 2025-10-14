@@ -155,8 +155,14 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
 - **Endpoint**: `/api/user-auth/password-reset-request/`
 - **Method**: `POST`
 - **Auth Required**: No
-- **Request Body Schema**: `{ "email": "string" }`
-- **Success Response (200 OK)**: `{ "message": "Password reset OTP sent successfully." }`
+- **Request Body Schema**:
+  ```json
+  { "email": "string" }
+  ```
+- **Success Response (200 OK)**:
+  ```json
+  { "message": "Password reset OTP sent successfully." }
+  ```
 
 ### Confirm Password Reset
 - **Endpoint**: `/api/user-auth/password-reset-confirm/`
@@ -171,7 +177,10 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
     "email": "string"
   }
   ```
-- **Success Response (200 OK)**: `{ "message": "Password reset successful." }`
+- **Success Response (200 OK)**:
+  ```json
+  { "message": "Password reset successful." }
+  ```
 
 ---
 
@@ -181,7 +190,10 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
 - **Endpoint**: `/api/user-auth/user-details`
 - **Method**: `GET`
 - **Auth Required**: Yes (Bearer Token)
-- **Success Response (200 OK)**: `{ /* User object */ }`
+- **Success Response (200 OK)**:
+  ```json
+  { /* User object */ }
+  ```
 
 ### Update User Details
 - **Endpoint**: `/api/user-auth/update-account`
@@ -197,7 +209,10 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
     "profile_image": "file (optional)"
   }
   ```
-- **Success Response (200 OK)**: `{ "message": "Account updated successfully." }`
+- **Success Response (200 OK)**:
+  ```json
+  { "message": "Account updated successfully." }
+  ```
 
 ### Change Password
 - **Endpoint**: `/api/user-auth/change-password`
@@ -210,27 +225,42 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
     "new_password": "string"
   }
   ```
-- **Success Response (200 OK)**: `{ "message": "Password changed successfully." }`
+- **Success Response (200 OK)**:
+  ```json
+  { "message": "Password changed successfully." }
+  ```
 
 ### Delete Account
 - **Endpoint**: `/api/user-auth/delete-account`
 - **Method**: `DELETE`
 - **Auth Required**: Yes (Bearer Token)
-- **Request Body Schema**: `{ "password": "string" }`
+- **Request Body Schema**:
+  ```json
+  { "password": "string" }
+  ```
 - **Success Response (204 No Content)**
 
 ### Send Verification Email
 - **Endpoint**: `/api/user-auth/verify-email`
 - **Method**: `GET`
 - **Auth Required**: Yes (Bearer Token)
-- **Success Response (200 OK)**: `{ "message": "Verification OTP sent to your email." }`
+- **Success Response (200 OK)**:
+  ```json
+  { "message": "Verification OTP sent to your email." }
+  ```
 
 ### Verify Email with OTP
 - **Endpoint**: `/api/user-auth/verify-email`
 - **Method**: `POST`
 - **Auth Required**: Yes (Bearer Token)
-- **Request Body Schema**: `{ "otp": "string" }`
-- **Success Response (200 OK)**: `{ "message": "Email verified successfully." }`
+- **Request Body Schema**:
+  ```json
+  { "otp": "string" }
+  ```
+- **Success Response (200 OK)**:
+  ```json
+  { "message": "Email verified successfully." }
+  ```
 
 ---
 
@@ -255,32 +285,47 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
 - **Method**: `GET`
 - **Auth Required**: Yes (Bearer Token)
 - **Query Params**: `type` (string, e.g., "Dog")
-- **Success Response (200 OK)**: `{ "data": [ /* Array of Pet objects */ ] }`
+- **Success Response (200 OK)**:
+  ```json
+  { "data": [ /* Array of Pet objects */ ] }
+  ```
 
 ### Get My Pets
 - **Endpoint**: `/api/pet-data/my-pets/`
 - **Method**: `GET`
 - **Auth Required**: Yes (Bearer Token)
-- **Success Response (200 OK)**: `{ "data": [ /* Array of Pet objects */ ] }`
+- **Success Response (200 OK)**:
+  ```json
+  { "data": [ /* Array of Pet objects */ ] }
+  ```
 
 ### Get My Pet Data
 - **Endpoint**: `/api/pet-data/my-pet-data/`
 - **Method**: `GET`
 - **Auth Required**: Yes (Bearer Token)
 - **Query Params**: `tab` ('lost', 'found', 'adopt', 'my-adoption-requests', 'adoption-requests-received')
-- **Success Response (200 OK)**: `{ "data": [ /* Array of relevant objects */ ] }`
+- **Success Response (200 OK)**:
+  ```json
+  { "data": [ /* Array of relevant objects */ ] }
+  ```
 
 ### Get Pet Profile by ID
 - **Endpoint**: `/api/pet-data/pet-profile/{id}`
 - **Method**: `GET`
 - **Auth Required**: Yes (Bearer Token)
-- **Success Response (200 OK)**: `{ "data": { /* Full Pet object with medical_history, etc. */ } }`
+- **Success Response (200 OK)**:
+  ```json
+  { "data": { /* Full Pet object with medical_history, etc. */ } }
+  ```
 
 ### Get Pet Request Form Data
 - **Endpoint**: `/api/pet-data/pet-request-view/{id}`
 - **Method**: `GET`
 - **Auth Required**: Yes (Bearer Token)
-- **Success Response (200 OK)**: `{ "data": { /* Pet data for form pre-filling */ } }`
+- **Success Response (200 OK)**:
+  ```json
+  { "data": { /* Pet data for form pre-filling */ } }
+  ```
 
 ### Submit Pet Request
 - **Endpoint**: `/api/pet-data/pet-request-form/`
@@ -288,15 +333,21 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
 - **Auth Required**: Yes (Bearer Token)
 - **Content-Type**: `multipart/form-data`
 - **Form Data Schema**: Includes all fields from the `addPetSchema`, including optional images (`pet_image`, `report_image`) and report details (`pet_status`, `message`).
-- **Success Response (201 Created)**: `{ "message": "Pet request submitted successfully." }`
+- **Success Response (201 Created)**:
+  ```json
+  { "message": "Pet request submitted successfully." }
+  ```
 
-### Update PetRequest
+### Update Pet Request
 - **Endpoint**: `/api/pet-data/pet-request-view/{id}`
 - **Method**: `PATCH`
 - **Auth Required**: Yes (Bearer Token)
 - **Content-Type**: `multipart/form-data`
 - **Form Data Schema**: Any subset of fields from the `updatePetSchema`.
-- **Success Response (200 OK)**: `{ "message": "Pet request updated successfully." }`
+- **Success Response (200 OK)**:
+  ```json
+  { "message": "Pet request updated successfully." }
+  ```
 
 ### Delete Pet Request
 - **Endpoint**: `/api/pet-data/pet-request-view/{id}/`
@@ -312,15 +363,27 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
 - **Endpoint**: `/api/pet-data/pet-adoptions/`
 - **Method**: `POST`
 - **Auth Required**: Yes (Bearer Token)
-- **Request Body Schema**: `{ "pet": "number (petId)", "message": "string" }`
-- **Success Response (201 Created)**: `{ /* AdoptionRequest object */ }`
+- **Request Body Schema**:
+  ```json
+  { "pet": "number (petId)", "message": "string" }
+  ```
+- **Success Response (201 Created)**:
+  ```json
+  { /* AdoptionRequest object */ }
+  ```
 
 ### Update Adoption Request
 - **Endpoint**: `/api/pet-data/pet-adoptions/{id}/`
 - **Method**: `PATCH`
 - **Auth Required**: Yes (Bearer Token)
-- **Request Body Schema**: `{ "message": "string" }`
-- **Success Response (200 OK)**: `{ /* AdoptionRequest object */ }`
+- **Request Body Schema**:
+  ```json
+  { "message": "string" }
+  ```
+- **Success Response (200 OK)**:
+  ```json
+  { /* AdoptionRequest object */ }
+  ```
 
 ### Delete Adoption Request
 - **Endpoint**: `/api/pet-data/pet-adoptions/{id}`
@@ -333,7 +396,10 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
 - **Method**: `GET`
 - **Auth Required**: Yes (Bearer Token)
 - **Query Params**: `pet_status` ('lost', 'found', 'adopt')
-- **Success Response (200 OK)**: `{ "data": [ /* Array of PetReport objects */ ] }`
+- **Success Response (200 OK)**:
+  ```json
+  { "data": [ /* Array of PetReport objects */ ] }
+  ```
 
 ---
 
@@ -344,12 +410,24 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
 - **Auth Required**: Yes (Bearer Token)
 - **Methods**:
   - `GET`: Fetches user's favorite pets.
-    - **Response**: `{ "data": [ /* Array of FavoritePet objects */ ] }`
+    - **Response**:
+      ```json
+      { "data": [ /* Array of FavoritePet objects */ ] }
+      ```
   - `POST`: Adds a pet to favorites.
-    - **Request**: `{ "pet_id": "number" }`
-    - **Response**: `{ /* FavoritePet object */ }`
+    - **Request**:
+      ```json
+      { "pet_id": "number" }
+      ```
+    - **Response**:
+      ```json
+      { /* FavoritePet object */ }
+      ```
   - `DELETE`: Removes a pet from favorites.
-    - **Request**: `{ "pet_id": "number" }`
+    - **Request**:
+      ```json
+      { "pet_id": "number" }
+      ```
     - **Response**: 204 No Content
 
 ### Manage User Stories
@@ -357,23 +435,38 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
 - **Auth Required**: Yes (Bearer Token)
 - **Methods**:
   - `GET`: Fetches all user stories.
-    - **Response**: `{ "data": [ /* Array of UserStory objects */ ] }`
+    - **Response**:
+      ```json
+      { "data": [ /* Array of UserStory objects */ ] }
+      ```
   - `POST`: Creates a new user story.
-    - **Request**: `{ "pet": "number (petId)", "title": "string", "content": "string" }`
-    - **Response**: `{ /* UserStory object */ }`
+    - **Request**:
+      ```json
+      { "pet": "number (petId)", "title": "string", "content": "string" }
+      ```
+    - **Response**:
+      ```json
+      { /* UserStory object */ }
+      ```
 
 ### Get Home User Stories
 - **Endpoint**: `/api/home/home-user-stories/`
 - **Method**: `GET`
 - **Auth Required**: No
-- **Success Response (200 OK)**: `{ "data": [ /* Array of HomeUserStory objects */ ] }`
+- **Success Response (200 OK)**:
+  ```json
+  { "data": [ /* Array of HomeUserStory objects */ ] }
+  ```
 
 ### Search Pets
 - **Endpoint**: `/api/home/user-search-query/`
 - **Method**: `GET`
 - **Auth Required**: Yes (Bearer Token)
 - **Query Params**: `query` (string)
-- **Success Response (200 OK)**: `{ "data": [ /* Array of simplified Pet objects */ ] }`
+- **Success Response (200 OK)**:
+  ```json
+  { "data": [ /* Array of simplified Pet objects */ ] }
+  ```
 
 ---
 
@@ -384,7 +477,10 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
 - **Method**: `GET`
 - **Auth Required**: Yes (Bearer Token)
 - **Query Params**: `pet_status` (optional), `read_status` (optional)
-- **Success Response (200 OK)**: `{ "data": [ /* Array of Notification objects */ ] }`
+- **Success Response (200 OK)**:
+  ```json
+  { "data": [ /* Array of Notification objects */ ] }
+  ```
 
 ### Mark Notification as Read
 - **Endpoint**: `/api/pet-data/notifications/{id}/`
@@ -406,48 +502,89 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
 - **Endpoint**: `/api/admin-panel/dashboard-metrics/`
 - **Method**: `GET`
 - **Auth Required**: Yes (Admin User)
-- **Success Response (200 OK)**: `{ "data": { /* Metrics object */ } }`
+- **Success Response (200 OK)**:
+  ```json
+  { "data": { /* Metrics object */ } }
+  ```
 
 ### Get Registered Users
 - **Endpoint**: `/api/admin-panel/registered-users/`
 - **Method**: `GET`
 - **Auth Required**: Yes (Admin User)
-- **Success Response (200 OK)**: `{ "data": [ /* Array of RegisteredUser objects */ ] }`
+- **Success Response (200 OK)**:
+  ```json
+  { "data": [ /* Array of RegisteredUser objects */ ] }
+  ```
 
 ### Update User Status
 - **Endpoint**: `/api/admin-panel/registered-users/{id}/`
 - **Method**: `PATCH`
 - **Auth Required**: Yes (Admin User)
-- **Request Body Schema**: `{ "is_verified": "boolean" }` or `{ "is_active": "boolean" }` or `{ "is_staff": "boolean" }`
-- **Success Response (200 OK)**: `{ /* Updated RegisteredUser object */ }`
+- **Request Body Schema**:
+  ```json
+  { "is_verified": "boolean" }
+  ```
+  or
+  ```json
+  { "is_active": "boolean" }
+  ```
+  or
+  ```json
+  { "is_staff": "boolean" }
+  ```
+- **Success Response (200 OK)**:
+  ```json
+  { /* Updated RegisteredUser object */ }
+  ```
 
 ### Get Admin Pet Reports
 - **Endpoint**: `/api/admin-panel/pet-reports/`
 - **Method**: `GET`
 - **Auth Required**: Yes (Admin User)
 - **Query Params**: `status` ('pending', 'approved', 'rejected', 'last50')
-- **Success Response (200 OK)**: `{ "data": [ /* Array of AdminPetReport objects */ ] }`
+- **Success Response (200 OK)**:
+  ```json
+  { "data": [ /* Array of AdminPetReport objects */ ] }
+  ```
 
 ### Update Pet Report Status
 - **Endpoint**: `/api/admin-panel/pet-reports/{id}/`
 - **Method**: `PATCH`
 - **Auth Required**: Yes (Admin User)
-- **Request Body Schema**: `{ "report_status": "string ('approved', 'rejected', 'resolved')" }`
-- **Success Response (200 OK)**: `{ /* Updated AdminPetReport object */ }`
+- **Request Body Schema**:
+  ```json
+  { "report_status": "string ('approved', 'rejected', 'resolved')" }
+  ```
+- **Success Response (200 OK)**:
+  ```json
+  { /* Updated AdminPetReport object */ }
+  ```
 
 ### Get Admin Adoption Requests
 - **Endpoint**: `/api/admin-panel/adoption-requests/`
 - **Method**: `GET`
 - **Auth Required**: Yes (Admin User)
 - **Query Params**: `report_status` ('pending', 'recents', 'rejected')
-- **Success Response (200 OK)**: `{ "data": [ /* Array of AdoptionRequest objects */ ] }`
+- **Success Response (200 OK)**:
+  ```json
+  { "data": [ /* Array of AdoptionRequest objects */ ] }
+  ```
 
 ### Update Adoption Request Status
 - **Endpoint**: `/api/admin-panel/adoption-requests/{id}/`
 - **Method**: `PATCH`
 - **Auth Required**: Yes (Admin User)
-- **Request Body Schema**: `{ "report_status": "string ('approved', 'rejected')", "message": "string (optional)" }`
-- **Success Response (200 OK)**: `{ /* Updated AdoptionRequest object */ }`
+- **Request Body Schema**:
+  ```json
+  {
+    "report_status": "string ('approved', 'rejected')",
+    "message": "string (optional)"
+  }
+  ```
+- **Success Response (200 OK)**:
+  ```json
+  { /* Updated AdoptionRequest object */ }
+  ```
 
 ### Delete Admin Adoption Request
 - **Endpoint**: `/api/admin-panel/adoption-requests/{id}/`
