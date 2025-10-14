@@ -18,7 +18,7 @@ export function BottomNavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { href: user?.is_admin ? '/admin/dashboard' : '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
+    { href: user?.is_admin ? '/admin/dashboard' : '/dashboard', icon: LayoutGrid, label: user?.is_admin ? 'Admin' : 'Dashboard' },
     { href: '/pets', icon: PawPrint, label: 'Pets' },
     { href: '/submit-request', icon: Plus, label: 'Add', isCenter: true },
     { href: '/notifications', icon: Bell, label: 'Updates' },
