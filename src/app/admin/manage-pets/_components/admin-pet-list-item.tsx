@@ -87,7 +87,7 @@ export function AdminPetListItem({ pet, onDelete, isDeleting }: AdminPetListItem
                 </div>
                  <div className="flex justify-end items-center gap-2">
                      <Button size="sm" asChild>
-                        <Link href={`/submit-request/${pet.id}`}>
+                        <Link href={`/admin/manage-pets/edit/${pet.id}`}>
                             <Pen className="mr-2 h-4 w-4" /> Edit
                         </Link>
                     </Button>

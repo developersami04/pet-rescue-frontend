@@ -79,7 +79,7 @@ export function AdminPetCard({ pet, onDelete, isDeleting }: AdminPetCardProps) {
         </CardHeader>
         <CardFooter className="p-4 pt-0 flex gap-2">
             <Button asChild variant="outline" className="w-full">
-                <Link href={`/submit-request/${pet.id}`}>
+                <Link href={`/admin/manage-pets/edit/${pet.id}`}>
                     <Pen className="mr-2 h-4 w-4" /> Edit
                 </Link>
             </Button>
