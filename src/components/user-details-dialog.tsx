@@ -36,16 +36,20 @@ function DetailsSkeleton() {
     return (
         <div className="space-y-4 py-4">
             <div className="flex items-center gap-4">
-                <Skeleton className="h-6 w-6" />
+                <Skeleton className="h-6 w-6 rounded-full" />
                 <Skeleton className="h-4 w-48" />
             </div>
              <div className="flex items-center gap-4">
-                <Skeleton className="h-6 w-6" />
-                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-6 w-6 rounded-full" />
+                <Skeleton className="h-4 w-32" />
             </div>
              <div className="flex items-center gap-4">
-                <Skeleton className="h-6 w-6" />
-                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-6 w-6 rounded-full" />
+                <Skeleton className="h-4 w-40" />
+            </div>
+             <div className="flex items-center gap-4">
+                <Skeleton className="h-6 w-6 rounded-full" />
+                <Skeleton className="h-4 w-24" />
             </div>
         </div>
     )
@@ -60,8 +64,6 @@ export function UserDetailsDialog({ userId, children }: UserDetailsDialogProps) 
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
   const fetchDetails = useCallback(async () => {
-    if (!isOpen || userDetails) return; // Don't fetch if dialog is closed or data already exists
-
     setIsLoading(true);
     setError(null);
     const token = localStorage.getItem('authToken');
@@ -84,16 +86,18 @@ export function UserDetailsDialog({ userId, children }: UserDetailsDialogProps) 
     } finally {
         setIsLoading(false);
     }
-  }, [isOpen, userId, router, toast, userDetails]);
+  }, [userId, router, toast]);
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
-    if(open) {
+    if (open && !userDetails) {
         fetchDetails();
-    } else {
-        // Reset state when closing
+    }
+    if (!open) {
+        // Reset state when closing to allow re-fetching next time
         setUserDetails(null);
         setError(null);
+        setIsLoading(false);
     }
   }
 
