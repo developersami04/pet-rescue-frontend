@@ -78,9 +78,9 @@ export function LoginDialog({ children }: LoginDialogProps) {
       }
 
       login(result.access_token, result.refresh_token, result.user, result.message);
-      setIsOpen(false);
       
-      router.push('/');
+      // Full page refresh to ensure all state is reset
+      window.location.assign('/');
 
     } catch (error: any) {
         toast({

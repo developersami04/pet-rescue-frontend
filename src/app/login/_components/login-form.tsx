@@ -66,7 +66,8 @@ export function LoginForm() {
 
       login(result.access_token, result.refresh_token, result.user, result.message);
       
-      router.push('/dashboard');
+      // Full page refresh to ensure all state is reset
+      window.location.assign('/');
 
     } catch (error: any) {
         toast({
