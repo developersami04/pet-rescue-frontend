@@ -17,11 +17,20 @@ import { Footer } from './landing/_components/footer';
 import { useEffect, useState } from 'react';
 
 function AppLayoutClient({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
   const { setTheme } = useTheme();
   const pathname = usePathname();
-  const [hasToken, setHasToken] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  
+  const [clientIsAuthenticated, setClientIsAuthenticated] = useState(false);
+  const [clientIsAdmin, setClientIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // This effect runs only on the client, after hydration
+    const token = localStorage.getItem('authToken');
+    const isAdmin = localStorage.getItem('is_admin') === 'true';
+    setClientIsAuthenticated(!!token);
+    setClientIsAdmin(isAdmin);
+  }, [isAuthenticated]); // Re-run when auth state changes
   
   useEffect(() => {
     if (user?.is_admin) {
@@ -30,31 +39,28 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
     }
   }, [user, setTheme]);
 
-  useEffect(() => {
-    setHasToken(!!localStorage.getItem('authToken'));
-    setIsAdmin(localStorage.getItem('is_admin') === 'true');
-  }, [isAuthenticated]);
 
-  const isAuthPage = isAuthenticated && pathname !== '/';
-  const showLandingFooter = !isAuthenticated && pathname === '/';
+  const showLandingFooter = !clientIsAuthenticated && pathname === '/';
 
   let HeaderComponent;
-  if (hasToken) {
-      if (isAdmin) {
-          HeaderComponent = <AdminHeader />;
-      } else {
-          HeaderComponent = <HeaderNav />;
-      }
+  // During the initial server render and client hydration, isLoading is true.
+  // We render the public header to match the server.
+  if (isLoading && !clientIsAuthenticated) {
+    HeaderComponent = <LandingHeader />;
+  } else if (clientIsAdmin) {
+    HeaderComponent = <AdminHeader />;
+  } else if (clientIsAuthenticated) {
+    HeaderComponent = <HeaderNav />;
   } else {
-      HeaderComponent = <LandingHeader />;
+    HeaderComponent = <LandingHeader />;
   }
 
   return (
     <div className="flex min-h-screen flex-col">
       {HeaderComponent}
-      <main className={cn("flex-1", isAuthenticated && "pb-20")}>{children}</main>
+      <main className={cn("flex-1", clientIsAuthenticated && "pb-20")}>{children}</main>
       {showLandingFooter && <Footer />}
-      {isAuthenticated && <BottomNavBar />}
+      {clientIsAuthenticated && <BottomNavBar />}
     </div>
   )
 }
