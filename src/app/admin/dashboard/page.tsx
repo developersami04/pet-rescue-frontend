@@ -45,7 +45,7 @@ function StatsSkeleton() {
 function DashboardContent() {
     const { toast } = useToast();
     const router = useRouter();
-    const { isLoading: isAuthLoading } = useAuth();
+    const { isLoading: isAuthLoading, isAuthenticated } = useAuth();
 
     const [metrics, setMetrics] = useState<Metrics | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -53,6 +53,8 @@ function DashboardContent() {
     const [error, setError] = useState<string | null>(null);
 
     const fetchMetrics = useCallback(async () => {
+        if (!isAuthenticated) return;
+        
         const token = localStorage.getItem('authToken');
         if (!token) {
             setError("Authentication required.");
@@ -73,13 +75,14 @@ function DashboardContent() {
                 toast({ variant: 'destructive', title: 'Error', description: error.message });
             }
         }
-    }, [router, toast]);
+    }, [router, toast, isAuthenticated]);
 
     useEffect(() => {
-        if (isAuthLoading) return; // Wait until auth check is complete
-        setIsLoading(true);
-        fetchMetrics().finally(() => setIsLoading(false));
-    }, [fetchMetrics, isAuthLoading]);
+        if (isAuthenticated) {
+            setIsLoading(true);
+            fetchMetrics().finally(() => setIsLoading(false));
+        }
+    }, [fetchMetrics, isAuthenticated]);
 
     const handleRefresh = async () => {
         setIsRefreshing(true);

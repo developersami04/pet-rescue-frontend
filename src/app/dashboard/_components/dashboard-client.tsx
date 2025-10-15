@@ -131,7 +131,7 @@ export function DashboardClient() {
     } finally {
         setLoading(prev => ({...prev, [tab]: false}));
     }
-  }, [router, toast, isAuthenticated]); // Removed tabData
+  }, [router, toast, isAuthenticated, tabData]);
 
   // Fetch data for the active tab when it changes OR when auth status changes
   useEffect(() => {
