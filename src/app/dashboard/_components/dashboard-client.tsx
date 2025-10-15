@@ -57,6 +57,8 @@ const tabApiMap: { [key: string]: 'lost' | 'found' | 'adopt' | 'my-adoption-requ
     'adoption-requests-received': 'adoption-requests-received',
 };
 
+const REFRESH_INTERVAL = 15 * 60 * 1000; // 15 minutes
+
 export function DashboardClient() {
   const [activeTab, setActiveTab] = useState("my-pets");
   const { toast } = useToast();
@@ -93,15 +95,13 @@ export function DashboardClient() {
       'favorites': null,
   });
 
-  const fetchTabData = useCallback(async (tab: string) => {
-    // Don't refetch if data is already available or not authenticated
-    if (tabData[tab as keyof TabData] !== null || !isAuthenticated) {
+  const fetchTabData = useCallback(async (tab: string, force = false) => {
+    if ((tabData[tab as keyof TabData] !== null && !force) || !isAuthenticated) {
       return;
     }
 
     const token = localStorage.getItem('authToken');
     if (!token) {
-        // This case is mostly handled by page-level auth checks, but as a safeguard:
         setErrors(prev => ({...prev, [tab]: 'You are not authenticated.'}));
         return;
     }
@@ -133,13 +133,25 @@ export function DashboardClient() {
     }
   }, [router, toast, isAuthenticated, tabData]);
 
-  // Fetch data for the active tab when it changes OR when auth status changes
   useEffect(() => {
     if (isAuthenticated) {
       fetchTabData(activeTab);
     }
   }, [activeTab, fetchTabData, isAuthenticated]);
   
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const intervalId = setInterval(() => {
+      // Re-fetch data for the currently active tab
+      fetchTabData(activeTab, true);
+    }, REFRESH_INTERVAL);
+
+    // Clear interval on component unmount or when dependencies change
+    return () => clearInterval(intervalId);
+  }, [isAuthenticated, activeTab, fetchTabData]);
+
+
   const handleDataRefresh = (tab: keyof TabData) => {
       setTabData(prev => ({...prev, [tab]: null}));
       fetchTabData(tab);

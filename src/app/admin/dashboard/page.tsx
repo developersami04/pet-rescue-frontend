@@ -42,6 +42,8 @@ function StatsSkeleton() {
   );
 }
 
+const REFRESH_INTERVAL = 15 * 60 * 1000; // 15 minutes
+
 function DashboardContent() {
     const { toast } = useToast();
     const router = useRouter();
@@ -83,6 +85,17 @@ function DashboardContent() {
             fetchMetrics().finally(() => setIsLoading(false));
         }
     }, [fetchMetrics, isAuthenticated]);
+
+    useEffect(() => {
+        if (!isAuthenticated) return;
+        
+        const intervalId = setInterval(async () => {
+            await fetchMetrics();
+        }, REFRESH_INTERVAL);
+
+        return () => clearInterval(intervalId);
+    }, [isAuthenticated, fetchMetrics]);
+
 
     const handleRefresh = async () => {
         setIsRefreshing(true);
