@@ -108,7 +108,7 @@ function RequestItem({ request, onUpdate }: { request: AdoptionRequest, onUpdate
                     <Badge variant={getStatusVariant(request.report_status || request.status)} className="capitalize mb-2">
                         {request.report_status || request.status}
                     </Badge>
-                     {request.report_status === 'pending' && (
+                     {(request.report_status === 'pending' || request.status === 'pending') && (
                         <div className="flex gap-2">
                              <AlertDialog>
                                 <AlertDialogTrigger asChild>
