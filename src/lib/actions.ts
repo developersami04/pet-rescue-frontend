@@ -5,35 +5,53 @@
 import { z } from "zod";
 import API_ENDPOINTS from "./endpoints";
 import { fetchWithAuth, fetchWithTimeout } from "./api";
-import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport, PetReport, AdoptionRequest, FavoritePet, UserStory, HomeUserStory } from "./data";
+import type { Pet, Notification, RegisteredUser, UnverifiedUser, AdminPetReport, PetReport, AdoptionRequest, FavoritePet, UserStory, HomeUserStory, MyAdoptionRequest } from "./data";
 
 // Import the backend Host Address from .env file
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-class ApiError extends Error {
-    status: number;
-    constructor(message: string, status: number) {
-        super(message);
-        this.status = status;
-    }
-}
-
-// Helper functions
+/**
+ * Parses an error response from the API to generate a user-friendly error message.
+ * It intelligently extracts details from various possible error formats.
+ * @param result - The JSON response body from a failed API call.
+ * @param defaultMessage - A fallback message if no specific error can be found.
+ * @returns A string containing the formatted error message.
+ */
 function getErrorMessage(result: any, defaultMessage: string): string {
     if (result) {
-        if (typeof result === 'string' && result.trim().startsWith('<!doctype html>')) {
-            return "The requested resource was not found on this server.";
+        if (typeof result === 'string') {
+            // Handle plain text errors or HTML error pages
+            if (result.trim().startsWith('<!doctype html>')) {
+                return "The server returned an unexpected error page. Please try again later.";
+            }
+            return result;
         }
-        if (result.message && typeof result.message === 'string') return result.message;
+        // Handle Django Rest Framework's standard error format: `{"detail": "..."}`
         if (result.detail && typeof result.detail === 'string') return result.detail;
-        if (typeof result === 'object' && result !== null) {
-            const messages = Object.values(result).flat();
+
+        // Handle custom error formats like `{"message": "..."}`
+        if (result.message && typeof result.message === 'string') return result.message;
+
+        // Handle validation errors where keys are field names and values are arrays of strings
+        if (typeof result === 'object' && !Array.isArray(result) && Object.keys(result).length > 0) {
+            const messages = Object.entries(result).map(([key, value]) => {
+                const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                if (Array.isArray(value)) {
+                    return `${formattedKey}: ${value.join(' ')}`;
+                }
+                return `${formattedKey}: ${value}`;
+            });
             if (messages.length > 0) return messages.join(' ');
         }
     }
+    // Fallback to the default message if no specific error can be extracted
     return defaultMessage;
 }
 
+
+// =================================================================================
+// AUTHENTICATION & USER ACTIONS
+// =================================================================================
 
 const registerUserSchema = z.object({
     firstName: z.string().min(1, 'First name is required.'),
@@ -49,6 +67,11 @@ const registerUserSchema = z.object({
     pin_code: z.coerce.number().optional().nullable(),
   });
 
+/**
+ * Registers a new user with the provided details.
+ * @param userData - The user's registration data, conforming to the schema.
+ * @returns An object indicating success or failure, with data or an error message.
+ */
 export async function registerUser(userData: z.infer<typeof registerUserSchema>) {
     if (!API_BASE_URL) {
         return { success: false, error: 'API is not configured. Please contact support.', status: 500 };
@@ -102,6 +125,11 @@ const loginUserSchema = z.object({
   password: z.string().min(1, 'Password is required.'),
 });
 
+/**
+ * Authenticates a user with username and password.
+ * @param credentials - The user's login credentials.
+ * @returns An object containing tokens and user data on success, or an error.
+ */
 export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
     if (!API_BASE_URL) {
         return { success: false, error: 'API is not configured. Please contact support.', status: 500 };
@@ -135,7 +163,11 @@ export async function loginUser(credentials: z.infer<typeof loginUserSchema>) {
     }
 }
 
-
+/**
+ * Verifies a refresh token to authenticate a user and get a new access token.
+ * @param refreshToken - The user's refresh token.
+ * @returns An object with authentication status, user data, and a new access token.
+ */
 export async function checkUserAuth(refreshToken: string) {
     if (!API_BASE_URL) {
         return { isAuthenticated: false, user: null, error: 'API not configured.', newAccessToken: null };
@@ -150,7 +182,7 @@ export async function checkUserAuth(refreshToken: string) {
 
         const result = await response.json();
         
-        if (!response.ok || result.status === 'Failed') {
+        if (!response.ok || result.status !== 'Successful') {
             return { isAuthenticated: false, user: null, error: getErrorMessage(result, 'Token validation failed.'), newAccessToken: null };
         }
 
@@ -167,7 +199,11 @@ export async function checkUserAuth(refreshToken: string) {
     }
 }
 
-
+/**
+ * Fetches the details for the currently authenticated user.
+ * @param token - The user's access token.
+ * @returns The user's detailed profile data.
+ */
 export async function getUserDetails(token: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -197,15 +233,23 @@ export async function getUserDetails(token: string) {
     }
 }
 
-export async function updateUserDetails(token: string, userData: Record<string, any>) {
+/**
+ * Updates the details of the currently authenticated user.
+ * Can handle both JSON data and FormData for file uploads.
+ * @param token - The user's access token.
+ * @param userData - The data to update, as a JSON object or FormData.
+ * @returns The result of the update operation.
+ */
+export async function updateUserDetails(token: string, userData: Record<string, any> | FormData) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
     
     const isFormData = userData instanceof FormData;
+    const isChangingPassword = isFormData ? userData.has('current_password') : 'current_password' in userData;
 
-    const endpoint = userData.current_password ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
-    const method = userData.current_password ? 'POST' : 'PATCH';
+    const endpoint = isChangingPassword ? API_ENDPOINTS.changePassword : API_ENDPOINTS.updateUserDetails;
+    const method = isChangingPassword ? 'POST' : 'PATCH';
     
     try {
         const response = await fetchWithAuth(`${API_BASE_URL}${endpoint}`, {
@@ -232,6 +276,11 @@ export async function updateUserDetails(token: string, userData: Record<string, 
     }
 }
 
+/**
+ * Sends a verification OTP to the user's registered email address.
+ * @param token - The user's access token.
+ * @returns A confirmation message.
+ */
 export async function sendVerificationEmail(token: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -261,6 +310,12 @@ export async function sendVerificationEmail(token: string) {
     }
 }
 
+/**
+ * Verifies an email address using a one-time password (OTP).
+ * @param token - The user's access token.
+ * @param otp - The 6-digit OTP sent to the user's email.
+ * @returns A success message on successful verification.
+ */
 export async function verifyOtp(token: string, otp: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -291,6 +346,13 @@ export async function verifyOtp(token: string, otp: string) {
     }
 }
 
+/**
+ * Deactivates a user's account. This is a soft delete.
+ * Requires the user's current password for confirmation.
+ * @param token - The user's access token.
+ * @param password - The user's current password.
+ * @returns A success message.
+ */
 export async function deactivateAccount(token: string, password: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -320,6 +382,11 @@ export async function deactivateAccount(token: string, password: string) {
     }
 }
 
+/**
+ * Requests a password reset code to be sent to the specified email.
+ * @param email - The user's email address.
+ * @returns A success message.
+ */
 export async function requestPasswordReset(email: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -345,6 +412,14 @@ export async function requestPasswordReset(email: string) {
     }
 }
 
+/**
+ * Confirms a password reset using the OTP and a new password.
+ * @param otp - The 6-digit OTP.
+ * @param password - The new password.
+ * @param confirm_password - The confirmation of the new password.
+ * @param email - The user's email.
+ * @returns A success message.
+ */
 export async function confirmPasswordReset(otp: string, password: string, confirm_password: string, email: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -370,17 +445,19 @@ export async function confirmPasswordReset(otp: string, password: string, confir
     }
 }
 
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------
-
+// =================================================================================
+// PET & REPORT ACTIONS
+// =================================================================================
 
 type PetType = {
   id: number;
   name: string;
 };
 
+/**
+ * Fetches the list of all available pet types (e.g., Dog, Cat).
+ * @returns An array of pet types, or null on failure.
+ */
 export async function getPetTypes(): Promise<PetType[] | null> {
     if (!API_BASE_URL) {
         console.error('API_BASE_URL is not defined in the environment variables.');
@@ -405,6 +482,12 @@ export async function getPetTypes(): Promise<PetType[] | null> {
     }
 }
 
+/**
+ * Fetches a list of all pets, with an option to filter by type.
+ * @param token - The user's access token.
+ * @param type - (Optional) The pet type to filter by (e.g., "Dog").
+ * @returns An array of Pet objects.
+ */
 export async function getAllPets(token: string, type?: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -440,6 +523,12 @@ export async function getAllPets(token: string, type?: string) {
     }
 }
 
+/**
+ * Fetches the full profile of a single pet by its ID.
+ * @param token - The user's access token.
+ * @param petId - The ID of the pet to fetch.
+ * @returns A single Pet object with all details.
+ */
 export async function getPetById(token: string, petId: string): Promise<Pet> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -470,6 +559,11 @@ export async function getPetById(token: string, petId: string): Promise<Pet> {
     }
 }
 
+/**
+ * Fetches all pets owned by the currently authenticated user.
+ * @param token - The user's access token.
+ * @returns An array of Pet objects.
+ */
 export async function getMyPets(token: string): Promise<Pet[] | null> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -497,6 +591,12 @@ export async function getMyPets(token: string): Promise<Pet[] | null> {
     }
 }
 
+/**
+ * Submits a new pet request, including pet details, medical history, and report info.
+ * @param token - The user's access token.
+ * @param formData - The complete pet data as a FormData object.
+ * @returns A success message.
+ */
 export async function submitRequest(token: string, formData: FormData) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -527,6 +627,12 @@ export async function submitRequest(token: string, formData: FormData) {
     }
 }
 
+/**
+ * Fetches various types of data related to the authenticated user's pets.
+ * @param token - The user's access token.
+ * @param tab - The category of data to fetch (e.g., 'lost', 'my-adoption-requests').
+ * @returns An array of data corresponding to the tab.
+ */
 export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopt' | 'my-adoption-requests' | 'adoption-requests-received'): Promise<any[] | null> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -557,6 +663,12 @@ export async function getMyPetData(token: string, tab: 'lost' | 'found' | 'adopt
     }
 }
 
+/**
+ * Fetches pre-filled data for updating a pet's request form.
+ * @param token - The user's access token.
+ * @param petId - The ID of the pet to fetch data for.
+ * @returns Pre-filled form data for the specified pet.
+ */
 export async function getPetRequestFormData(token: string, petId: string): Promise<any> {
   if (!API_BASE_URL) {
     throw new Error('API is not configured. Please contact support.');
@@ -587,6 +699,13 @@ export async function getPetRequestFormData(token: string, petId: string): Promi
   }
 }
 
+/**
+ * Updates an existing pet request with new data.
+ * @param token - The user's access token.
+ * @param petId - The ID of the pet request to update.
+ * @param formData - The updated data as a FormData object.
+ * @returns A success message.
+ */
 export async function updatePetRequest(token: string, petId: string, formData: FormData) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -618,6 +737,12 @@ export async function updatePetRequest(token: string, petId: string, formData: F
     }
 }
 
+/**
+ * Deletes a pet request.
+ * @param token - The user's access token.
+ * @param petId - The ID of the pet request to delete.
+ * @returns A success message.
+ */
 export async function deletePetRequest(token: string, petId: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -647,6 +772,13 @@ export async function deletePetRequest(token: string, petId: string) {
     }
 }
 
+/**
+ * Creates a new adoption request for a pet.
+ * @param token - The user's access token.
+ * @param petId - The ID of the pet to adopt.
+ * @param message - A message to the pet owner.
+ * @returns The created adoption request object.
+ */
 export async function createAdoptionRequest(token: string, petId: number, message: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -671,6 +803,13 @@ export async function createAdoptionRequest(token: string, petId: number, messag
     }
 }
 
+/**
+ * Updates the message of an existing adoption request.
+ * @param token - The user's access token.
+ * @param requestId - The ID of the adoption request to update.
+ * @param message - The new message.
+ * @returns The updated adoption request object.
+ */
 export async function updateAdoptionRequest(token: string, requestId: number, message: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -695,6 +834,12 @@ export async function updateAdoptionRequest(token: string, requestId: number, me
     }
 }
 
+/**
+ * Deletes a user's own adoption request.
+ * @param token - The user's access token.
+ * @param requestId - The ID of the adoption request to delete.
+ * @returns A success message.
+ */
 export async function deleteAdoptionRequest(token: string, requestId: number) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -719,6 +864,16 @@ export async function deleteAdoptionRequest(token: string, requestId: number) {
     }
 }
 
+// =================================================================================
+// NOTIFICATION ACTIONS
+// =================================================================================
+
+/**
+ * Fetches notifications for the authenticated user, with optional filters.
+ * @param token - The user's access token.
+ * @param filters - (Optional) Filters for pet status or read status.
+ * @returns An array of Notification objects.
+ */
 export async function getNotifications(
   token: string,
   filters: { pet_status?: string; read_status?: string } = {}
@@ -771,6 +926,12 @@ export async function getNotifications(
   }
 }
 
+/**
+ * Marks a specific notification as read.
+ * @param token - The user's access token.
+ * @param notificationId - The ID of the notification to mark as read.
+ * @returns The updated notification data or a success message.
+ */
 export async function readNotification(token: string, notificationId: number) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -801,6 +962,12 @@ export async function readNotification(token: string, notificationId: number) {
     }
 }
 
+/**
+ * Deletes a specific notification.
+ * @param token - The user's access token.
+ * @param notificationId - The ID of the notification to delete.
+ * @returns A success message.
+ */
 export async function deleteNotification(token: string, notificationId: number) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -821,6 +988,15 @@ export async function deleteNotification(token: string, notificationId: number) 
     }
 }
 
+// =================================================================================
+// ADMIN ACTIONS
+// =================================================================================
+
+/**
+ * Fetches all key metrics for the admin dashboard.
+ * @param token - The admin's access token.
+ * @returns An object containing metrics for users, pets, reports, and adoptions.
+ */
 export async function getAdminDashboardMetrics(token: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -851,6 +1027,11 @@ export async function getAdminDashboardMetrics(token: string) {
     }
 }
 
+/**
+ * Fetches a list of all registered users for the admin panel.
+ * @param token - The admin's access token.
+ * @returns An array of RegisteredUser objects.
+ */
 export async function getRegisteredUsers(token: string): Promise<RegisteredUser[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -881,6 +1062,11 @@ export async function getRegisteredUsers(token: string): Promise<RegisteredUser[
     }
 }
 
+/**
+ * Fetches a list of all unverified users.
+ * @param token - The admin's access token.
+ * @returns An array of UnverifiedUser objects.
+ */
 export async function getUnverifiedUsers(token: string): Promise<UnverifiedUser[]> {
   if (!API_BASE_URL) {
     throw new Error('API is not configured. Please contact support.');
@@ -924,6 +1110,14 @@ export async function getUnverifiedUsers(token: string): Promise<UnverifiedUser[
   }
 }
 
+/**
+ * Updates the status of a user (verified, active, or staff).
+ * @param token - The admin's access token.
+ * @param userId - The ID of the user to update.
+ * @param field - The status field to update.
+ * @param value - The new boolean value for the status.
+ * @returns The updated user object.
+ */
 export async function updateUserStatus(token: string, userId: number, field: 'is_verified' | 'is_active' | 'is_staff', value: boolean) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -954,6 +1148,12 @@ export async function updateUserStatus(token: string, userId: number, field: 'is
     }
 }
 
+/**
+ * Fetches pet reports for the admin panel, with optional status filtering.
+ * @param token - The admin's access token.
+ * @param status - (Optional) Filter reports by status.
+ * @returns An array of AdminPetReport objects.
+ */
 export async function getAdminPetReports(token: string, status?: 'pending' | 'approved' | 'rejected' | 'last50'): Promise<AdminPetReport[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -988,6 +1188,13 @@ export async function getAdminPetReports(token: string, status?: 'pending' | 'ap
     }
 }
 
+/**
+ * Updates the status of a pet report (approved, rejected, or resolved).
+ * @param token - The admin's access token.
+ * @param reportId - The ID of the report to update.
+ * @param status - The new status for the report.
+ * @returns The updated report object.
+ */
 export async function updatePetReportStatus(token: string, reportId: number, status: 'approved' | 'rejected' | 'resolved') {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -1019,6 +1226,12 @@ export async function updatePetReportStatus(token: string, reportId: number, sta
     }
 }
 
+/**
+ * Fetches all pet reports of a specific status for general users.
+ * @param token - The user's access token.
+ * @param status - The status to filter reports by ('lost', 'found', 'adopt').
+ * @returns An array of PetReport objects.
+ */
 export async function getPetReports(token: string, status: 'lost' | 'found' | 'adopt'): Promise<PetReport[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -1051,6 +1264,12 @@ export async function getPetReports(token: string, status: 'lost' | 'found' | 'a
     }
 }
 
+/**
+ * Fetches adoption requests for the admin panel, with optional status filtering.
+ * @param token - The admin's access token.
+ * @param status - (Optional) Filter requests by status ('pending', 'recents', 'rejected').
+ * @returns An array of AdoptionRequest objects.
+ */
 export async function getAdminAdoptionRequests(token: string, status?: 'pending' | 'recents' | 'rejected'): Promise<AdoptionRequest[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -1075,7 +1294,7 @@ export async function getAdminAdoptionRequests(token: string, status?: 'pending'
         // Transform the data to match the AdoptionRequest type
         const transformedData: AdoptionRequest[] = result.data.map((item: any) => ({
             id: item.id,
-            pet: item.id, // The API doesn't provide a separate pet id, so we use the request id for now.
+            pet: item.pet,
             pet_name: item.pet_name,
             pet_image: item.pet_image,
             message: item.message,
@@ -1102,6 +1321,14 @@ export async function getAdminAdoptionRequests(token: string, status?: 'pending'
     }
 }
 
+/**
+ * Updates the status of an adoption request (approved or rejected) by an admin.
+ * @param token - The admin's access token.
+ * @param requestId - The ID of the request to update.
+ * @param status - The new status.
+ * @param message - (Optional) A notification message for the user.
+ * @returns The updated adoption request object.
+ */
 export async function updateAdoptionRequestStatus(token: string, requestId: number, status: 'approved' | 'rejected', message?: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -1133,6 +1360,12 @@ export async function updateAdoptionRequestStatus(token: string, requestId: numb
     }
 }
 
+/**
+ * Deletes an adoption request from the admin panel.
+ * @param token - The admin's access token.
+ * @param requestId - The ID of the request to delete.
+ * @returns A success message.
+ */
 export async function deleteAdminAdoptionRequest(token: string, requestId: number) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -1153,6 +1386,15 @@ export async function deleteAdminAdoptionRequest(token: string, requestId: numbe
     }
 }
 
+// =================================================================================
+// FAVORITES & STORIES ACTIONS
+// =================================================================================
+
+/**
+ * Fetches the list of favorite pets for the authenticated user.
+ * @param token - The user's access token.
+ * @returns An array of FavoritePet objects.
+ */
 export async function getFavoritePets(token: string): Promise<FavoritePet[]> {
     if (!API_BASE_URL) throw new Error('API not configured.');
     const url = `${API_BASE_URL}${API_ENDPOINTS.favouritePets}`;
@@ -1168,6 +1410,12 @@ export async function getFavoritePets(token: string): Promise<FavoritePet[]> {
     }
 }
 
+/**
+ * Adds a pet to the user's favorites.
+ * @param token - The user's access token.
+ * @param petId - The ID of the pet to add.
+ * @returns The new favorite pet object.
+ */
 export async function addFavoritePet(token: string, petId: number) {
     if (!API_BASE_URL) throw new Error('API not configured.');
     const url = `${API_BASE_URL}${API_ENDPOINTS.favouritePets}`;
@@ -1186,6 +1434,12 @@ export async function addFavoritePet(token: string, petId: number) {
     }
 }
 
+/**
+ * Removes a pet from the user's favorites.
+ * @param token - The user's access token.
+ * @param petId - The ID of the pet to remove.
+ * @returns A success message.
+ */
 export async function removeFavoritePet(token: string, petId: number) {
     if (!API_BASE_URL) throw new Error('API not configured.');
     const url = `${API_BASE_URL}${API_ENDPOINTS.favouritePets}`;
@@ -1206,6 +1460,11 @@ export async function removeFavoritePet(token: string, petId: number) {
     }
 }
 
+/**
+ * Fetches all user-submitted stories.
+ * @param token - The user's access token.
+ * @returns An array of UserStory objects.
+ */
 export async function getUserStories(token: string): Promise<UserStory[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -1237,6 +1496,10 @@ export async function getUserStories(token: string): Promise<UserStory[]> {
     }
 }
 
+/**
+ * Fetches a selection of user stories for the public landing page.
+ * @returns An array of HomeUserStory objects.
+ */
 export async function getHomeUserStories(): Promise<HomeUserStory[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -1268,6 +1531,14 @@ export async function getHomeUserStories(): Promise<HomeUserStory[]> {
     }
 }
 
+/**
+ * Creates a new user story.
+ * @param token - The user's access token.
+ * @param petId - (Optional) The ID of the pet the story is about.
+ * @param title - The title of the story.
+ * @param content - The content of the story.
+ * @returns The newly created story object.
+ */
 export async function createUserStory(token: string, petId: number | null | undefined, title: string, content: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -1292,6 +1563,12 @@ export async function createUserStory(token: string, petId: number | null | unde
     }
 }
 
+/**
+ * Searches for pets based on a query string.
+ * @param token - The user's access token.
+ * @param query - The search term.
+ * @returns An array of simplified Pet objects matching the search.
+ */
 export async function searchPets(token: string, query: string): Promise<Pet[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
@@ -1351,8 +1628,3 @@ export async function searchPets(token: string, query: string): Promise<Pet[]> {
         throw new Error('An unknown error occurred while searching for pets.');
     }
 }
-
-
-    
-
-
