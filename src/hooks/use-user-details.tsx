@@ -20,6 +20,7 @@ export function useUserDetails() {
     if (authUser) {
       setUser(authUser);
       setIsLoading(false);
+      // No early return, still might need to fetch more details not present in authUser
     }
     
     const token = localStorage.getItem('authToken');

@@ -1,4 +1,6 @@
 
+'use client';
+
 import { PageHeader } from "@/components/page-header";
 import { ProfileCard } from "./_components/profile-card";
 import { ProfileForm } from "./_components/profile-form";
