@@ -7,7 +7,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { useAuth, AuthProvider } from '@/lib/auth.tsx';
 import { LandingHeader } from './landing/_components/landing-header';
 import { HeaderNav } from '@/components/header-nav';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeProvider } from '@/components/theme-provider';
 import { useTheme } from 'next-themes';
 import { NotificationProvider } from '@/hooks/use-notifications';
@@ -15,12 +14,14 @@ import { BottomNavBar } from '@/components/bottom-nav-bar';
 import { usePathname } from 'next/navigation';
 import { AdminHeader } from '@/components/admin-header';
 import { Footer } from './landing/_components/footer';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 function AppLayoutClient({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { setTheme } = useTheme();
   const pathname = usePathname();
+  const [hasToken, setHasToken] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   
   useEffect(() => {
     if (user?.is_admin) {
@@ -29,30 +30,24 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
     }
   }, [user, setTheme]);
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen flex-col">
-        <Skeleton className="h-16 w-full" />
-        <main className="flex-1">{children}</main>
-      </div>
-    );
-  }
+  useEffect(() => {
+    setHasToken(!!localStorage.getItem('authToken'));
+    setIsAdmin(localStorage.getItem('is_admin') === 'true');
+  }, [isAuthenticated]);
 
   const isAuthPage = isAuthenticated && pathname !== '/';
   const showLandingFooter = !isAuthenticated && pathname === '/';
 
-  let HeaderComponent = <LandingHeader />;
-  if (isAuthPage) {
-    if (user?.is_admin) {
-      HeaderComponent = <AdminHeader />;
-    } else {
-      HeaderComponent = <HeaderNav />;
-    }
-  } else if (isAuthenticated) {
-    // Authenticated user on the landing page
-    HeaderComponent = user?.is_admin ? <AdminHeader /> : <HeaderNav />;
+  let HeaderComponent;
+  if (hasToken) {
+      if (isAdmin) {
+          HeaderComponent = <AdminHeader />;
+      } else {
+          HeaderComponent = <HeaderNav />;
+      }
+  } else {
+      HeaderComponent = <LandingHeader />;
   }
-
 
   return (
     <div className="flex min-h-screen flex-col">
