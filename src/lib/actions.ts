@@ -18,20 +18,20 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
  */
 function getErrorMessage(result: any, defaultMessage: string): string {
     if (result) {
+        // Handle plain text errors or HTML error pages
         if (typeof result === 'string') {
-            // Handle plain text errors or HTML error pages
             if (result.trim().startsWith('<!doctype html>')) {
                 return "The server returned an unexpected error page. Please try again later.";
             }
             return result;
         }
-        // Handle Django Rest Framework's standard error format: `{"detail": "..."}`
+
+        // Handle standard Django Rest Framework error formats and others
         if (result.detail && typeof result.detail === 'string') return result.detail;
-
-        // Handle custom error formats like `{"message": "..."}`
         if (result.message && typeof result.message === 'string') return result.message;
+        if (result.error && typeof result.error === 'string') return result.error;
 
-        // Handle validation errors where keys are field names and values are arrays of strings
+        // Handle validation errors (e.g., {"field": ["error message"]})
         if (typeof result === 'object' && !Array.isArray(result) && Object.keys(result).length > 0) {
             const messages = Object.entries(result).map(([key, value]) => {
                 const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -792,7 +792,7 @@ export async function createAdoptionRequest(token: string, petId: number, messag
         
         const result = await response.json();
         if (!response.ok) {
-            throw new Error(getErrorMessage(result, 'Failed to create adoption request.'));
+            throw new Error(getErrorMessage(result, 'Failed to create adoption request. You may have already sent a request for this pet.'));
         }
         return result;
     } catch (error) {
@@ -882,13 +882,19 @@ export async function updateReceivedAdoptionRequestStatus(token: string, request
             body: JSON.stringify({ status }),
         }, token);
         
-        const result = await response.json();
-
         if (!response.ok) {
+            const result = await response.json();
+            if (response.status === 404) {
+                 throw new Error(getErrorMessage(result, `Request not found.`));
+            } else if (response.status === 400) {
+                 throw new Error(getErrorMessage(result, `This request may have already been processed.`));
+            } else if (response.status === 403) {
+                 throw new Error(getErrorMessage(result, `You do not have permission to perform this action.`));
+            }
             throw new Error(getErrorMessage(result, `Failed to update request to ${status}.`));
         }
 
-        return result;
+        return await response.json();
     } catch (error) {
         if ((error as any).name === 'AbortError') {
             throw new Error('Adoption request status update timed out.');
