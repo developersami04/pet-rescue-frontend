@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { FavoritesTab } from "./tabs/favorites-tab";
+import { useAuth } from "@/lib/auth";
 
 
 type TabData = {
@@ -60,6 +61,7 @@ export function DashboardClient() {
   const [activeTab, setActiveTab] = useState("my-pets");
   const { toast } = useToast();
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
   const [tabData, setTabData] = useState<TabData>({
       'my-pets': null,
@@ -92,8 +94,8 @@ export function DashboardClient() {
   });
 
   const fetchTabData = useCallback(async (tab: string) => {
-    // Don't refetch if data is already available
-    if (tabData[tab as keyof TabData] !== null) {
+    // Don't refetch if data is already available or not authenticated
+    if (tabData[tab as keyof TabData] !== null || !isAuthenticated) {
       return;
     }
 
@@ -129,12 +131,14 @@ export function DashboardClient() {
     } finally {
         setLoading(prev => ({...prev, [tab]: false}));
     }
-  }, [tabData, router, toast]);
+  }, [router, toast, isAuthenticated]); // Removed tabData
 
-  // Fetch data for the active tab when it changes
+  // Fetch data for the active tab when it changes OR when auth status changes
   useEffect(() => {
-    fetchTabData(activeTab);
-  }, [activeTab, fetchTabData]);
+    if (isAuthenticated) {
+      fetchTabData(activeTab);
+    }
+  }, [activeTab, fetchTabData, isAuthenticated]);
   
   const handleDataRefresh = (tab: keyof TabData) => {
       setTabData(prev => ({...prev, [tab]: null}));
