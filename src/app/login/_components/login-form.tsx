@@ -66,13 +66,9 @@ export function LoginForm() {
         return;
       }
 
-      login(result.access_token, result.refresh_token, result.message);
+      login(result.access_token, result.refresh_token, result.user, result.message);
       
-      if (result.user && result.user.username) {
-        localStorage.setItem('username', result.user.username);
-      }
-      
-      if (result.user?.is_staff) {
+      if (result.user?.is_admin) {
         router.push('/admin/dashboard');
       } else {
         router.push('/dashboard');
