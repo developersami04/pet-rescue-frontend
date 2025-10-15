@@ -13,13 +13,17 @@ const placeholderData: Record<string, PlaceholderInfo> = {
         url: "https://res.cloudinary.com/dev-supriya/image/upload/v1760537689/cat_placeholder_xhkqao.jpg",
         hint: "cat"
     },
+    Other: {
+        url: "https://res.cloudinary.com/dev-supriya/image/upload/v1760539781/Others_pet_type_s7ifxv.webp",
+        hint: "other"
+    },
     Default: {
-        url: "https://images.unsplash.com/photo-1521911528923-9c3838123490?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687",
+        url: "https://res.cloudinary.com/dev-supriya/image/upload/v1760539781/Others_pet_type_s7ifxv.webp",
         hint: "pet"
     }
 };
 
 export function getPlaceholderImage(petType: string): PlaceholderInfo {
     
-    return placeholderData[petType]   || placeholderData.Default;
+    return placeholderData[petType] || placeholderData.Default;
 }

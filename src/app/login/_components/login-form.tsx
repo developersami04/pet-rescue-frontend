@@ -17,7 +17,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { loginUser } from '@/lib/actions';
@@ -31,7 +30,6 @@ const loginSchema = z.object({
 export function LoginForm() {
   const { toast } = useToast();
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -42,8 +40,9 @@ export function LoginForm() {
     },
   });
 
+  const { isSubmitting } = form.formState;
+
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    setIsSubmitting(true);
     try {
       const result = await loginUser(values);
       
@@ -74,15 +73,11 @@ export function LoginForm() {
       }
 
     } catch (error: any) {
-        // This catch block will now mostly handle unexpected server/network errors
-        // since the action returns a structured response for login failures.
         toast({
             variant: 'destructive',
             title: 'Login Failed',
             description: error.message || 'An unexpected error occurred.',
         });
-    } finally {
-        setIsSubmitting(false);
     }
   }
 

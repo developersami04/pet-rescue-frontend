@@ -17,7 +17,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { registerUser } from '@/lib/actions';
@@ -45,7 +44,6 @@ const createAccountSchema = z.object({
 export function CreateAccountForm() {
   const { toast } = useToast();
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof createAccountSchema>>({
     resolver: zodResolver(createAccountSchema),
@@ -64,8 +62,9 @@ export function CreateAccountForm() {
     },
   });
 
+  const { isSubmitting } = form.formState;
+
   async function onSubmit(values: z.infer<typeof createAccountSchema>) {
-    setIsSubmitting(true);
     try {
       const result = await registerUser(values);
 
@@ -84,14 +83,11 @@ export function CreateAccountForm() {
       });
       router.push('/login');
     } catch (error: any) {
-      // This will now mostly handle unexpected errors, not API validation errors
       toast({
         variant: 'destructive',
         title: 'Registration Failed',
         description: 'An unexpected error occurred. Please try again.',
       });
-    } finally {
-        setIsSubmitting(false);
     }
   }
 

@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { confirmPasswordReset } from '@/lib/actions';
 
@@ -35,7 +34,6 @@ export function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof resetPasswordSchema>>({
     resolver: zodResolver(resetPasswordSchema),
@@ -46,6 +44,8 @@ export function ResetPasswordForm() {
     },
   });
 
+  const { isSubmitting } = form.formState;
+
   async function onSubmit(values: z.infer<typeof resetPasswordSchema>) {
     if (!email) {
         toast({
@@ -55,7 +55,6 @@ export function ResetPasswordForm() {
         });
         return;
     }
-    setIsSubmitting(true);
     try {
       await confirmPasswordReset(values.otp, values.password, values.confirm_password, email);
       toast({
@@ -69,8 +68,6 @@ export function ResetPasswordForm() {
         title: 'Reset Failed',
         description: error.message || 'An unknown error occurred.',
       });
-    } finally {
-      setIsSubmitting(false);
     }
   }
 
