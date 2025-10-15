@@ -1,5 +1,4 @@
 
-
 'use server';
 
 import { z } from "zod";
@@ -863,6 +862,45 @@ export async function deleteAdoptionRequest(token: string, requestId: number) {
         throw new Error('An unknown error occurred while deleting the adoption request.');
     }
 }
+
+/**
+ * Updates the status of a received adoption request (approved or rejected).
+ * @param token - The user's access token.
+ * @param requestId - The ID of the request to update.
+ * @param status - The new status ('accepted' or 'rejected').
+ * @returns The updated adoption request object.
+ */
+export async function updateReceivedAdoptionRequestStatus(token: string, requestId: number, status: 'accepted' | 'rejected') {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+    const url = `${API_BASE_URL}${API_ENDPOINTS.updateUserAdoptionRequest}${requestId}`;
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'POST',
+            body: JSON.stringify({ status }),
+        }, token);
+        
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(getErrorMessage(result, `Failed to update request to ${status}.`));
+        }
+
+        return result;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Adoption request status update timed out.');
+        }
+        console.error('Error updating adoption request status:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error(`An unknown error occurred while updating the request status.`);
+    }
+}
+
 
 // =================================================================================
 // NOTIFICATION ACTIONS

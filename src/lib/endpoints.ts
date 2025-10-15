@@ -37,6 +37,7 @@ const API_ENDPOINTS = {
   petRequestView: '/api/pet-data/pet-request-view/',
   petReports: '/api/pet-data/pet-reports/',
   petAdoptions: '/api/pet-data/pet-adoptions/',
+  updateUserAdoptionRequest: '/api/pet-data/accept-reject-adoption/',
 
 
   // Notifications endpoints
