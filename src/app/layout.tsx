@@ -17,7 +17,7 @@ import { Footer } from './landing/_components/footer';
 import { useEffect, useState } from 'react';
 
 function AppLayoutClient({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, user, isLoading } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { setTheme } = useTheme();
   const pathname = usePathname();
   
@@ -25,12 +25,13 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
   const [clientIsAdmin, setClientIsAdmin] = useState(false);
 
   useEffect(() => {
-    // This effect runs only on the client, after hydration
+    // This effect runs only on the client, after hydration.
+    // It safely checks localStorage and updates the state.
     const token = localStorage.getItem('authToken');
     const isAdmin = localStorage.getItem('is_admin') === 'true';
     setClientIsAuthenticated(!!token);
     setClientIsAdmin(isAdmin);
-  }, [isAuthenticated]); // Re-run when auth state changes
+  }, [isAuthenticated]); // Re-run when auth state changes.
   
   useEffect(() => {
     if (user?.is_admin) {
@@ -39,21 +40,13 @@ function AppLayoutClient({ children }: { children: React.ReactNode }) {
     }
   }, [user, setTheme]);
 
-
   const showLandingFooter = !clientIsAuthenticated && pathname === '/';
 
-  let HeaderComponent;
-  // During the initial server render and client hydration, isLoading is true.
-  // We render the public header to match the server.
-  if (isLoading && !clientIsAuthenticated) {
-    HeaderComponent = <LandingHeader />;
-  } else if (clientIsAdmin) {
-    HeaderComponent = <AdminHeader />;
-  } else if (clientIsAuthenticated) {
-    HeaderComponent = <HeaderNav />;
-  } else {
-    HeaderComponent = <LandingHeader />;
-  }
+  // Determine which header to render based on the client-side state.
+  // Initially, clientIsAuthenticated is false, so LandingHeader is rendered, matching the server.
+  const HeaderComponent = clientIsAuthenticated 
+      ? (clientIsAdmin ? <AdminHeader /> : <HeaderNav />) 
+      : <LandingHeader />;
 
   return (
     <div className="flex min-h-screen flex-col">
