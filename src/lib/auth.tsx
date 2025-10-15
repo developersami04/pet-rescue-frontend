@@ -11,8 +11,9 @@ type AuthContextType = {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: User | null;
+  isAdmin: boolean | null;
   logout: () => void;
-  login: (token: string, refreshToken: string, message?: string) => void;
+  login: (token: string, refreshToken: string, user: User, message?: string) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -47,36 +48,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const adminStatus = localStorage.getItem('is_admin');
+    return adminStatus ? JSON.parse(adminStatus) : null;
+  });
   
   const logout = useCallback(() => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
-    localStorage.removeItem('username');
+    localStorage.removeItem('is_admin');
     setIsAuthenticated(false);
     setUser(null);
+    setIsAdmin(null);
     window.dispatchEvent(new Event('storage'));
   }, []);
 
-  const verifyAuth = useCallback(async (isLoginEvent = false, loginMessage?: string) => {
+  const verifyAuth = useCallback(async (isLoginEvent = false, loginUser?: User, loginMessage?: string) => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
       setIsAuthenticated(false);
       setUser(null);
+      setIsAdmin(null);
       setIsLoading(false);
       return;
     }
     
-    setIsLoading(true);
+    if(!isLoginEvent) setIsLoading(true);
     
     try {
+        if(isLoginEvent && loginUser) {
+            setIsAuthenticated(true);
+            setUser(loginUser);
+            setIsAdmin(loginUser.is_admin);
+            toast({ title: "Login Successful", description: loginMessage });
+            return;
+        }
+
         const { isAuthenticated: authStatus, user: userData, error, message, newAccessToken } = await checkUserAuth(refreshToken);
         if (authStatus && userData && newAccessToken) {
             setIsAuthenticated(true);
             setUser(userData);
+            setIsAdmin(userData.is_admin);
             localStorage.setItem('authToken', newAccessToken);
-            if (isLoginEvent) {
-                toast({ title: "Login Successful", description: loginMessage || message });
-            }
+            localStorage.setItem('is_admin', String(userData.is_admin));
         } else {
             logout();
              if (error) {
@@ -94,7 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             });
         }
     } finally {
-        setIsLoading(false);
+        if(!isLoginEvent) setIsLoading(false);
     }
   }, [logout]);
 
@@ -102,14 +117,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     verifyAuth();
 
     const handleStorageChange = (e: StorageEvent) => {
-      if(e.key === 'authToken' || e.key === null) {
+      if(e.key === 'authToken' || e.key === 'is_admin' || e.key === null) {
         verifyAuth();
       }
     };
 
     window.addEventListener('storage', handleStorageChange);
 
-    // Set up the interval for silent token refresh
     let intervalId: NodeJS.Timeout | undefined;
     if (isAuthenticated) {
         intervalId = setInterval(silentTokenRefresh, REFRESH_INTERVAL);
@@ -123,15 +137,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [isAuthenticated, verifyAuth]);
 
-  const login = (token: string, refreshToken: string, message?: string) => {
+  const login = (token: string, refreshToken: string, user: User, message?: string) => {
     localStorage.setItem('authToken', token);
     localStorage.setItem('refreshToken', refreshToken);
-    // Instead of dispatching event, directly call verifyAuth
-    verifyAuth(true, message);
+    localStorage.setItem('is_admin', String(user.is_admin));
+    verifyAuth(true, user, message);
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading, user, logout, login }}>
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, user, isAdmin, logout, login }}>
       {children}
     </AuthContext.Provider>
   );
