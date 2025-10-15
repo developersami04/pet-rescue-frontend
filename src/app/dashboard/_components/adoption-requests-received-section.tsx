@@ -3,7 +3,7 @@
 
 import { AdoptionRequest } from "@/lib/data";
 import { Card } from "@/components/ui/card";
-import { Inbox, Loader2 } from "lucide-react";
+import { Inbox, Loader2, MoreVertical } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -26,6 +26,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 type AdoptionRequestsReceivedSectionProps = {
     requests: AdoptionRequest[];
@@ -76,6 +77,9 @@ function RequestItem({ request, onUpdate }: { request: AdoptionRequest, onUpdate
     };
     
     const defaultRequesterImage = getRandomDefaultProfileImage(request.requester_name);
+    const isPending = request.report_status === 'pending' || request.status === 'pending';
+    const isAccepted = request.report_status === 'accepted' || request.status === 'accepted';
+    const isRejected = request.report_status === 'rejected' || request.status === 'rejected';
 
     return (
         <Card className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-all duration-300 hover:shadow-md hover:border-primary/50">
@@ -108,7 +112,7 @@ function RequestItem({ request, onUpdate }: { request: AdoptionRequest, onUpdate
                     <Badge variant={getStatusVariant(request.report_status || request.status)} className="capitalize mb-2">
                         {request.report_status || request.status}
                     </Badge>
-                     {(request.report_status === 'pending' || request.status === 'pending') && (
+                     {isPending ? (
                         <div className="flex gap-2">
                              <AlertDialog>
                                 <AlertDialogTrigger asChild>
@@ -152,6 +156,46 @@ function RequestItem({ request, onUpdate }: { request: AdoptionRequest, onUpdate
                                 </AlertDialogContent>
                             </AlertDialog>
                         </div>
+                    ) : (
+                        <AlertDialog>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8" disabled={!!isLoading}>
+                                        {!!isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreVertical className="h-4 w-4" />}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    {isAccepted && (
+                                         <AlertDialogTrigger asChild>
+                                            <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
+                                                Reject Instead
+                                            </DropdownMenuItem>
+                                        </AlertDialogTrigger>
+                                    )}
+                                    {isRejected && (
+                                        <AlertDialogTrigger asChild>
+                                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                                Approve Instead
+                                            </DropdownMenuItem>
+                                        </AlertDialogTrigger>
+                                    )}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Change your mind?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Are you sure you want to change the status to <span className="font-bold">{isAccepted ? 'Rejected' : 'Approved'}</span>? This will update the request.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleStatusUpdate(isAccepted ? 'rejected' : 'accepted')}>
+                                        Confirm
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     )}
                 </div>
             </div>
