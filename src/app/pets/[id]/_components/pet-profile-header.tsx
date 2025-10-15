@@ -46,6 +46,23 @@ export function PetProfileHeader({ pet, isFavorited, onUpdate }: PetProfileHeade
         }
     };
 
+    const getStatusInfo = (status: 'lost' | 'found' | 'adopt' | undefined) => {
+        if (!status) return null;
+        switch (status) {
+            case 'lost':
+                return { label: 'Lost', className: 'bg-destructive/90 text-destructive-foreground' };
+            case 'found':
+                return { label: 'Available For Adoption', className: 'bg-blue-500 text-white' };
+            case 'adopt':
+                return { label: 'Ready for Adoption', className: 'bg-green-500 text-white' };
+            default:
+                return null;
+        }
+    };
+
+    const statusInfo = getStatusInfo(petStatus);
+
+
     const handleFavoriteToggle = async () => {
         setIsFavoriteLoading(true);
         const token = localStorage.getItem('authToken');
@@ -108,15 +125,11 @@ export function PetProfileHeader({ pet, isFavorited, onUpdate }: PetProfileHeade
                 <div>
                     <div className="flex items-center gap-4">
                         <h1 className="text-4xl font-bold font-headline">{pet.name}</h1>
-                        {petStatus && !isResolved && (
+                        {statusInfo && !isResolved && (
                             <Badge
-                                className={cn("capitalize text-base",
-                                    petStatus === 'lost' ? 'bg-destructive/90 text-destructive-foreground' : 
-                                    petStatus === 'found' ? 'bg-blue-500 text-white' :
-                                    petStatus === 'adopt' ? 'bg-green-500 text-white' : ''
-                                )}
+                                className={cn("text-base", statusInfo.className)}
                             >
-                                {petStatus}
+                                {statusInfo.label}
                             </Badge>
                         )}
                     </div>
