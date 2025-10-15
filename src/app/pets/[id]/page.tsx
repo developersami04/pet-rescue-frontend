@@ -21,6 +21,7 @@ import { AdoptionRequestDialog } from './_components/adoption-request-dialog';
 import { PostStoryDialog } from './_components/post-story-dialog';
 import { Button } from '@/components/ui/button';
 import { Film, Hand, MessageSquareQuote } from 'lucide-react';
+import { UserDetailsDialog } from '@/components/user-details-dialog';
 
 export default function PetProfilePage() {
   const params = useParams();
@@ -87,6 +88,7 @@ export default function PetProfilePage() {
   const petStatus = pet.pet_report?.pet_status;
   const isResolved = pet.pet_report?.is_resolved;
   const isAvailableForAdoption = (petStatus === 'adopt' || petStatus === 'found') && !isResolved;
+  const isOwner = currentUser?.id === pet.created_by;
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
@@ -94,7 +96,7 @@ export default function PetProfilePage() {
         <PetProfileHeader pet={pet} isFavorited={isFavorited} onUpdate={fetchPetDetails} />
 
         <div className="flex flex-wrap gap-4 items-center justify-center p-4 bg-muted/50 rounded-lg">
-            {isAvailableForAdoption && (
+            {isAvailableForAdoption && !isOwner && (
                 <AdoptionRequestDialog petId={pet.id} petName={pet.name} onUpdate={fetchPetDetails}>
                     <Button>
                         <Hand className="mr-2 h-4 w-4" />
@@ -102,7 +104,7 @@ export default function PetProfilePage() {
                     </Button>
                 </AdoptionRequestDialog>
             )}
-            {pet.is_verified && (
+            {pet.is_verified && isOwner && (
                 <PostStoryDialog petId={pet.id} petName={pet.name}>
                         <Button>
                         <Film className="mr-2 h-4 w-4" />
@@ -110,10 +112,14 @@ export default function PetProfilePage() {
                     </Button>
                 </PostStoryDialog>
             )}
-            <Button variant="secondary">
-                <MessageSquareQuote className="mr-2 h-4 w-4" />
-                Contact Owner
-            </Button>
+            {!isOwner && (
+              <UserDetailsDialog userId={pet.created_by}>
+                <Button variant="secondary">
+                    <MessageSquareQuote className="mr-2 h-4 w-4" />
+                    Contact Owner
+                </Button>
+              </UserDetailsDialog>
+            )}
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -143,7 +149,7 @@ export default function PetProfilePage() {
             </div>
         </div>
 
-        {pet.adoption_requests && pet.adoption_requests.length > 0 && (
+        {pet.adoption_requests && pet.adoption_requests.length > 0 && isOwner && (
             <AdoptionRequestsCard requests={pet.adoption_requests} petName={pet.name}/>
         )}
 

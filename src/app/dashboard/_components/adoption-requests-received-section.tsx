@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { UserDetailsDialog } from "@/components/user-details-dialog";
 
 type AdoptionRequestsReceivedSectionProps = {
     requests: AdoptionRequest[];
@@ -77,7 +78,7 @@ function RequestItem({ request, onUpdate }: { request: AdoptionRequest, onUpdate
     };
     
     const defaultRequesterImage = getRandomDefaultProfileImage(request.requester_name);
-    const isPending = request.report_status === 'pending' || request.status === 'pending';
+    const isPending = (request.report_status === 'pending' || request.status === 'pending');
     const isAccepted = request.report_status === 'accepted' || request.status === 'accepted';
     const isRejected = request.report_status === 'rejected' || request.status === 'rejected';
 
@@ -99,7 +100,9 @@ function RequestItem({ request, onUpdate }: { request: AdoptionRequest, onUpdate
              <div className="flex-grow grid grid-cols-1 md:grid-cols-3 items-center gap-4 w-full">
                  <div className="md:col-span-2">
                      <h3 className="text-lg font-bold">
-                        <Link href={`/profile/${request.requester_id}`} className="hover:underline">{request.requester_name}</Link>
+                        <UserDetailsDialog userId={request.requester_id}>
+                            <span className="hover:underline cursor-pointer">{request.requester_name}</span>
+                        </UserDetailsDialog>
                         <span className="font-normal text-muted-foreground"> wants to adopt </span> 
                         <Link href={`/pets/${request.pet}`} className="hover:underline">{request.pet_name}</Link>
                     </h3>

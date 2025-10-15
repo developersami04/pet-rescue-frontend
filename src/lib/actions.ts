@@ -233,6 +233,42 @@ export async function getUserDetails(token: string) {
 }
 
 /**
+ * Fetches the public details for any user by their ID.
+ * @param token - The user's access token.
+ * @param userId - The ID of the user to view.
+ * @returns The user's public profile data.
+ */
+export async function viewUserDetails(token: string, userId: number) {
+    if (!API_BASE_URL) {
+        throw new Error('API is not configured. Please contact support.');
+    }
+
+    try {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.viewUserDetails}${userId}`, {
+            method: 'GET',
+        }, token);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(getErrorMessage(result, 'Failed to fetch user details.'));
+        }
+
+        return result.data;
+    } catch (error) {
+        if ((error as any).name === 'AbortError') {
+            throw new Error('Request for user details timed out.');
+        }
+        console.error('Error fetching user details:', error);
+        if (error instanceof Error) {
+           throw new Error(error.message);
+        }
+        throw new Error('An unknown error occurred while fetching user details.');
+    }
+}
+
+
+/**
  * Updates the details of the currently authenticated user.
  * Can handle both JSON data and FormData for file uploads.
  * @param token - The user's access token.

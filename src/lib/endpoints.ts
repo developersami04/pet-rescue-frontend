@@ -11,6 +11,7 @@ const API_ENDPOINTS = {
   confirmPasswordReset: '/api/user-auth/password-reset-confirm/',
 
   userDetails: '/api/user-auth/user-details',
+  viewUserDetails: '/api/user-auth/view-user-details/', // Note the trailing slash
   updateUserDetails: '/api/user-auth/update-account',
   changePassword: '/api/user-auth/change-password',
   deleteAccount: '/api/user-auth/delete-account',

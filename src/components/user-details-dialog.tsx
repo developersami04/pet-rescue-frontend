@@ -1,0 +1,153 @@
+
+'use client';
+
+import { useState, useCallback } from 'react';
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useToast } from '@/hooks/use-toast';
+import { Loader2, Mail, Phone, User as UserIcon } from 'lucide-react';
+import { viewUserDetails } from '@/lib/actions';
+import { useRouter } from 'next/navigation';
+import { Skeleton } from './ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+
+type UserDetails = {
+    id: number;
+    username: string;
+    email: string;
+    phone_no: string;
+    gender: string;
+}
+
+type UserDetailsDialogProps = {
+    userId: number;
+    children: React.ReactNode;
+};
+
+function DetailsSkeleton() {
+    return (
+        <div className="space-y-4 py-4">
+            <div className="flex items-center gap-4">
+                <Skeleton className="h-6 w-6" />
+                <Skeleton className="h-4 w-48" />
+            </div>
+             <div className="flex items-center gap-4">
+                <Skeleton className="h-6 w-6" />
+                <Skeleton className="h-4 w-48" />
+            </div>
+             <div className="flex items-center gap-4">
+                <Skeleton className="h-6 w-6" />
+                <Skeleton className="h-4 w-48" />
+            </div>
+        </div>
+    )
+}
+
+export function UserDetailsDialog({ userId, children }: UserDetailsDialogProps) {
+  const { toast } = useToast();
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+
+  const fetchDetails = useCallback(async () => {
+    if (!isOpen || userDetails) return; // Don't fetch if dialog is closed or data already exists
+
+    setIsLoading(true);
+    setError(null);
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        toast({ variant: 'destructive', title: 'Authentication Error' });
+        setError('You are not authenticated.');
+        setIsLoading(false);
+        return;
+    }
+
+    try {
+        const result = await viewUserDetails(token, userId);
+        setUserDetails(result);
+    } catch (error: any) {
+        if (error.message.includes('Session expired')) {
+            router.push('/login');
+        } else {
+            setError(error.message || 'Could not load user details.');
+        }
+    } finally {
+        setIsLoading(false);
+    }
+  }, [isOpen, userId, router, toast, userDetails]);
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if(open) {
+        fetchDetails();
+    } else {
+        // Reset state when closing
+        setUserDetails(null);
+        setError(null);
+    }
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        {children}
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Contact Details</DialogTitle>
+          <DialogDescription>
+            Contact information for {isLoading ? '...' : (userDetails?.username || 'the user')}.
+          </DialogDescription>
+        </DialogHeader>
+        {isLoading ? (
+            <DetailsSkeleton />
+        ) : error ? (
+            <Alert variant="destructive">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+            </Alert>
+        ) : userDetails ? (
+            <div className="space-y-4 py-4">
+                <div className="flex items-center gap-4">
+                    <UserIcon className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                        <p className="text-sm text-muted-foreground">Username</p>
+                        <p className="font-semibold">{userDetails.username}</p>
+                    </div>
+                </div>
+                 <div className="flex items-center gap-4">
+                    <Mail className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                        <p className="text-sm text-muted-foreground">Email</p>
+                        <a href={`mailto:${userDetails.email}`} className="font-semibold hover:underline">{userDetails.email}</a>
+                    </div>
+                </div>
+                 <div className="flex items-center gap-4">
+                    <Phone className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                        <p className="text-sm text-muted-foreground">Phone</p>
+                         <a href={`tel:${userDetails.phone_no}`} className="font-semibold hover:underline">{userDetails.phone_no}</a>
+                    </div>
+                </div>
+                 <div className="flex items-center gap-4">
+                    <UserIcon className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                        <p className="text-sm text-muted-foreground">Gender</p>
+                        <p className="font-semibold">{userDetails.gender}</p>
+                    </div>
+                </div>
+            </div>
+        ) : null}
+      </DialogContent>
+    </Dialog>
+  );
+}
