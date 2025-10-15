@@ -245,7 +245,7 @@ export async function viewUserDetails(token: string, userId: number) {
     }
 
     try {
-        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.viewUserDetails}${userId}/`, {
+        const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.viewUserDetails}${userId}`, {
             method: 'GET',
         }, token);
 
