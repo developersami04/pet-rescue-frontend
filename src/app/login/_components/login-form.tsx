@@ -66,11 +66,7 @@ export function LoginForm() {
 
       login(result.access_token, result.refresh_token, result.user, result.message);
       
-      if (result.user?.is_admin) {
-        router.push('/admin/dashboard');
-      } else {
-        router.push('/dashboard');
-      }
+      router.push('/');
 
     } catch (error: any) {
         toast({
