@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     window.dispatchEvent(new Event('storage'));
   }, []);
 
-  const verifyAuth = useCallback(async (isLoginEvent = false, loginUser?: User, loginMessage?: string) => {
+  const verifyAuth = useCallback(async () => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
       setIsAuthenticated(false);
@@ -74,17 +74,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     
-    if(!isLoginEvent) setIsLoading(true);
+    setIsLoading(true);
     
     try {
-        if(isLoginEvent && loginUser) {
-            setIsAuthenticated(true);
-            setUser(loginUser);
-            setIsAdmin(loginUser.is_admin);
-            toast({ title: "Login Successful", description: loginMessage });
-            return;
-        }
-
         const { isAuthenticated: authStatus, user: userData, error, message, newAccessToken } = await checkUserAuth(refreshToken);
         if (authStatus && userData && newAccessToken) {
             setIsAuthenticated(true);
@@ -101,15 +93,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (e: any) {
         console.error("Error during auth verification:", e);
         logout();
-        if (!isLoginEvent) { 
-            toast({
-                variant: "destructive",
-                title: "Session Expired",
-                description: "Please log in again to continue.",
-            });
-        }
+        toast({
+            variant: "destructive",
+            title: "Session Expired",
+            description: "Please log in again to continue.",
+        });
     } finally {
-        if(!isLoginEvent) setIsLoading(false);
+        setIsLoading(false);
     }
   }, [logout]);
 
@@ -141,7 +131,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('authToken', token);
     localStorage.setItem('refreshToken', refreshToken);
     localStorage.setItem('is_admin', String(user.is_admin));
-    verifyAuth(true, user, message);
+    
+    setIsAuthenticated(true);
+    setUser(user);
+    setIsAdmin(user.is_admin);
+    
+    toast({ title: "Login Successful", description: message });
+
+    // This ensures other parts of the app are aware of the change
+    window.dispatchEvent(new Event('storage'));
   }
 
   return (

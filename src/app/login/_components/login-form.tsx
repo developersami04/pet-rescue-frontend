@@ -66,7 +66,7 @@ export function LoginForm() {
 
       login(result.access_token, result.refresh_token, result.user, result.message);
       
-      router.push('/');
+      router.push('/dashboard');
 
     } catch (error: any) {
         toast({
