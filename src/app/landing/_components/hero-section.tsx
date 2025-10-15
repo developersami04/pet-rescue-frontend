@@ -32,19 +32,19 @@ const features = [
   {
     title: 'Rescue',
     imageUrl:
-      'https://images.unsplash.com/photo-1519052537078-e6302a4968d4?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170ps://res.cloudinary.com/dev-supriya/image/upload/v1760342184/sample-cat-2_fjoohh.jpg',
+      'https://images.unsplash.com/photo-1553434133-96822a8e94af?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2065ttps://images.unsplash.com/photo-1649003590453-e6f4566fde74?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687https://images.unsplash.com/photo-1519052537078-e6302a4968d4?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170ps://res.cloudinary.com/dev-supriya/image/upload/v1760342184/sample-cat-2_fjoohh.jpg',
     imageHint: 'sleepy cat',
+  },
+  {
+    title: 'Found',
+    imageUrl:
+      'https://images.unsplash.com/photo-1736445786983-d7a6c09fc657?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1112https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1074ps://images.unsplash.com/photo-1552053831-71594a27632d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=662',
+    imageHint: 'dog',
   },
   {
     title: 'Adopt',
     imageUrl:
-      'https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1074ps://images.unsplash.com/photo-1552053831-71594a27632d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=662',
-    imageHint: 'dog',
-  },
-  {
-    title: 'Lost',
-    imageUrl:
-      'https://images.unsplash.com/photo-1573865526739-10659fec78a5?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=715tps://res.cloudinary.com/dev-supriya/image/upload/v1760342183/sample-cat-1_bfmsg0.jpg',
+      'https://images.unsplash.com/photo-1653665746412-16f75be26803?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZG9nJTIwd2l0aCUyMHdyaXR0ZW4lMjB0YWtlJTIwbWUlMjBob21lfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=600ttps://images.unsplash.com/photo-1573865526739-10659fec78a5?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=715tps://res.cloudinary.com/dev-supriya/image/upload/v1760342183/sample-cat-1_bfmsg0.jpg',
     imageHint: 'cat cute',
   },
 ];
@@ -112,9 +112,9 @@ export function HeroSection() {
                     data-ai-hint={feature.imageHint}
                   />
                 </div>
-                <h3 className="text-xl font-semibold text-white font-headline">
+                {/* <h3 className="text-xl font-semibold text-white font-headline">
                   {feature.title}
-                </h3>
+                </h3> */}  
               </motion.div>
             ))}
           </motion.div>
