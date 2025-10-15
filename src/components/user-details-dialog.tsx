@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Mail, Phone, User as UserIcon } from 'lucide-react';
+import { Mail, Phone, User as UserIcon } from 'lucide-react';
 import { viewUserDetails } from '@/lib/actions';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from './ui/skeleton';
@@ -21,6 +21,7 @@ import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 type UserDetails = {
     id: number;
     username: string;
+    full_name?: string;
     email: string;
     phone_no: string;
     gender: string;
@@ -96,6 +97,8 @@ export function UserDetailsDialog({ userId, children }: UserDetailsDialogProps) 
     }
   }
 
+  const displayName = userDetails?.full_name || userDetails?.username;
+
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
@@ -105,7 +108,7 @@ export function UserDetailsDialog({ userId, children }: UserDetailsDialogProps) 
         <DialogHeader>
           <DialogTitle>Contact Details</DialogTitle>
           <DialogDescription>
-            Contact information for {isLoading ? '...' : (userDetails?.username || 'the user')}.
+            Contact information for {isLoading ? '...' : (displayName || 'the user')}.
           </DialogDescription>
         </DialogHeader>
         {isLoading ? (
@@ -120,8 +123,8 @@ export function UserDetailsDialog({ userId, children }: UserDetailsDialogProps) 
                 <div className="flex items-center gap-4">
                     <UserIcon className="h-5 w-5 text-muted-foreground" />
                     <div>
-                        <p className="text-sm text-muted-foreground">Username</p>
-                        <p className="font-semibold">{userDetails.username}</p>
+                        <p className="text-sm text-muted-foreground">Name</p>
+                        <p className="font-semibold">{displayName}</p>
                     </div>
                 </div>
                  <div className="flex items-center gap-4">
