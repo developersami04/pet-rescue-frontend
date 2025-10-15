@@ -128,6 +128,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [isAuthenticated, verifyAuth]);
 
   const login = (token: string, refreshToken: string, user: User, message?: string) => {
+    // Clear previous session data first to ensure a clean state
+    logout();
+
+    // Set new session data
     localStorage.setItem('authToken', token);
     localStorage.setItem('refreshToken', refreshToken);
     localStorage.setItem('is_admin', String(user.is_admin));
