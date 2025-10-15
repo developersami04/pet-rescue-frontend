@@ -747,7 +747,7 @@ export async function deletePetRequest(token: string, petId: string) {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
-    const url = `${API_BASE_URL}${API_ENDPOINTS.petRequestView}${petId}/`;
+    const url = `${API_BASE_URL}${API_ENDPOINTS.petRequestView}${petId}`;
 
     try {
         const response = await fetchWithAuth(url, {
@@ -851,7 +851,7 @@ export async function deleteAdoptionRequest(token: string, requestId: number) {
             method: 'DELETE',
         }, token);
 
-        if (response.status !== 204) {
+        if (![200, 204].includes(response.status)) {
             const result = await response.json();
             throw new Error(getErrorMessage(result, 'Failed to delete adoption request.'));
         }

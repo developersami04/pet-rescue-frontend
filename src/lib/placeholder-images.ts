@@ -6,11 +6,11 @@ export type PlaceholderInfo = {
 
 const placeholderData: Record<string, PlaceholderInfo> = {
     Dog: { 
-        url: "https://images.unsplash.com/photo-1561037404-61cd46aa615b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        url: "https://res.cloudinary.com/dev-supriya/image/upload/v1760537655/dog_pgxyim.jpg",
         hint: "dog"
     },
     Cat: {
-        url: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        url: "https://res.cloudinary.com/dev-supriya/image/upload/v1760537689/cat_placeholder_xhkqao.jpg",
         hint: "cat"
     },
     Default: {
@@ -20,6 +20,6 @@ const placeholderData: Record<string, PlaceholderInfo> = {
 };
 
 export function getPlaceholderImage(petType: string): PlaceholderInfo {
-    const cleanTypeName = petType.replace(/\s/g, '');
-    return placeholderData[cleanTypeName] || placeholderData.Default;
+    
+    return placeholderData[petType]   || placeholderData.Default;
 }

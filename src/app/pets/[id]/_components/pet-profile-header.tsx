@@ -52,7 +52,7 @@ export function PetProfileHeader({ pet, isFavorited, onUpdate }: PetProfileHeade
             case 'lost':
                 return { label: 'Lost', className: 'bg-destructive/90 text-destructive-foreground' };
             case 'found':
-                return { label: 'Available For Adoption', className: 'bg-blue-500 text-white' };
+                return { label: 'Found(Available For Adoption)', className: 'bg-blue-500 text-white' };
             case 'adopt':
                 return { label: 'Ready for Adoption', className: 'bg-green-500 text-white' };
             default:

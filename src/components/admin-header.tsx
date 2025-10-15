@@ -61,7 +61,6 @@ const navItems = {
     { href: "/admin/adoption-requests", icon: Hand, label: "Manage Adoptions" },
   ],
   general: [
-    { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
     { href: "/stories", icon: Film, label: "Stories" },
     { href: "/pets", icon: PawPrint, label: "All Pets" },
     { href: "/pet-categories", icon: Shapes, label: "Categories" },
