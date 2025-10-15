@@ -67,7 +67,12 @@ export function LoginForm() {
       login(result.access_token, result.refresh_token, result.user, result.message);
       
       // Full page refresh to ensure all state is reset
-      window.location.assign('/');
+      if (result.user?.is_admin) {
+        window.location.assign('/admin/dashboard');
+      } else {
+        window.location.assign('/dashboard');
+      }
+
 
     } catch (error: any) {
         toast({
