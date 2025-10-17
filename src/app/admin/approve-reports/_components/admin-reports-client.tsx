@@ -15,6 +15,7 @@ import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { LayoutGrid, List, Loader2, Table } from 'lucide-react';
 import { AdminReportTable } from './admin-report-table';
+import { AnimatePresence, motion } from 'framer-motion';
 
 type TabValue = 'pending' | 'last50' | 'rejected';
 type ReportStatus = 'approved' | 'rejected' | 'resolved';
@@ -219,8 +220,18 @@ function AdminReportsClientContent() {
             </div>
             <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as any)} className="w-full">
                 <AdminReportTabs activeTab={activeTab} onTabChange={handleTabChange} />
-                <div className="mt-6">
-                    {renderContent()}
+                <div className="mt-6 relative overflow-hidden">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ x: 300, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: -300, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {renderContent()}
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
             </Tabs>
         </>

@@ -12,6 +12,7 @@ import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { ReportTabs } from './report-tabs';
 import { ReportPetList } from './report-pet-list';
 import { LoginPromptDialog } from '@/components/login-prompt-dialog';
+import { AnimatePresence, motion } from 'framer-motion';
 
 function ReportsSkeleton() {
     return (
@@ -106,19 +107,28 @@ function ReportsClientContent() {
         );
     }
 
+    const renderContent = (status: 'lost' | 'found' | 'adopt') => {
+        if (isLoading) {
+            return <ReportsSkeleton />;
+        }
+        return <ReportPetList reports={reports} status={status} />;
+    }
+
     return (
         <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as any)} className="w-full">
             <ReportTabs activeTab={activeTab} onTabChange={handleTabChange} />
-            <div className="mt-6">
-                <TabsContent value="lost">
-                    {isLoading ? <ReportsSkeleton /> : <ReportPetList reports={reports} status="lost" />}
-                </TabsContent>
-                <TabsContent value="found">
-                    {isLoading ? <ReportsSkeleton /> : <ReportPetList reports={reports} status="found" />}
-                </TabsContent>
-                <TabsContent value="adopt">
-                    {isLoading ? <ReportsSkeleton /> : <ReportPetList reports={reports} status="adopt" />}
-                </TabsContent>
+            <div className="mt-6 relative overflow-hidden">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={activeTab}
+                        initial={{ x: 300, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: -300, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        {renderContent(activeTab)}
+                    </motion.div>
+                </AnimatePresence>
             </div>
         </Tabs>
     );

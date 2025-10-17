@@ -15,6 +15,7 @@ import { AdoptionRequestsTabs } from './adoption-requests-tabs';
 import { AdoptionRequestList } from './adoption-request-list';
 import { PageHeader } from '@/components/page-header';
 import { AdoptionRequestTable } from './adoption-request-table';
+import { AnimatePresence, motion } from 'framer-motion';
 
 type TabValue = 'pending' | 'recents' | 'rejected';
 type RequestStatus = 'approved' | 'rejected';
@@ -238,8 +239,18 @@ function AdoptionRequestsClientContent() {
             </div>
             <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as any)} className="w-full">
                 <AdoptionRequestsTabs activeTab={activeTab} onTabChange={handleTabChange} />
-                <div className="mt-6">
-                    {renderContent()}
+                 <div className="mt-6 relative overflow-hidden">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ x: 300, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: -300, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                           {renderContent()}
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
             </Tabs>
         </>

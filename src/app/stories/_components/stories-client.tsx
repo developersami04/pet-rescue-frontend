@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 import Loading from '../loading';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export function StoriesClient() {
     const [allStories, setAllStories] = useState<UserStory[]>([]);
@@ -179,27 +180,23 @@ export function StoriesClient() {
                         <TabsTrigger value="my-stories">My Stories</TabsTrigger>
                     </TabsList>
                 </div>
-                <TabsContent value="all-stories">
-                    {renderContent(
-                        isLoading, 
-                        error, 
-                        allStories, 
-                        "No stories yet", 
-                        "Be the first to share a story about your pet!"
-                    )}
-                </TabsContent>
-                <TabsContent value="my-stories">
-                    {renderContent(
-                        isMyStoriesLoading, 
-                        myStoriesError, 
-                        myStories, 
-                        "You haven't posted any stories yet", 
-                        "Click the \"Post a Story\" button to share your first one."
-                    )}
-                </TabsContent>
+                 <div className="relative overflow-hidden">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ x: 300, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: -300, opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {activeTab === 'all-stories' 
+                                ? renderContent(isLoading, error, allStories, "No stories yet", "Be the first to share a story about your pet!")
+                                : renderContent(isMyStoriesLoading, myStoriesError, myStories, "You haven't posted any stories yet", "Click the \"Post a Story\" button to share your first one.")
+                            }
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
             </Tabs>
         </div>
     );
 }
-
-    

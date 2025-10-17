@@ -21,6 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { FavoritesTab } from "./tabs/favorites-tab";
 import { useAuth } from "@/lib/auth";
+import { AnimatePresence, motion } from "framer-motion";
 
 
 type TabData = {
@@ -195,14 +196,18 @@ export function DashboardClient() {
         <Tabs defaultValue="my-pets" value={activeTab} onValueChange={setActiveTab} className="mt-8">
             <DashboardTabs activeTab={activeTab} onTabChange={setActiveTab} />
             
-            <div className="mt-6">
-                <TabsContent value="my-pets">{renderTabContent('my-pets')}</TabsContent>
-                <TabsContent value="lost-pets">{renderTabContent('lost-pets')}</TabsContent>
-                <TabsContent value="found-pets">{renderTabContent('found-pets')}</TabsContent>
-                <TabsContent value="adoptable-pets">{renderTabContent('adoptable-pets')}</TabsContent>
-                <TabsContent value="my-requests">{renderTabContent('my-requests')}</TabsContent>
-                <TabsContent value="adoption-requests-received">{renderTabContent('adoption-requests-received')}</TabsContent>
-                <TabsContent value="favorites">{renderTabContent('favorites')}</TabsContent>
+             <div className="mt-6 relative overflow-hidden">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={activeTab}
+                        initial={{ x: 300, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: -300, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        {renderTabContent(activeTab as keyof TabData)}
+                    </motion.div>
+                </AnimatePresence>
             </div>
         </Tabs>
     </>
