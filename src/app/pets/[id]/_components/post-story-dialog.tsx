@@ -76,7 +76,7 @@ export function PostStoryDialog({ petId, petName, children }: PostStoryDialogPro
         });
         form.reset();
         setIsOpen(false);
-        router.push('/stories');
+        router.push('/stories?tab=my-stories');
     } catch (error: any) {
         if (error.message.includes('Session expired')) {
             toast({

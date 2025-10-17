@@ -1,11 +1,10 @@
 
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/lib/auth.tsx';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { UserStory } from '@/lib/data';
 import { getUserStories } from '@/lib/actions';
 import { PageHeader } from '@/components/page-header';
@@ -17,7 +16,6 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 import Loading from '../loading';
-import { cn } from '@/lib/utils';
 
 export function StoriesClient() {
     const [allStories, setAllStories] = useState<UserStory[]>([]);
@@ -27,9 +25,28 @@ export function StoriesClient() {
     const [error, setError] = useState<string | null>(null);
     const [myStoriesError, setMyStoriesError] = useState<string | null>(null);
     const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-    const [activeTab, setActiveTab] = useState('all-stories');
+    
     const { toast } = useToast();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const { user } = useAuth();
+    
+    const tabFromUrl = searchParams.get('tab');
+    const [activeTab, setActiveTab] = useState(tabFromUrl === 'my-stories' ? 'my-stories' : 'all-stories');
+
+    useEffect(() => {
+        const currentTab = searchParams.get('tab');
+        if (currentTab === 'my-stories' || currentTab === 'all-stories') {
+            setActiveTab(currentTab);
+        } else {
+            setActiveTab('all-stories');
+        }
+    }, [searchParams]);
+
+    const handleTabChange = (value: string) => {
+        setActiveTab(value);
+        router.push(`/stories?tab=${value}`, { scroll: false });
+    };
 
     const handleAuthError = (e: any) => {
         if (e.message.includes('Session expired')) {
@@ -89,14 +106,12 @@ export function StoriesClient() {
     }, [toast, router]);
 
     useEffect(() => {
-        fetchAllStories();
-    }, [fetchAllStories]);
-    
-    useEffect(() => {
-        if (activeTab === 'my-stories') {
+        if (activeTab === 'all-stories') {
+            fetchAllStories();
+        } else if (activeTab === 'my-stories') {
             fetchMyStories();
         }
-    }, [activeTab, fetchMyStories]);
+    }, [activeTab, fetchAllStories, fetchMyStories]);
     
     if (showLoginPrompt) {
         return <LoginPromptDialog isOpen={showLoginPrompt} />;
@@ -107,8 +122,7 @@ export function StoriesClient() {
         errorMsg: string | null, 
         stories: UserStory[], 
         emptyTitle: string, 
-        emptyDesc: string,
-        isMyStories: boolean
+        emptyDesc: string
     ) => {
         if (loading) {
             return <Loading />;
@@ -128,8 +142,8 @@ export function StoriesClient() {
                         <StoryCard 
                             key={story.id} 
                             story={story} 
-                            isMyStory={isMyStories} 
-                            onUpdate={isMyStories ? fetchMyStories : fetchAllStories}
+                            isMyStory={story.user === user?.id}
+                            onUpdate={story.user === user?.id ? fetchMyStories : fetchAllStories}
                         />
                     ))}
                 </div>
@@ -158,7 +172,7 @@ export function StoriesClient() {
                 </Button>
             </div>
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
                 <div className="sticky top-16 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-40 py-2 -mt-2">
                     <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
                         <TabsTrigger value="all-stories">Story Feed</TabsTrigger>
@@ -171,8 +185,7 @@ export function StoriesClient() {
                         error, 
                         allStories, 
                         "No stories yet", 
-                        "Be the first to share a story about your pet!",
-                        false
+                        "Be the first to share a story about your pet!"
                     )}
                 </TabsContent>
                 <TabsContent value="my-stories">
@@ -181,8 +194,7 @@ export function StoriesClient() {
                         myStoriesError, 
                         myStories, 
                         "You haven't posted any stories yet", 
-                        "Click the \"Post a Story\" button to share your first one.",
-                        true
+                        "Click the \"Post a Story\" button to share your first one."
                     )}
                 </TabsContent>
             </Tabs>

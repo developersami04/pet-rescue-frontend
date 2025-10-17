@@ -118,7 +118,7 @@ export function CreateStoryForm() {
             title: 'Story Published!',
             description: `Your story has been successfully published.`,
         });
-        router.push('/stories');
+        router.push('/stories?tab=my-stories');
     } catch (error: any) {
         if (error.message.includes('Session expired')) {
             router.push('/login');
