@@ -138,77 +138,81 @@ export function ManagePetsClient() {
 
     return (
         <div className="mt-6">
-             <div className="flex items-center justify-between mb-4 gap-4">
-                 <PageHeader
-                    title="Manage All Pets"
-                    description="View and manage all pets registered in the system."
-                    className="pb-0"
-                />
-                 <div className="flex items-center gap-2">
-                    <Button onClick={handleRefresh} disabled={isRefreshing || isLoading} variant="outline">
-                        {(isRefreshing || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Refresh
-                    </Button>
-                    <div className="flex items-center gap-1 rounded-md border p-1">
-                        <Button
-                            variant={view === 'grid' ? 'secondary' : 'ghost'}
-                            size="icon"
-                            onClick={() => setView('grid')}
-                            aria-label="Grid view"
-                        >
-                            <LayoutGrid className="h-5 w-5" />
+            <div className="sticky top-16 z-40 bg-background/95 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <div className="flex items-center justify-between gap-4">
+                    <PageHeader
+                        title="Manage All Pets"
+                        description="View and manage all pets registered in the system."
+                        className="pb-0"
+                    />
+                    <div className="flex items-center gap-2">
+                        <Button onClick={handleRefresh} disabled={isRefreshing || isLoading} variant="outline">
+                            {(isRefreshing || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Refresh
                         </Button>
-                        <Button
-                            variant={view === 'list' ? 'secondary' : 'ghost'}
-                            size="icon"
-                            onClick={() => setView('list')}
-                            aria-label="List view"
-                        >
-                            <List className="h-5 w-5" />
-                        </Button>
-                         <Button
-                            variant={view === 'table' ? 'secondary' : 'ghost'}
-                            size="icon"
-                            onClick={() => setView('table')}
-                            aria-label="Table view"
-                        >
-                            <Table className="h-5 w-5" />
-                        </Button>
+                        <div className="flex items-center gap-1 rounded-md border p-1">
+                            <Button
+                                variant={view === 'grid' ? 'secondary' : 'ghost'}
+                                size="icon"
+                                onClick={() => setView('grid')}
+                                aria-label="Grid view"
+                            >
+                                <LayoutGrid className="h-5 w-5" />
+                            </Button>
+                            <Button
+                                variant={view === 'list' ? 'secondary' : 'ghost'}
+                                size="icon"
+                                onClick={() => setView('list')}
+                                aria-label="List view"
+                            >
+                                <List className="h-5 w-5" />
+                            </Button>
+                            <Button
+                                variant={view === 'table' ? 'secondary' : 'ghost'}
+                                size="icon"
+                                onClick={() => setView('table')}
+                                aria-label="Table view"
+                            >
+                                <Table className="h-5 w-5" />
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {isLoading ? (
-                <PetsSkeleton view={view} />
-            ) : view === 'grid' ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {pets.map((pet) => (
-                        <AdminPetCard 
-                            key={pet.id} 
-                            pet={pet}
-                            onDelete={handleDeletePet}
-                            isDeleting={deletingPets[pet.id]}
-                        />
-                    ))}
-                </div>
-            ) : view === 'list' ? (
-                <div className="space-y-4">
-                    {pets.map((pet) => (
-                        <AdminPetListItem 
-                            key={pet.id} 
-                            pet={pet}
-                            onDelete={handleDeletePet}
-                            isDeleting={deletingPets[pet.id]}
-                        />
-                    ))}
-                </div>
-            ) : (
-                <AdminPetTable
-                    data={pets}
-                    onDelete={handleDeletePet}
-                    deletingPets={deletingPets}
-                />
-            )}
+            <div className="mt-6">
+                {isLoading ? (
+                    <PetsSkeleton view={view} />
+                ) : view === 'grid' ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {pets.map((pet) => (
+                            <AdminPetCard 
+                                key={pet.id} 
+                                pet={pet}
+                                onDelete={handleDeletePet}
+                                isDeleting={deletingPets[pet.id]}
+                            />
+                        ))}
+                    </div>
+                ) : view === 'list' ? (
+                    <div className="space-y-4">
+                        {pets.map((pet) => (
+                            <AdminPetListItem 
+                                key={pet.id} 
+                                pet={pet}
+                                onDelete={handleDeletePet}
+                                isDeleting={deletingPets[pet.id]}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <AdminPetTable
+                        data={pets}
+                        onDelete={handleDeletePet}
+                        deletingPets={deletingPets}
+                    />
+                )}
+            </div>
         </div>
     );
 }

@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsAuthenticated(false);
     setUser(null);
     setIsAdmin(null);
-    window.dispatchEvent(new Event('storage'));
+    window.location.assign('/');
   }, []);
 
   const verifyAuth = useCallback(async () => {
