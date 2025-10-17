@@ -6,15 +6,12 @@ import { Pet } from "@/lib/data";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Hand, MessageSquareQuote, Expand, Heart, Loader2, Film } from "lucide-react";
-import { AdoptionRequestDialog } from "./adoption-request-dialog";
+import { Expand, Heart, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { getPlaceholderImage } from "@/lib/placeholder-images";
 import { addFavoritePet, removeFavoritePet } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import { PostStoryDialog } from "./post-story-dialog";
-
 
 type PetProfileHeaderProps = {
     pet: Pet;
@@ -31,8 +28,6 @@ export function PetProfileHeader({ pet, isFavorited, onUpdate }: PetProfileHeade
     const petStatus = pet.pet_report?.pet_status;
     const isResolved = pet.pet_report?.is_resolved;
     const reportStatus = pet.pet_report?.report_status;
-
-    const isAvailableForAdoption = (petStatus === 'adopt' || petStatus === 'found') && !isResolved;
 
     const getReportStatusVariant = (status?: string) => {
         switch (status?.toLowerCase()) {
