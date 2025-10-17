@@ -13,36 +13,45 @@ import { AdminReportTabs } from './admin-report-tabs';
 import { AdminReportList } from './admin-report-list';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { LayoutGrid, List, Loader2, Table } from 'lucide-react';
+import { AdminReportTable } from './admin-report-table';
 
 type TabValue = 'pending' | 'last50' | 'rejected';
 type ReportStatus = 'approved' | 'rejected' | 'resolved';
 
-function ReportsSkeleton() {
-    return (
-        <div className="space-y-8">
-            <div className="flex items-center justify-between">
-                <div className="space-y-2">
-                    <Skeleton className="h-8 w-64" />
-                    <Skeleton className="h-4 w-96" />
-                </div>
-                <Skeleton className="h-10 w-24" />
-            </div>
-            <Skeleton className="h-12 w-full" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {[...Array(8)].map((_, i) => (
-                     <div key={i} className="flex flex-col space-y-3">
-                        <Skeleton className="h-56 w-full rounded-lg" />
-                        <div className="space-y-2">
-                            <Skeleton className="h-4 w-3/4" />
-                            <Skeleton className="h-4 w-1/2" />
-                        </div>
-                    </div>
-                ))}
+function ReportsSkeleton({ view }: { view: 'grid' | 'list' | 'table' }) {
+    const CardSkeleton = () => (
+         <div className="flex flex-col space-y-3">
+            <Skeleton className="h-56 w-full rounded-lg" />
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
             </div>
         </div>
     );
+
+    const ListSkeleton = () => <Skeleton className="h-24 w-full rounded-lg" />;
+    
+    const TableSkeleton = () => (
+        <div className="space-y-4">
+            <Skeleton className="h-10 w-1/3" />
+            <Skeleton className="h-96 w-full rounded-lg" />
+        </div>
+    );
+
+    if (view === 'table') return <TableSkeleton />;
+
+    const items = view === 'grid' 
+        ? Array.from({ length: 8 }).map((_, i) => <CardSkeleton key={i} />)
+        : Array.from({ length: 5 }).map((_, i) => <ListSkeleton key={i} />);
+    
+    const containerClass = view === 'grid'
+        ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+        : "space-y-4";
+
+    return <div className={containerClass}>{items}</div>;
 }
+
 
 function AdminReportsClientContent() {
     const [reports, setReports] = useState<AdminPetReport[]>([]);
@@ -50,6 +59,7 @@ function AdminReportsClientContent() {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [updatingReports, setUpdatingReports] = useState<Record<number, boolean>>({});
+    const [view, setView] = useState<'grid' | 'list' | 'table'>('grid');
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabFromUrl = searchParams.get('tab');
@@ -138,7 +148,6 @@ function AdminReportsClientContent() {
 
     const filteredReports = useMemo(() => {
         // The API now handles filtering by status, so we can just display the results.
-        // The `last50` case in the previous implementation which sliced the array is now handled by the API.
         return reports;
     }, [reports]);
 
@@ -146,10 +155,6 @@ function AdminReportsClientContent() {
         setActiveTab(tab);
         router.push(`/admin/approve-reports?tab=${tab}`, { scroll: false });
     };
-
-    if (isLoading) {
-        return <ReportsSkeleton />;
-    }
 
     if (error) {
         return (
@@ -160,6 +165,17 @@ function AdminReportsClientContent() {
         );
     }
 
+    const renderContent = () => {
+        if (isLoading) {
+            return <ReportsSkeleton view={view} />;
+        }
+        if (view === 'table') {
+            return <AdminReportTable data={filteredReports} onUpdateReport={handleUpdateReport} updatingReports={updatingReports} />
+        }
+        return <AdminReportList reports={filteredReports} onUpdateReport={handleUpdateReport} updatingReports={updatingReports} initialView={view} />;
+    };
+
+
     return (
         <>
             <div className="flex items-center justify-between mb-6">
@@ -168,23 +184,43 @@ function AdminReportsClientContent() {
                     description="Review and approve pet reports from users."
                     className="pb-0"
                 />
-                <Button onClick={handleRefresh} disabled={isRefreshing}>
-                    {isRefreshing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Refresh
-                </Button>
+                 <div className="flex items-center gap-2">
+                    <Button onClick={handleRefresh} disabled={isRefreshing || isLoading} variant="outline">
+                        {(isRefreshing || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Refresh
+                    </Button>
+                     <div className="flex items-center gap-1 rounded-md border p-1">
+                        <Button
+                            variant={view === 'grid' ? 'secondary' : 'ghost'}
+                            size="icon"
+                            onClick={() => setView('grid')}
+                            aria-label="Grid view"
+                        >
+                            <LayoutGrid className="h-5 w-5" />
+                        </Button>
+                        <Button
+                            variant={view === 'list' ? 'secondary' : 'ghost'}
+                            size="icon"
+                            onClick={() => setView('list')}
+                            aria-label="List view"
+                        >
+                            <List className="h-5 w-5" />
+                        </Button>
+                         <Button
+                            variant={view === 'table' ? 'secondary' : 'ghost'}
+                            size="icon"
+                            onClick={() => setView('table')}
+                            aria-label="Table view"
+                        >
+                            <Table className="h-5 w-5" />
+                        </Button>
+                    </div>
+                </div>
             </div>
             <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as any)} className="w-full">
                 <AdminReportTabs activeTab={activeTab} onTabChange={handleTabChange} />
                 <div className="mt-6">
-                    <TabsContent value="pending">
-                        <AdminReportList reports={filteredReports} onUpdateReport={handleUpdateReport} updatingReports={updatingReports} />
-                    </TabsContent>
-                    <TabsContent value="last50">
-                        <AdminReportList reports={filteredReports} onUpdateReport={handleUpdateReport} updatingReports={updatingReports} />
-                    </TabsContent>
-                    <TabsContent value="rejected">
-                        <AdminReportList reports={filteredReports} onUpdateReport={handleUpdateReport} updatingReports={updatingReports} />
-                    </TabsContent>
+                    {renderContent()}
                 </div>
             </Tabs>
         </>
@@ -193,7 +229,7 @@ function AdminReportsClientContent() {
 
 export function AdminReportsClient() {
     return (
-        <Suspense fallback={<ReportsSkeleton />}>
+        <Suspense fallback={<ReportsSkeleton view="grid" />}>
             <AdminReportsClientContent />
         </Suspense>
     )

@@ -2,9 +2,7 @@
 'use client';
 
 import { AdoptionRequest } from "@/lib/data";
-import { Inbox, LayoutGrid, List } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Inbox } from "lucide-react";
 import { AdoptionRequestListItem } from "./adoption-request-list-item";
 import { AdoptionRequestCard } from "./adoption-request-card";
 
@@ -15,10 +13,10 @@ type AdoptionRequestListProps = {
     onUpdate: (requestId: number, status: RequestStatus, message?: string) => void;
     onDelete: (requestId: number) => void;
     updatingRequests: Record<number, boolean>;
+    initialView: 'grid' | 'list';
 };
 
-export function AdoptionRequestList({ requests, onUpdate, onDelete, updatingRequests }: AdoptionRequestListProps) {
-    const [view, setView] = useState('grid');
+export function AdoptionRequestList({ requests, onUpdate, onDelete, updatingRequests, initialView }: AdoptionRequestListProps) {
     
     if (requests.length === 0) {
         return (
@@ -34,27 +32,7 @@ export function AdoptionRequestList({ requests, onUpdate, onDelete, updatingRequ
     
     return (
         <>
-            <div className="flex items-center justify-end mb-4">
-                <div className="flex items-center gap-1 rounded-md border p-1">
-                    <Button
-                        variant={view === 'grid' ? 'secondary' : 'ghost'}
-                        size="icon"
-                        onClick={() => setView('grid')}
-                        aria-label="Grid view"
-                    >
-                        <LayoutGrid className="h-5 w-5" />
-                    </Button>
-                    <Button
-                        variant={view === 'list' ? 'secondary' : 'ghost'}
-                        size="icon"
-                        onClick={() => setView('list')}
-                        aria-label="List view"
-                    >
-                        <List className="h-5 w-5" />
-                    </Button>
-                </div>
-            </div>
-            {view === 'grid' ? (
+            {initialView === 'grid' ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {requests.map((request) => (
                         <AdoptionRequestCard

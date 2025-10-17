@@ -14,10 +14,11 @@ type AdminReportListProps = {
     reports: AdminPetReport[];
     onUpdateReport: (reportId: number, status: ReportStatus) => void;
     updatingReports: Record<number, boolean>;
+    initialView?: 'grid' | 'list';
 };
 
-export function AdminReportList({ reports, onUpdateReport, updatingReports }: AdminReportListProps) {
-    const [view, setView] = useState('grid');
+export function AdminReportList({ reports, onUpdateReport, updatingReports, initialView = 'grid' }: AdminReportListProps) {
+    const [view, setView] = useState(initialView);
     
     if (reports.length === 0) {
         return (
@@ -33,26 +34,6 @@ export function AdminReportList({ reports, onUpdateReport, updatingReports }: Ad
     
     return (
         <>
-            <div className="flex items-center justify-end mb-4">
-                <div className="flex items-center gap-1 rounded-md border p-1">
-                    <Button
-                        variant={view === 'grid' ? 'secondary' : 'ghost'}
-                        size="icon"
-                        onClick={() => setView('grid')}
-                        aria-label="Grid view"
-                    >
-                        <LayoutGrid className="h-5 w-5" />
-                    </Button>
-                    <Button
-                        variant={view === 'list' ? 'secondary' : 'ghost'}
-                        size="icon"
-                        onClick={() => setView('list')}
-                        aria-label="List view"
-                    >
-                        <List className="h-5 w-5" />
-                    </Button>
-                </div>
-            </div>
             {view === 'grid' ? (
                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {reports.map((report) => (

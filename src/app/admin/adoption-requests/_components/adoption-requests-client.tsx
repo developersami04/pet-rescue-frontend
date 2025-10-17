@@ -10,23 +10,46 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { LayoutGrid, List, Loader2, Table } from 'lucide-react';
 import { AdoptionRequestsTabs } from './adoption-requests-tabs';
 import { AdoptionRequestList } from './adoption-request-list';
 import { PageHeader } from '@/components/page-header';
+import { AdoptionRequestTable } from './adoption-request-table';
 
 type TabValue = 'pending' | 'recents' | 'rejected';
 type RequestStatus = 'approved' | 'rejected';
 
-function RequestsSkeleton() {
-    return (
-        <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-                    <Skeleton key={i} className="h-28 w-full" />
-            ))}
+function RequestsSkeleton({ view }: { view: 'grid' | 'list' | 'table' }) {
+    const CardSkeleton = () => (
+         <div className="flex flex-col space-y-3">
+            <Skeleton className="h-56 w-full rounded-lg" />
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+            </div>
         </div>
     );
+    const ListSkeleton = () => <Skeleton className="h-28 w-full" />;
+    const TableSkeleton = () => (
+        <div className="space-y-4">
+            <Skeleton className="h-10 w-1/3" />
+            <Skeleton className="h-96 w-full rounded-lg" />
+        </div>
+    );
+
+    if (view === 'table') return <TableSkeleton />;
+    
+    const items = view === 'grid' 
+        ? Array.from({ length: 8 }).map((_, i) => <CardSkeleton key={i} />)
+        : Array.from({ length: 5 }).map((_, i) => <ListSkeleton key={i} />);
+    
+    const containerClass = view === 'grid'
+        ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+        : "space-y-4";
+    
+    return <div className={containerClass}>{items}</div>;
 }
+
 
 function AdoptionRequestsClientContent() {
     const [requests, setRequests] = useState<AdoptionRequest[]>([]);
@@ -34,6 +57,7 @@ function AdoptionRequestsClientContent() {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [updatingRequests, setUpdatingRequests] = useState<Record<number, boolean>>({});
+    const [view, setView] = useState<'grid' | 'list' | 'table'>('grid');
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabFromUrl = searchParams.get('tab');
@@ -153,6 +177,24 @@ function AdoptionRequestsClientContent() {
         router.push(`/admin/adoption-requests?tab=${tab}`, { scroll: false });
     };
 
+    const renderContent = () => {
+        if (isLoading) {
+            return <RequestsSkeleton view={view} />;
+        }
+        if (error) {
+            return (
+                <Alert variant="destructive" className="mt-6">
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                </Alert>
+            );
+        }
+        if (view === 'table') {
+            return <AdoptionRequestTable data={requests} onUpdate={handleUpdateRequest} onDelete={handleDeleteRequest} updatingRequests={updatingRequests} />;
+        }
+        return <AdoptionRequestList requests={requests} onUpdate={handleUpdateRequest} onDelete={handleDeleteRequest} updatingRequests={updatingRequests} initialView={view} />;
+    }
+
     return (
         <>
             <div className="flex items-center justify-between mb-4">
@@ -161,29 +203,43 @@ function AdoptionRequestsClientContent() {
                     description="Review and approve adoption requests from users."
                     className="pb-0"
                 />
-                <Button onClick={handleRefresh} disabled={isRefreshing || isLoading} variant="outline">
-                    {(isRefreshing || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Refresh
-                </Button>
+                 <div className="flex items-center gap-2">
+                    <Button onClick={handleRefresh} disabled={isRefreshing || isLoading} variant="outline">
+                        {(isRefreshing || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Refresh
+                    </Button>
+                    <div className="flex items-center gap-1 rounded-md border p-1">
+                        <Button
+                            variant={view === 'grid' ? 'secondary' : 'ghost'}
+                            size="icon"
+                            onClick={() => setView('grid')}
+                            aria-label="Grid view"
+                        >
+                            <LayoutGrid className="h-5 w-5" />
+                        </Button>
+                        <Button
+                            variant={view === 'list' ? 'secondary' : 'ghost'}
+                            size="icon"
+                            onClick={() => setView('list')}
+                            aria-label="List view"
+                        >
+                            <List className="h-5 w-5" />
+                        </Button>
+                         <Button
+                            variant={view === 'table' ? 'secondary' : 'ghost'}
+                            size="icon"
+                            onClick={() => setView('table')}
+                            aria-label="Table view"
+                        >
+                            <Table className="h-5 w-5" />
+                        </Button>
+                    </div>
+                </div>
             </div>
             <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as any)} className="w-full">
                 <AdoptionRequestsTabs activeTab={activeTab} onTabChange={handleTabChange} />
                 <div className="mt-6">
-                    {isLoading ? (
-                        <RequestsSkeleton />
-                    ) : error ? (
-                        <Alert variant="destructive" className="mt-6">
-                            <AlertTitle>Error</AlertTitle>
-                            <AlertDescription>{error}</AlertDescription>
-                        </Alert>
-                    ) : (
-                        <AdoptionRequestList 
-                            requests={requests} 
-                            onUpdate={handleUpdateRequest}
-                            onDelete={handleDeleteRequest}
-                            updatingRequests={updatingRequests}
-                        />
-                    )}
+                    {renderContent()}
                 </div>
             </Tabs>
         </>
@@ -192,7 +248,7 @@ function AdoptionRequestsClientContent() {
 
 export function AdoptionRequestsClient() {
     return (
-        <Suspense fallback={<RequestsSkeleton />}>
+        <Suspense fallback={<RequestsSkeleton view="grid" />}>
             <AdoptionRequestsClientContent />
         </Suspense>
     )
