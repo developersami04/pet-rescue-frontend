@@ -1547,18 +1547,22 @@ export async function removeFavoritePet(token: string, petId: number) {
 }
 
 /**
- * Fetches all user-submitted stories.
+ * Fetches user-submitted stories.
  * @param token - The user's access token.
+ * @param query - Optional query parameter (e.g., 'my-stories').
  * @returns An array of UserStory objects.
  */
-export async function getUserStories(token: string): Promise<UserStory[]> {
+export async function getUserStories(token: string, query?: string): Promise<UserStory[]> {
     if (!API_BASE_URL) {
         throw new Error('API is not configured. Please contact support.');
     }
-    const url = `${API_BASE_URL}${API_ENDPOINTS.userStories}`;
+    const url = new URL(`${API_BASE_URL}${API_ENDPOINTS.userStories}`);
+    if (query) {
+        url.searchParams.append('q', query);
+    }
 
     try {
-        const response = await fetchWithAuth(url, {
+        const response = await fetchWithAuth(url.toString(), {
             method: 'GET',
             cache: 'no-store'
         }, token);
@@ -1715,5 +1719,7 @@ export async function searchPets(token: string, query: string): Promise<Pet[]> {
     }
 }
 
+
+    
 
     
