@@ -143,7 +143,7 @@ export function ManageUsersClient() {
                 title="Manage Users"
                 description="View and manage all registered users in the system."
             />
-            <div className="sticky top-16 z-40 bg-background/95 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex justify-end">
+             <div className="sticky top-16 z-40 bg-background py-4 flex justify-end">
                 <div className="flex items-center gap-2">
                     <Button onClick={handleRefresh} disabled={isRefreshing || isLoading} variant="outline">
                         {(isRefreshing || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
