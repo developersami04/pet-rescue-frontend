@@ -69,6 +69,10 @@ export function PetProfileStickyHeader({ pet, isFavorited, onUpdate }: PetProfil
                     <p className="text-sm text-muted-foreground">Reported by: {pet.pet_report?.reporter_name || 'Unknown'}</p>
                 </div>
                 <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium px-3 py-1.5">
+                        <span>{pet.likes ?? 0}</span>
+                        <Heart className="h-4 w-4 text-red-500" />
+                    </div>
                     <Button variant="secondary" size="icon" onClick={handleFavoriteToggle} disabled={isFavoriteLoading}>
                         {isFavoriteLoading ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
@@ -82,4 +86,3 @@ export function PetProfileStickyHeader({ pet, isFavorited, onUpdate }: PetProfil
         </motion.div>
     );
 }
-
