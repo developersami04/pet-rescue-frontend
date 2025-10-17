@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 import Loading from '../loading';
+import { cn } from '@/lib/utils';
 
 export function StoriesClient() {
     const [allStories, setAllStories] = useState<UserStory[]>([]);
@@ -158,10 +159,12 @@ export function StoriesClient() {
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
-                    <TabsTrigger value="all-stories">Story Feed</TabsTrigger>
-                    <TabsTrigger value="my-stories">My Stories</TabsTrigger>
-                </TabsList>
+                <div className="sticky top-16 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-40 py-2 -mt-2">
+                    <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
+                        <TabsTrigger value="all-stories">Story Feed</TabsTrigger>
+                        <TabsTrigger value="my-stories">My Stories</TabsTrigger>
+                    </TabsList>
+                </div>
                 <TabsContent value="all-stories">
                     {renderContent(
                         isLoading, 
