@@ -143,7 +143,11 @@ export function PetProfileHeader({ pet, isFavorited, onUpdate }: PetProfileHeade
                     </div>
                 )}
             </div>
-             <div className="absolute top-4 right-4">
+             <div className="absolute top-4 right-4 flex items-center gap-2">
+                <div className="flex items-center gap-1 rounded-full bg-background/80 text-foreground text-sm font-medium px-3 py-1.5 backdrop-blur-sm">
+                    <span>{pet.likes ?? 0}</span>
+                    <Heart className="h-4 w-4 text-red-500" />
+                </div>
                 <Button variant="secondary" size="icon" onClick={handleFavoriteToggle} disabled={isFavoriteLoading}>
                     {isFavoriteLoading ? (
                         <Loader2 className="h-4 w-4 animate-spin" />

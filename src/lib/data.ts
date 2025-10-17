@@ -81,6 +81,7 @@ export type Pet = {
   is_vaccinated: boolean;
   is_diseased: boolean;
   is_verified?: boolean; // This field is not in the new pet profile response
+  likes?: number;
   address: string | null;
   city: string | null;
   pincode: number | null;
