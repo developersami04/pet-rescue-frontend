@@ -1654,6 +1654,59 @@ export async function createUserStory(token: string, petId: number | null | unde
 }
 
 /**
+ * Updates a user's story.
+ * @param token - The user's access token.
+ * @param storyId - The ID of the story to update.
+ * @param title - The updated title.
+ * @param content - The updated content.
+ * @returns The updated story object.
+ */
+export async function updateUserStory(token: string, storyId: number, title: string, content: string) {
+    if (!API_BASE_URL) throw new Error('API not configured.');
+    const url = `${API_BASE_URL}${API_ENDPOINTS.userStories}${storyId}/`;
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'PATCH',
+            body: JSON.stringify({ title, content }),
+        }, token);
+        const result = await response.json();
+        if (!response.ok) throw new Error(getErrorMessage(result, 'Failed to update story.'));
+        return result;
+    } catch (error) {
+        console.error('Error updating story:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred.');
+    }
+}
+
+/**
+ * Deletes a user's story.
+ * @param token - The user's access token.
+ * @param storyId - The ID of the story to delete.
+ * @returns A success message.
+ */
+export async function deleteUserStory(token: string, storyId: number) {
+    if (!API_BASE_URL) throw new Error('API not configured.');
+    const url = `${API_BASE_URL}${API_ENDPOINTS.userStories}${storyId}/`;
+
+    try {
+        const response = await fetchWithAuth(url, {
+            method: 'DELETE',
+        }, token);
+        if (response.status !== 204 && !response.ok) {
+            const result = await response.json();
+            throw new Error(getErrorMessage(result, 'Failed to delete story.'));
+        }
+        return { message: 'Story deleted successfully' };
+    } catch (error) {
+        console.error('Error deleting story:', error);
+        if (error instanceof Error) throw error;
+        throw new Error('An unknown error occurred.');
+    }
+}
+
+/**
  * Searches for pets based on a query string.
  * @param token - The user's access token.
  * @param query - The search term.

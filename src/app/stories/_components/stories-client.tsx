@@ -106,7 +106,8 @@ export function StoriesClient() {
         errorMsg: string | null, 
         stories: UserStory[], 
         emptyTitle: string, 
-        emptyDesc: string
+        emptyDesc: string,
+        isMyStories: boolean
     ) => {
         if (loading) {
             return <Loading />;
@@ -123,7 +124,12 @@ export function StoriesClient() {
             return (
                 <div className="max-w-2xl mx-auto space-y-8 mt-6">
                     {stories.map(story => (
-                        <StoryCard key={story.id} story={story} />
+                        <StoryCard 
+                            key={story.id} 
+                            story={story} 
+                            isMyStory={isMyStories} 
+                            onUpdate={isMyStories ? fetchMyStories : fetchAllStories}
+                        />
                     ))}
                 </div>
             );
@@ -162,7 +168,8 @@ export function StoriesClient() {
                         error, 
                         allStories, 
                         "No stories yet", 
-                        "Be the first to share a story about your pet!"
+                        "Be the first to share a story about your pet!",
+                        false
                     )}
                 </TabsContent>
                 <TabsContent value="my-stories">
@@ -171,7 +178,8 @@ export function StoriesClient() {
                         myStoriesError, 
                         myStories, 
                         "You haven't posted any stories yet", 
-                        "Click the \"Post a Story\" button to share your first one."
+                        "Click the \"Post a Story\" button to share your first one.",
+                        true
                     )}
                 </TabsContent>
             </Tabs>
