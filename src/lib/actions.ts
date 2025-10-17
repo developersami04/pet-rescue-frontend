@@ -1694,10 +1694,17 @@ export async function deleteUserStory(token: string, storyId: number) {
         const response = await fetchWithAuth(url, {
             method: 'DELETE',
         }, token);
-        if (response.status !== 204 && !response.ok) {
+
+        // Treat 404 (Not Found) as a successful deletion from the client's perspective
+        if (response.status === 204 || response.status === 404) {
+            return { message: 'Story deleted successfully' };
+        }
+        
+        if (!response.ok) {
             const result = await response.json();
             throw new Error(getErrorMessage(result, 'Failed to delete story.'));
         }
+        
         return { message: 'Story deleted successfully' };
     } catch (error) {
         console.error('Error deleting story:', error);
@@ -1776,3 +1783,4 @@ export async function searchPets(token: string, query: string): Promise<Pet[]> {
     
 
     
+
