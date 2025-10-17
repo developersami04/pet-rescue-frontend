@@ -12,11 +12,33 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Logo } from "@/components/logo";
+import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const navItems = [
     // All items removed as per request
 ];
 
+function NavItem({ href, children }: { href: string; children: React.ReactNode }) {
+    const pathname = usePathname();
+    const isActive = pathname === href;
+
+    return (
+        <Button variant="ghost" asChild className="relative">
+            <Link href={href}>
+                {children}
+                {isActive && (
+                    <motion.div
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                        layoutId="underline"
+                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                    />
+                )}
+            </Link>
+        </Button>
+    )
+}
 
 export function LandingHeader() {
     const { setTheme } = useTheme();
@@ -24,14 +46,14 @@ export function LandingHeader() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link href="/" className="flex items-center gap-2" prefetch={false}>
-          <Logo />
-        </Link>
+        <motion.div whileTap={{ scale: 0.95 }}>
+            <Link href="/" className="flex items-center gap-2" prefetch={false}>
+                <Logo />
+            </Link>
+        </motion.div>
         <nav className="flex items-center gap-1">
             {navItems.map((item) => (
-                <Button key={item.href} variant="ghost" asChild>
-                    <Link href={item.href}>{item.label}</Link>
-                </Button>
+                <NavItem key={item.href} href={item.href}>{item.label}</NavItem>
             ))}
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>

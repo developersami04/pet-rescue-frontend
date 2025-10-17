@@ -24,6 +24,7 @@ import {
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { motion } from "framer-motion";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -86,10 +87,32 @@ function NavLink({
         className
       )}
     >
-      {isActive && <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 bg-primary rounded-r-full" />}
+      {isActive && <motion.span layoutId="mobile-active-nav" className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 bg-primary rounded-r-full" />}
       {children}
     </Link>
   );
+}
+
+function AnimatedNavButton({ href, label }: { href: string, label: string }) {
+    const pathname = usePathname();
+    const isActive = pathname === href;
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+        <Button
+            variant="ghost"
+            asChild
+            className={cn("text-sm font-medium relative", isActive ? "text-primary" : "text-foreground")}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            <Link href={href}>
+                {label}
+                {isActive && <motion.div layoutId="underline" className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />}
+                {isHovered && !isActive && <motion.div layoutId="underline" className="absolute -bottom-1 left-0 right-0 h-0.5 bg-muted-foreground/50 rounded-full" />}
+            </Link>
+        </Button>
+    )
 }
 
 function DropdownNav({
@@ -101,6 +124,8 @@ function DropdownNav({
 }) {
   const pathname = usePathname();
   const isActive = items.some((item) => pathname.startsWith(item.href.split('?')[0]));
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -110,10 +135,13 @@ function DropdownNav({
               "text-sm font-medium relative",
                isActive ? "text-primary" : "text-foreground"
             )}
+           onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
           {label}
           <ChevronDown className="ml-1 h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-          {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-1 bg-primary rounded-full" />}
+           {isActive && <motion.div layoutId="underline" className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />}
+           {isHovered && !isActive && <motion.div layoutId="underline" className="absolute -bottom-1 left-0 right-0 h-0.5 bg-muted-foreground/50 rounded-full" />}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -132,7 +160,6 @@ function DropdownNav({
 
 export function HeaderNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const pathname = usePathname();
   const router = useRouter();
   const { setTheme } = useTheme();
   const { user, isLoading, logout } = useAuth();
@@ -164,29 +191,19 @@ export function HeaderNav() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2 mr-4">
-            <Logo className="h-7 w-7 text-primary" />
-            <span className="text-lg font-semibold tracking-wider font-headline">
-              Pet Rescue
-            </span>
-          </Link>
+          <motion.div whileTap={{ scale: 0.95 }}>
+            <Link href="/" className="flex items-center gap-2 mr-4">
+              <Logo className="h-7 w-7 text-primary" />
+              <span className="text-lg font-semibold tracking-wider font-headline">
+                Pet Rescue
+              </span>
+            </Link>
+          </motion.div>
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-2 nav-break:flex">
-            {navItems.main.map((item) => {
-              const isActive = pathname === item.href;
-              return(
-              <Button
-                key={item.href}
-                variant="ghost"
-                asChild
-                className={cn("text-sm font-medium relative", isActive ? "text-primary" : "text-foreground")}
-              >
-                <Link href={item.href}>
-                  {item.label}
-                  {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-1 bg-primary rounded-full" />}
-                  </Link>
-              </Button>
-            )})}
+            {navItems.main.map((item) => (
+              <AnimatedNavButton key={item.href} href={item.href} label={item.label} />
+            ))}
             <DropdownNav label="Pets" items={navItems.pets} />
             <DropdownNav label="Reports" items={navItems.reports} />
              <Button asChild size="sm" className="ml-4">
