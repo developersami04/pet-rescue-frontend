@@ -21,7 +21,7 @@ export function BottomNavBar() {
     { href: user?.is_admin ? '/admin/dashboard' : '/dashboard', icon: LayoutGrid, label: user?.is_admin ? 'Admin' : 'Dashboard' },
     { href: '/pets', icon: PawPrint, label: 'Pets' },
     { href: '/submit-request', icon: Plus, label: 'Add', isCenter: true },
-    { href: '/notifications', icon: Bell, label: 'Updates' },
+    { href: '/stories', icon: Film, label: 'Stories' },
     { href: '/profile', icon: User, label: 'Profile' },
   ];
 
