@@ -103,6 +103,10 @@ export default function PetProfilePage() {
   const isAvailableForAdoption = (petStatus === 'adopt' || petStatus === 'found') && !isResolved;
   const isOwner = currentUser?.id === pet.created_by;
 
+  const approvedRequest = pet.adoption_requests?.find(
+    req => req.requester_id === currentUser?.id && req.report_status === 'approved'
+  );
+
   return (
     <>
       <PetProfileStickyHeader 
@@ -137,7 +141,7 @@ export default function PetProfilePage() {
                       </Button>
                   </PostStoryDialog>
               )}
-              {!isOwner && (
+              {approvedRequest && (
                 <UserDetailsDialog userId={pet.created_by}>
                   <Button variant="secondary">
                       <MessageSquareQuote className="mr-2 h-4 w-4" />
