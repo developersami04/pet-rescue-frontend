@@ -7,14 +7,15 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Pet } from '@/lib/data';
 import { Button } from '@/components/ui/button';
-import { LayoutGrid, List, Loader2 } from 'lucide-react';
+import { LayoutGrid, List, Loader2, Table } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AdminPetCard } from './admin-pet-card';
 import { AdminPetListItem } from './admin-pet-list-item';
 import { PageHeader } from '@/components/page-header';
+import { AdminPetTable } from './admin-pet-table';
 
-function PetsSkeleton({ view }: { view: 'grid' | 'list' }) {
+function PetsSkeleton({ view }: { view: 'grid' | 'list' | 'table' }) {
     const CardSkeleton = () => (
         <div className="flex flex-col space-y-3">
             <Skeleton className="h-56 w-full rounded-lg" />
@@ -30,7 +31,24 @@ function PetsSkeleton({ view }: { view: 'grid' | 'list' }) {
             <Skeleton className="h-24 w-full rounded-lg" />
         </div>
     );
+
+    const TableSkeleton = () => (
+        <div className="space-y-4">
+            <div className="flex justify-between">
+                <Skeleton className="h-10 w-1/3" />
+            </div>
+            <Skeleton className="h-96 w-full rounded-lg" />
+             <div className="flex justify-between">
+                <Skeleton className="h-8 w-24" />
+                <Skeleton className="h-8 w-48" />
+            </div>
+        </div>
+    );
     
+    if (view === 'table') {
+        return <TableSkeleton />;
+    }
+
     return (
         view === 'grid' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -49,7 +67,7 @@ export function ManagePetsClient() {
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [view, setView] = useState<'grid' | 'list'>('grid');
+    const [view, setView] = useState<'grid' | 'list' | 'table'>('grid');
     const [deletingPets, setDeletingPets] = useState<Record<number, boolean>>({});
     const router = useRouter();
     const { toast } = useToast();
@@ -148,6 +166,14 @@ export function ManagePetsClient() {
                         >
                             <List className="h-5 w-5" />
                         </Button>
+                         <Button
+                            variant={view === 'table' ? 'secondary' : 'ghost'}
+                            size="icon"
+                            onClick={() => setView('table')}
+                            aria-label="Table view"
+                        >
+                            <Table className="h-5 w-5" />
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -165,7 +191,7 @@ export function ManagePetsClient() {
                         />
                     ))}
                 </div>
-            ) : (
+            ) : view === 'list' ? (
                 <div className="space-y-4">
                     {pets.map((pet) => (
                         <AdminPetListItem 
@@ -176,6 +202,12 @@ export function ManagePetsClient() {
                         />
                     ))}
                 </div>
+            ) : (
+                <AdminPetTable
+                    data={pets}
+                    onDelete={handleDeletePet}
+                    deletingPets={deletingPets}
+                />
             )}
         </div>
     );
