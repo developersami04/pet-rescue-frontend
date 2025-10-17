@@ -22,6 +22,7 @@ import { PostStoryDialog } from './_components/post-story-dialog';
 import { Button } from '@/components/ui/button';
 import { Film, Hand, MessageSquareQuote } from 'lucide-react';
 import { UserDetailsDialog } from '@/components/user-details-dialog';
+import { PetProfileStickyHeader } from './_components/pet-profile-sticky-header';
 
 export default function PetProfilePage() {
   const params = useParams();
@@ -91,69 +92,72 @@ export default function PetProfilePage() {
   const isOwner = currentUser?.id === pet.created_by;
 
   return (
-    <div className="container mx-auto py-8 px-4 md:px-6">
-      <div className="space-y-8">
-        <PetProfileHeader pet={pet} isFavorited={isFavorited} onUpdate={fetchPetDetails} />
+    <>
+      <PetProfileStickyHeader pet={pet} isFavorited={isFavorited} onUpdate={fetchPetDetails} />
+      <div className="container mx-auto py-8 px-4 md:px-6">
+        <div className="space-y-8">
+          <PetProfileHeader pet={pet} isFavorited={isFavorited} onUpdate={fetchPetDetails} />
 
-        <div className="flex flex-wrap gap-4 items-center justify-center p-4 bg-muted/50 rounded-lg">
-            {isAvailableForAdoption && !isOwner && (
-                <AdoptionRequestDialog petId={pet.id} petName={pet.name} onUpdate={fetchPetDetails}>
-                    <Button>
-                        <Hand className="mr-2 h-4 w-4" />
-                        Request to Adopt
-                    </Button>
-                </AdoptionRequestDialog>
-            )}
-            {pet.is_verified && isOwner && (
-                <PostStoryDialog petId={pet.id} petName={pet.name}>
-                        <Button>
-                        <Film className="mr-2 h-4 w-4" />
-                        Post Story
-                    </Button>
-                </PostStoryDialog>
-            )}
-            {!isOwner && (
-              <UserDetailsDialog userId={pet.created_by}>
-                <Button variant="secondary">
-                    <MessageSquareQuote className="mr-2 h-4 w-4" />
-                    Contact Owner
-                </Button>
-              </UserDetailsDialog>
-            )}
+          <div className="flex flex-wrap gap-4 items-center justify-center p-4 bg-muted/50 rounded-lg">
+              {isAvailableForAdoption && !isOwner && (
+                  <AdoptionRequestDialog petId={pet.id} petName={pet.name} onUpdate={fetchPetDetails}>
+                      <Button>
+                          <Hand className="mr-2 h-4 w-4" />
+                          Request to Adopt
+                      </Button>
+                  </AdoptionRequestDialog>
+              )}
+              {pet.is_verified && isOwner && (
+                  <PostStoryDialog petId={pet.id} petName={pet.name}>
+                          <Button>
+                          <Film className="mr-2 h-4 w-4" />
+                          Post Story
+                      </Button>
+                  </PostStoryDialog>
+              )}
+              {!isOwner && (
+                <UserDetailsDialog userId={pet.created_by}>
+                  <Button variant="secondary">
+                      <MessageSquareQuote className="mr-2 h-4 w-4" />
+                      Contact Owner
+                  </Button>
+                </UserDetailsDialog>
+              )}
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+              <div className="lg:col-span-2 space-y-8">
+                  <PetDetailsCard pet={pet} />
+              </div>
+
+              <div className="lg:col-span-1 space-y-8">
+                  <Card>
+                      <CardContent className="p-4">
+                          <Accordion type="single" collapsible defaultValue="pet-report" className="w-full">
+                              <AccordionItem value="pet-report">
+                                  <AccordionTrigger className="text-base font-semibold hover:no-underline">Pet Report</AccordionTrigger>
+                                  <AccordionContent>
+                                      <PetReportContent report={pet.pet_report} />
+                                  </AccordionContent>
+                              </AccordionItem>
+                              <AccordionItem value="medical-history">
+                                  <AccordionTrigger className="text-base font-semibold hover:no-underline">Medical History</AccordionTrigger>
+                                  <AccordionContent>
+                                      <MedicalHistoryContent history={pet.medical_history} />
+                                  </AccordionContent>
+                              </AccordionItem>
+                          </Accordion>
+                      </CardContent>
+                  </Card>
+              </div>
+          </div>
+
+          {pet.adoption_requests && pet.adoption_requests.length > 0 && isOwner && (
+              <AdoptionRequestsCard requests={pet.adoption_requests} petName={pet.name}/>
+          )}
+
         </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            <div className="lg:col-span-2 space-y-8">
-                <PetDetailsCard pet={pet} />
-            </div>
-
-            <div className="lg:col-span-1 space-y-8">
-                <Card>
-                    <CardContent className="p-4">
-                        <Accordion type="single" collapsible defaultValue="pet-report" className="w-full">
-                            <AccordionItem value="pet-report">
-                                <AccordionTrigger className="text-base font-semibold hover:no-underline">Pet Report</AccordionTrigger>
-                                <AccordionContent>
-                                    <PetReportContent report={pet.pet_report} />
-                                </AccordionContent>
-                            </AccordionItem>
-                            <AccordionItem value="medical-history">
-                                <AccordionTrigger className="text-base font-semibold hover:no-underline">Medical History</AccordionTrigger>
-                                <AccordionContent>
-                                    <MedicalHistoryContent history={pet.medical_history} />
-                                </AccordionContent>
-                            </AccordionItem>
-                        </Accordion>
-                    </CardContent>
-                </Card>
-            </div>
-        </div>
-
-        {pet.adoption_requests && pet.adoption_requests.length > 0 && isOwner && (
-            <AdoptionRequestsCard requests={pet.adoption_requests} petName={pet.name}/>
-        )}
-
       </div>
-    </div>
+    </>
   );
 }
