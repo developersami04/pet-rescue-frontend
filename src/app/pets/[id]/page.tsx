@@ -130,17 +130,17 @@ export default function PetProfilePage() {
             <div className="lg:col-span-1 space-y-8">
                 <Card>
                     <CardContent className="p-4">
-                        <Accordion type="single" collapsible defaultValue="medical-history" className="w-full">
-                            <AccordionItem value="medical-history">
-                                <AccordionTrigger className="text-base font-semibold hover:no-underline">Medical History</AccordionTrigger>
-                                <AccordionContent>
-                                    <MedicalHistoryContent history={pet.medical_history} />
-                                </AccordionContent>
-                            </AccordionItem>
+                        <Accordion type="single" collapsible defaultValue="pet-report" className="w-full">
                             <AccordionItem value="pet-report">
                                 <AccordionTrigger className="text-base font-semibold hover:no-underline">Pet Report</AccordionTrigger>
                                 <AccordionContent>
                                     <PetReportContent report={pet.pet_report} />
+                                </AccordionContent>
+                            </AccordionItem>
+                            <AccordionItem value="medical-history">
+                                <AccordionTrigger className="text-base font-semibold hover:no-underline">Medical History</AccordionTrigger>
+                                <AccordionContent>
+                                    <MedicalHistoryContent history={pet.medical_history} />
                                 </AccordionContent>
                             </AccordionItem>
                         </Accordion>
