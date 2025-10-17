@@ -3,12 +3,17 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
-// Dummy data for featured pets with Unsplash images
 const featuredPets = [
   { 
     id: 'pet-buddy', 
@@ -54,28 +59,6 @@ const featuredPets = [
   }
 ];
 
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: 'spring',
-      stiffness: 100,
-      damping: 12,
-    },
-  },
-};
-
 export function FeaturedPetsSection() {
   return (
     <section className="py-12 md:py-24">
@@ -88,73 +71,44 @@ export function FeaturedPetsSection() {
                 </Link>
             </Button>
         </div>
-        <div className="md:hidden">
-          <motion.div
-            className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-          >
-            {featuredPets.map((pet) => (
-              <motion.div key={pet.id} variants={cardVariants} className="flex-shrink-0 w-3/4 sm:w-2/5">
-                <Link href="/pets" className="group h-full">
-                    <Card className="overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <div className="relative aspect-square w-full">
-                        <Image
-                        src={pet.imageUrl}
-                        alt={pet.name}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        data-ai-hint={pet.imageHint}
-                        sizes="(max-width: 768px) 75vw, 25vw"
-                        />
-                    </div>
-                    <CardHeader>
-                        <CardTitle>{pet.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-muted-foreground">{pet.breed}</p>
-                    </CardContent>
-                    </Card>
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-        <motion.div
-          className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+        <Carousel 
+            opts={{
+                align: "start",
+                loop: true,
+            }}
+            className="w-full"
         >
-          {featuredPets.map((pet) => {
-            return (
-              <motion.div key={pet.id} variants={cardVariants}>
-                <Link href="/pets" className="group">
-                    <Card className="overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <div className="relative aspect-square w-full">
-                        <Image
-                        src={pet.imageUrl}
-                        alt={pet.name}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        data-ai-hint={pet.imageHint}
-                        />
-                    </div>
-                    <CardHeader>
-                        <CardTitle>{pet.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-muted-foreground">{pet.breed}</p>
-                    </CardContent>
-                    </Card>
-                </Link>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+          <CarouselContent>
+            {featuredPets.map((pet) => (
+              <CarouselItem key={pet.id} className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                <div className="p-1">
+                    <Link href="/pets" className="group h-full">
+                        <Card className="overflow-hidden h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                        <div className="relative aspect-square w-full">
+                            <Image
+                            src={pet.imageUrl}
+                            alt={pet.name}
+                            fill
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                            data-ai-hint={pet.imageHint}
+                            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            />
+                        </div>
+                        <CardHeader>
+                            <CardTitle>{pet.name}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground">{pet.breed}</p>
+                        </CardContent>
+                        </Card>
+                    </Link>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 h-10 w-10 disabled:opacity-0" />
+          <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 h-10 w-10 disabled:opacity-0" />
+        </Carousel>
       </div>
     </section>
   );
