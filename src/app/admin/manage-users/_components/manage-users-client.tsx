@@ -143,13 +143,13 @@ export function ManageUsersClient() {
                 title="Manage Users"
                 description="View and manage all registered users in the system."
             />
-             <div className="sticky top-16 z-40 bg-background py-4 flex justify-end">
+             <div className="sticky top-16 z-40 py-4 flex justify-end">
                 <div className="flex items-center gap-2">
                     <Button onClick={handleRefresh} disabled={isRefreshing || isLoading} variant="outline">
                         {(isRefreshing || isLoading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Refresh
                     </Button>
-                    <div className="flex items-center gap-1 rounded-md border p-1">
+                    <div className="flex items-center gap-1 rounded-md border p-1 bg-background">
                         <Button
                             variant={view === 'grid' ? 'secondary' : 'ghost'}
                             size="icon"
