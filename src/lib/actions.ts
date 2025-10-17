@@ -441,7 +441,7 @@ export async function requestPasswordReset(email: string) {
         
         // For security, don't reveal if an email exists. Treat 404 as success.
         if (response.status === 404) {
-            return { message: 'Password reset OTP sent successfully.' };
+            return { message: 'If an account with this email exists, a password reset OTP has been sent.' };
         }
 
         const result = await response.json();
@@ -1787,5 +1787,6 @@ export async function searchPets(token: string, query: string): Promise<Pet[]> {
     
 
     
+
 
 
