@@ -7,15 +7,16 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { RegisteredUser } from '@/lib/data';
 import { Button } from '@/components/ui/button';
-import { LayoutGrid, List, Loader2 } from 'lucide-react';
+import { LayoutGrid, List, Loader2, Table } from 'lucide-react';
 import { UserCard } from './user-card';
 import { UserListItem } from './user-list-item';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { PageHeader } from '@/components/page-header';
+import { UserTable } from './user-table';
 
 
-function UsersSkeleton({ view }: { view: 'grid' | 'list' }) {
+function UsersSkeleton({ view }: { view: 'grid' | 'list' | 'table' }) {
     const CardSkeleton = () => (
         <div className="flex flex-col space-y-3">
             <Skeleton className="h-[350px] w-full rounded-lg" />
@@ -27,7 +28,25 @@ function UsersSkeleton({ view }: { view: 'grid' | 'list' }) {
             <Skeleton className="h-24 w-full rounded-lg" />
         </div>
     );
+
+     const TableSkeleton = () => (
+        <div className="space-y-4">
+            <div className="flex justify-between">
+                <Skeleton className="h-10 w-1/3" />
+                <Skeleton className="h-10 w-1/4" />
+            </div>
+            <Skeleton className="h-96 w-full rounded-lg" />
+             <div className="flex justify-between">
+                <Skeleton className="h-8 w-24" />
+                <Skeleton className="h-8 w-48" />
+            </div>
+        </div>
+    );
     
+    if (view === 'table') {
+        return <TableSkeleton />;
+    }
+
     return (
         view === 'grid' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -46,7 +65,7 @@ export function ManageUsersClient() {
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [view, setView] = useState<'grid' | 'list'>('grid');
+    const [view, setView] = useState<'grid' | 'list' | 'table'>('grid');
     const [updatingUsers, setUpdatingUsers] = useState<Record<number, boolean>>({});
     const router = useRouter();
     const { toast } = useToast();
@@ -148,6 +167,14 @@ export function ManageUsersClient() {
                         >
                             <List className="h-5 w-5" />
                         </Button>
+                        <Button
+                            variant={view === 'table' ? 'secondary' : 'ghost'}
+                            size="icon"
+                            onClick={() => setView('table')}
+                            aria-label="Table view"
+                        >
+                            <Table className="h-5 w-5" />
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -165,7 +192,7 @@ export function ManageUsersClient() {
                         />
                     ))}
                 </div>
-            ) : (
+            ) : view === 'list' ? (
                 <div className="space-y-4">
                     {users.map((user) => (
                         <UserListItem 
@@ -176,6 +203,12 @@ export function ManageUsersClient() {
                         />
                     ))}
                 </div>
+            ) : (
+                 <UserTable 
+                    data={users} 
+                    onUpdate={handleUpdateUser}
+                    updatingUsers={updatingUsers}
+                />
             )}
         </div>
     );
