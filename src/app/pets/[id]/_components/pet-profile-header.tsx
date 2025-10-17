@@ -16,10 +16,11 @@ import { useState } from "react";
 type PetProfileHeaderProps = {
     pet: Pet;
     isFavorited: boolean;
-    onUpdate: () => void;
+    likeCount: number;
+    onFavoriteToggle: (favorited: boolean) => void;
 }
 
-export function PetProfileHeader({ pet, isFavorited, onUpdate }: PetProfileHeaderProps) {
+export function PetProfileHeader({ pet, isFavorited, likeCount, onFavoriteToggle }: PetProfileHeaderProps) {
     const { toast } = useToast();
     const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
     const placeholder = getPlaceholderImage(pet.type_name);
@@ -57,7 +58,6 @@ export function PetProfileHeader({ pet, isFavorited, onUpdate }: PetProfileHeade
 
     const statusInfo = getStatusInfo(petStatus);
 
-
     const handleFavoriteToggle = async () => {
         setIsFavoriteLoading(true);
         const token = localStorage.getItem('authToken');
@@ -71,11 +71,12 @@ export function PetProfileHeader({ pet, isFavorited, onUpdate }: PetProfileHeade
             if (isFavorited) {
                 await removeFavoritePet(token, pet.id);
                 toast({ title: 'Removed from Favorites' });
+                onFavoriteToggle(false);
             } else {
                 await addFavoritePet(token, pet.id);
                 toast({ title: 'Added to Favorites' });
+                onFavoriteToggle(true);
             }
-            onUpdate(); // Re-fetch pet details to update favorite status
         } catch (error: any) {
             toast({ variant: 'destructive', title: 'Error', description: error.message });
         } finally {
@@ -140,7 +141,7 @@ export function PetProfileHeader({ pet, isFavorited, onUpdate }: PetProfileHeade
             </div>
              <div className="absolute top-4 right-4 flex items-center gap-2">
                 <div className="flex items-center gap-1 rounded-full bg-background/80 text-foreground text-sm font-medium px-3 py-1.5 backdrop-blur-sm">
-                    <span>{pet.likes ?? 0}</span>
+                    <span>{likeCount}</span>
                     <Heart className="h-4 w-4 text-red-500" />
                 </div>
                 <Button variant="secondary" size="icon" onClick={handleFavoriteToggle} disabled={isFavoriteLoading}>

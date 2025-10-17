@@ -35,9 +35,15 @@ export default function PetProfilePage() {
   const [pet, setPet] = useState<Pet | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [favoritePets, setFavoritePets] = useState<FavoritePet[]>([]);
+  
+  // Local state for optimistic updates
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
-  const fetchPetDetails = useCallback(async () => {
+  const fetchPetDetails = useCallback(async (isInitialLoad = false) => {
+    if (isInitialLoad) {
+      setIsLoading(true);
+    }
     const token = localStorage.getItem('authToken');
     if (!token) {
       toast({ variant: 'destructive', title: 'Authentication Error', description: 'Please log in to view pet details.' });
@@ -46,26 +52,32 @@ export default function PetProfilePage() {
     }
 
     try {
-      setIsLoading(true);
       const [petData, favoritePetsData] = await Promise.all([
         getPetById(token, petId),
         getFavoritePets(token)
       ]);
       setPet(petData);
-      setFavoritePets(favoritePetsData);
+      setLikeCount(petData.likes ?? 0);
+      setIsFavorited(favoritePetsData.some(fav => fav.pet_id === petData.id));
+
     } catch (e: any) {
       setError(e.message || 'Failed to fetch pet details.');
       toast({ variant: 'destructive', title: 'Error', description: e.message });
     } finally {
-      setIsLoading(false);
+      if (isInitialLoad) {
+        setIsLoading(false);
+      }
     }
   }, [petId, router, toast]);
 
   useEffect(() => {
-    fetchPetDetails();
+    fetchPetDetails(true);
   }, [fetchPetDetails]);
   
-  const isFavorited = favoritePets.some(fav => fav.pet_id === pet?.id);
+  const handleFavoriteToggle = (favorited: boolean) => {
+    setIsFavorited(favorited);
+    setLikeCount(prev => favorited ? prev + 1 : prev - 1);
+  };
 
   if (isLoading) {
     return <Loading />;
@@ -93,14 +105,24 @@ export default function PetProfilePage() {
 
   return (
     <>
-      <PetProfileStickyHeader pet={pet} isFavorited={isFavorited} onUpdate={fetchPetDetails} />
+      <PetProfileStickyHeader 
+        pet={pet} 
+        isFavorited={isFavorited} 
+        likeCount={likeCount}
+        onFavoriteToggle={handleFavoriteToggle} 
+      />
       <div className="container mx-auto py-8 px-4 md:px-6">
         <div className="space-y-8">
-          <PetProfileHeader pet={pet} isFavorited={isFavorited} onUpdate={fetchPetDetails} />
+          <PetProfileHeader 
+            pet={pet} 
+            isFavorited={isFavorited}
+            likeCount={likeCount}
+            onFavoriteToggle={handleFavoriteToggle}
+          />
 
           <div className="flex flex-wrap gap-4 items-center justify-center p-4 bg-muted/50 rounded-lg">
               {isAvailableForAdoption && !isOwner && (
-                  <AdoptionRequestDialog petId={pet.id} petName={pet.name} onUpdate={fetchPetDetails}>
+                  <AdoptionRequestDialog petId={pet.id} petName={pet.name} onUpdate={() => fetchPetDetails(false)}>
                       <Button>
                           <Hand className="mr-2 h-4 w-4" />
                           Request to Adopt

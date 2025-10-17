@@ -13,10 +13,11 @@ import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 type PetProfileStickyHeaderProps = {
     pet: Pet;
     isFavorited: boolean;
-    onUpdate: () => void;
+    likeCount: number;
+    onFavoriteToggle: (favorited: boolean) => void;
 }
 
-export function PetProfileStickyHeader({ pet, isFavorited, onUpdate }: PetProfileStickyHeaderProps) {
+export function PetProfileStickyHeader({ pet, isFavorited, likeCount, onFavoriteToggle }: PetProfileStickyHeaderProps) {
     const { toast } = useToast();
     const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
     const [isHidden, setIsHidden] = useState(true);
@@ -44,11 +45,12 @@ export function PetProfileStickyHeader({ pet, isFavorited, onUpdate }: PetProfil
             if (isFavorited) {
                 await removeFavoritePet(token, pet.id);
                 toast({ title: 'Removed from Favorites' });
+                onFavoriteToggle(false);
             } else {
                 await addFavoritePet(token, pet.id);
                 toast({ title: 'Added to Favorites' });
+                onFavoriteToggle(true);
             }
-            onUpdate();
         } catch (error: any) {
             toast({ variant: 'destructive', title: 'Error', description: error.message });
         } finally {
@@ -70,7 +72,7 @@ export function PetProfileStickyHeader({ pet, isFavorited, onUpdate }: PetProfil
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium px-3 py-1.5">
-                        <span>{pet.likes ?? 0}</span>
+                        <span>{likeCount}</span>
                         <Heart className="h-4 w-4 text-red-500" />
                     </div>
                     <Button variant="secondary" size="icon" onClick={handleFavoriteToggle} disabled={isFavoriteLoading}>
