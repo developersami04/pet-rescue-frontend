@@ -57,7 +57,7 @@ function AdoptionRequestsClientContent() {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [updatingRequests, setUpdatingRequests] = useState<Record<number, boolean>>({});
-    const [view, setView] = useState<'grid' | 'list' | 'table'>('grid');
+    const [view, setView] = useState<'grid' | 'list' | 'table'>('table');
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabFromUrl = searchParams.get('tab');
@@ -248,7 +248,7 @@ function AdoptionRequestsClientContent() {
 
 export function AdoptionRequestsClient() {
     return (
-        <Suspense fallback={<RequestsSkeleton view="grid" />}>
+        <Suspense fallback={<RequestsSkeleton view="table" />}>
             <AdoptionRequestsClientContent />
         </Suspense>
     )

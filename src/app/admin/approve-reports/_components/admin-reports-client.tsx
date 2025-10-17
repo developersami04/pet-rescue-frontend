@@ -59,7 +59,7 @@ function AdminReportsClientContent() {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [updatingReports, setUpdatingReports] = useState<Record<number, boolean>>({});
-    const [view, setView] = useState<'grid' | 'list' | 'table'>('grid');
+    const [view, setView] = useState<'grid' | 'list' | 'table'>('table');
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabFromUrl = searchParams.get('tab');

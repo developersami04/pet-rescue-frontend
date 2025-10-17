@@ -65,7 +65,7 @@ export function ManageUsersClient() {
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [view, setView] = useState<'grid' | 'list' | 'table'>('grid');
+    const [view, setView] = useState<'grid' | 'list' | 'table'>('table');
     const [updatingUsers, setUpdatingUsers] = useState<Record<number, boolean>>({});
     const router = useRouter();
     const { toast } = useToast();
