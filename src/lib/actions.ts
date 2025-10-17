@@ -435,6 +435,11 @@ export async function requestPasswordReset(email: string) {
             body: JSON.stringify({ email }),
         });
         
+        // For security, don't reveal if an email exists. Treat 404 as success.
+        if (response.status === 404) {
+            return { message: 'Password reset OTP sent successfully.' };
+        }
+
         const result = await response.json();
 
         if (!response.ok) {
