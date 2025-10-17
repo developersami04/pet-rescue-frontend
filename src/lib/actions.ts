@@ -326,6 +326,10 @@ export async function sendVerificationEmail(token: string) {
         const response = await fetchWithAuth(`${API_BASE_URL}${API_ENDPOINTS.sendVerificationEmail}`, {
             method: 'GET',
         }, token);
+        
+        if (response.status === 404) {
+             throw new Error('User not found. Please try logging in again.');
+        }
 
         const result = await response.json();
 
@@ -1783,4 +1787,5 @@ export async function searchPets(token: string, query: string): Promise<Pet[]> {
     
 
     
+
 
