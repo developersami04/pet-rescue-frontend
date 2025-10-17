@@ -16,6 +16,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useState } from "react";
 import { NotifyUserDialog } from "./notify-user-dialog";
 import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
+import { UserDetailsDialog } from "@/components/user-details-dialog";
 
 type RequestStatus = 'approved' | 'rejected';
 
@@ -56,19 +57,21 @@ export function AdoptionRequestListItem({ request, onUpdate, onDelete, isUpdatin
                         <AvatarFallback>{request.pet_name?.[0] ?? 'P'}</AvatarFallback>
                     </Avatar>
                 </Link>
-                <Link href={`/profile/${request.requester_id}`}>
-                    <Avatar className="h-20 w-20">
+                <UserDetailsDialog userId={request.requester_id}>
+                     <Avatar className="h-20 w-20 cursor-pointer">
                         <AvatarImage src={requesterImageUrl} alt={request.requester_name} className="object-cover" />
                         <AvatarFallback>{request.requester_name?.[0] ?? 'U'}</AvatarFallback>
                     </Avatar>
-                </Link>
+                </UserDetailsDialog>
             </div>
             
             <div className="flex-grow grid grid-cols-1 md:grid-cols-3 items-start gap-4 w-full">
                 <div className="md:col-span-2 space-y-2">
                     <div>
                          <h3 className="text-lg font-bold">
-                            <Link href={`/profile/${request.requester_id}`} className="hover:underline">{request.requester_name}</Link>
+                            <UserDetailsDialog userId={request.requester_id}>
+                                <span className="hover:underline cursor-pointer">{request.requester_name}</span>
+                            </UserDetailsDialog>
                             <span className="font-normal text-muted-foreground"> requested </span> 
                             <Link href={`/pets/${request.pet}`} className="hover:underline">{request.pet_name}</Link>
                         </h3>

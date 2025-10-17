@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { NotifyUserDialog } from "./notify-user-dialog";
 import { getRandomDefaultProfileImage } from "@/lib/page-data/user-data";
+import { UserDetailsDialog } from "@/components/user-details-dialog";
 
 type RequestStatus = 'approved' | 'rejected';
 
@@ -75,9 +76,11 @@ export function AdoptionRequestCard({ request, onUpdate, onDelete, isUpdating }:
                         <AvatarFallback>{request.requester_name?.[0] ?? 'U'}</AvatarFallback>
                     </Avatar>
                     <div>
-                        <p className="font-semibold text-sm">
-                            <Link href={`/profile/${request.requester_id}`} className="hover:underline">{request.requester_name}</Link>
-                        </p>
+                        <UserDetailsDialog userId={request.requester_id}>
+                            <p className="font-semibold text-sm cursor-pointer hover:underline">
+                                {request.requester_name}
+                            </p>
+                        </UserDetailsDialog>
                         <p className="text-xs text-muted-foreground">Requester</p>
                     </div>
                 </div>

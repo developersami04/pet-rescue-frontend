@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import * as React from 'react';
@@ -34,6 +35,7 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { NotifyUserDialog } from './notify-user-dialog';
+import { UserDetailsDialog } from '@/components/user-details-dialog';
 
 type RequestStatus = 'approved' | 'rejected';
 
@@ -77,13 +79,15 @@ export function AdoptionRequestTable({ data, onUpdate, onDelete, updatingRequest
             const defaultRequesterImage = getRandomDefaultProfileImage(request.requester_name);
             const requesterImageUrl = request.requester_profile_image || defaultRequesterImage;
             return (
-                 <Link href={`/profile/${request.requester_id}`} className="flex items-center gap-3 group">
-                    <Avatar className="h-10 w-10">
-                        <AvatarImage src={requesterImageUrl} alt={request.requester_name} className="object-cover" />
-                        <AvatarFallback>{request.requester_name?.[0] ?? 'U'}</AvatarFallback>
-                    </Avatar>
-                    <p className="font-medium group-hover:underline">{request.requester_name}</p>
-                </Link>
+                <UserDetailsDialog userId={request.requester_id}>
+                     <div className="flex items-center gap-3 group cursor-pointer">
+                        <Avatar className="h-10 w-10">
+                            <AvatarImage src={requesterImageUrl} alt={request.requester_name} className="object-cover" />
+                            <AvatarFallback>{request.requester_name?.[0] ?? 'U'}</AvatarFallback>
+                        </Avatar>
+                        <p className="font-medium group-hover:underline">{request.requester_name}</p>
+                    </div>
+                </UserDetailsDialog>
             )
       }
     },
