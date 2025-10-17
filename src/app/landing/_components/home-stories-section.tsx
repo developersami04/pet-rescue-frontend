@@ -10,7 +10,6 @@ import { HomeStoryCard } from "./home-story-card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useAuth } from "@/lib/auth";
 
 const containerVariants = {
   hidden: {},
@@ -26,13 +25,8 @@ export function HomeStoriesSection() {
     const [stories, setStories] = useState<HomeUserStory[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const { isLoading: isAuthLoading } = useAuth();
 
     useEffect(() => {
-        if (isAuthLoading) {
-            return; // Wait for authentication to resolve
-        }
-        
         async function fetchStories() {
             setIsLoading(true);
             try {
@@ -45,7 +39,7 @@ export function HomeStoriesSection() {
             }
         }
         fetchStories();
-    }, [isAuthLoading]);
+    }, []);
 
     return (
         <section className="py-12 md:py-24">
