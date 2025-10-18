@@ -58,7 +58,7 @@ export function AdoptionRequestTable({ data, onUpdate, onDelete, updatingRequest
             const request = row.original;
             const petImageUrl = request.pet_image || `https://picsum.photos/seed/${request.pet}/100/100`;
             return (
-                 <Link href={`/pets/${request.pet}`} className="flex items-center gap-3 group">
+                 <Link href={`/pets/${request.pet_id}`} className="flex items-center gap-3 group">
                     <Avatar className="h-10 w-10">
                         <AvatarImage src={petImageUrl} alt={request.pet_name} className="object-cover" />
                         <AvatarFallback>{request.pet_name?.[0] ?? 'P'}</AvatarFallback>
