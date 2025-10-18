@@ -12,9 +12,13 @@ import { useNotifications } from '@/hooks/use-notifications';
 import { NotificationList } from './notification-list';
 import { Card, CardHeader, CardTitle, CardFooter } from './ui/card';
 import Link from 'next/link';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export function NotificationPopover() {
   const { notifications, unreadCount, markAsRead, deleteNotification } = useNotifications();
+  const isMobile = useIsMobile();
+
+  const notificationsToShow = isMobile ? notifications.slice(0, 3) : notifications.slice(0, 5);
   
   return (
     <Popover>
@@ -42,7 +46,7 @@ export function NotificationPopover() {
             )}
           </CardHeader>
           <NotificationList 
-            notifications={notifications.slice(0, 5)}
+            notifications={notificationsToShow}
             onMarkAsRead={markAsRead}
             onDelete={deleteNotification}
           />
