@@ -83,7 +83,7 @@ export function FavoritePets() {
                 <Skeleton className="h-6 w-1/2" />
                 <div className="flex space-x-4">
                     {Array.from({ length: 4 }).map((_, index) => (
-                        <div key={index} className="space-y-2 w-48">
+                        <div key={index} className="space-y-2 w-48 basis-4/5 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
                             <Skeleton className="aspect-square w-full" />
                             <Skeleton className="h-5 w-3/4" />
                         </div>
@@ -121,7 +121,7 @@ export function FavoritePets() {
                 const imageUrl = pet.pet_image || placeholder.url;
                 const imageHint = pet.pet_image ? 'pet' : placeholder.hint;
                 return (
-                    <CarouselItem key={pet.id} className="pl-4 basis-3/4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
+                    <CarouselItem key={pet.id} className="pl-4 basis-4/5 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
                         <Card className="overflow-hidden group h-full flex flex-col">
                              <Link href={`/pets/${pet.pet_id}`}>
                                 <div className="relative aspect-square w-full">
