@@ -437,7 +437,7 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
 - **Auth Required**: Yes (Bearer Token)
 - **Success Response (204 No Content)**
 - **Failed Response Status Code**: 
-  401 UNAUThorized, 404 NOT FOUND
+  401 UNAUTHORIZED, 404 NOT FOUND
 
 ### Get Pet Reports
 - **Endpoint**: `/api/pet-data/pet-reports/`
@@ -484,25 +484,41 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
     - **Failed Response Status Code**: 400 BAD REQUEST, 401 UNAUTHORIZED
 
 ### Manage User Stories
-- **Endpoint**: `/api/pet-data/user-stories/`
+- **Endpoint**: `/api/pet-data/user-stories/` or `/api/pet-data/user-stories/{id}/`
 - **Auth Required**: Yes (Bearer Token)
 - **Methods**:
-  - `GET`: Fetches all user stories.
+  - `GET`: Fetches user stories. Can specify `?q=my-stories` to get stories by the authenticated user.
     - **Response (200 OK)**:
       ```json
       { "data": [ /* Array of UserStory objects */ ] }
       ```
     - **Failed Response Status Code**: 401 UNAUTHORIZED
   - `POST`: Creates a new user story.
+    - **Endpoint**: `/api/pet-data/user-stories/`
     - **Request**:
       ```json
-      { "pet": "number (petId)", "title": "string", "content": "string" }
+      { "pet": "number (petId, optional)", "title": "string", "content": "string" }
       ```
     - **Response (201 Created)**:
       ```json
       { /* UserStory object */ }
       ```
     - **Failed Response Status Code**: 400 BAD REQUEST, 401 UNAUTHORIZED
+  - `PATCH`: Updates an existing user story.
+    - **Endpoint**: `/api/pet-data/user-stories/{id}/`
+    - **Request**:
+      ```json
+      { "title": "string (optional)", "content": "string (optional)" }
+      ```
+    - **Response (200 OK)**:
+      ```json
+      { /* Updated UserStory object */ }
+      ```
+    - **Failed Response Status Code**: 400 BAD REQUEST, 401 UNAUTHORIZED, 403 FORBIDDEN, 404 NOT FOUND
+  - `DELETE`: Deletes a user story.
+    - **Endpoint**: `/api/pet-data/user-stories/{id}/`
+    - **Response**: 204 No Content
+    - **Failed Response Status Code**: 401 UNAUTHORIZED, 403 FORBIDDEN, 404 NOT FOUND
 
 ### Get Home User Stories
 - **Endpoint**: `/api/home/home-user-stories/`
