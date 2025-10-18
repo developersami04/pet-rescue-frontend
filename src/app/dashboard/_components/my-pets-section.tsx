@@ -57,7 +57,7 @@ export function MyPetsSection({ myPets }: MyPetsSectionProps) {
                 const imageHint = pet.pet_image ? pet.type_name : placeholder.hint;
                 const isResolved = pet.pet_report?.is_resolved ?? false;
                 return (
-                    <CarouselItem key={pet.id} className="pl-4 basis-4/5 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
+                    <CarouselItem key={pet.id} className="pl-4 basis-3/4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
                         <Card key={pet.id} className="overflow-hidden flex flex-col h-full">
                             <Link href={`/pets/${pet.id}`} className="group">
                                 <div className="relative aspect-square w-full">
