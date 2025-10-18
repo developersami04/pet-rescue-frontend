@@ -67,7 +67,7 @@ export function ManagePetsClient() {
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [view, setView] = useState<'grid' | 'list' | 'table'>('table');
+    const [view, setView] = useState<'grid' | 'list' | 'table'>('list');
     const [deletingPets, setDeletingPets] = useState<Record<number, boolean>>({});
     const router = useRouter();
     const { toast } = useToast();
