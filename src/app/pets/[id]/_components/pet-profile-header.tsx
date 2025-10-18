@@ -86,7 +86,7 @@ export function PetProfileHeader({ pet, isFavorited, likeCount, onFavoriteToggle
 
 
     return (
-       <div className="relative h-96 w-full rounded-lg overflow-hidden bg-muted group">
+       <div className="relative h-64 md:h-96 w-full rounded-lg overflow-hidden bg-muted group">
             <Dialog>
                  <DialogTrigger asChild>
                     <div className="absolute inset-0 cursor-pointer">
@@ -117,24 +117,24 @@ export function PetProfileHeader({ pet, isFavorited, likeCount, onFavoriteToggle
                 </DialogContent>
             </Dialog>
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 flex justify-between items-end text-white">
+            <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 flex justify-between items-end text-white">
                 <div>
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-4xl font-bold font-headline">{pet.name}</h1>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                        <h1 className="text-3xl md:text-4xl font-bold font-headline">{pet.name}</h1>
                         {statusInfo && !isResolved && (
                             <Badge
-                                className={cn("text-base", statusInfo.className)}
+                                className={cn("text-sm md:text-base whitespace-nowrap self-start", statusInfo.className)}
                             >
                                 {statusInfo.label}
                             </Badge>
                         )}
                     </div>
-                    <p className="mt-2 text-lg max-w-2xl text-white/90">{pet.description}</p>
+                    <p className="mt-2 text-base md:text-lg max-w-2xl text-white/90 hidden sm:block">{pet.description}</p>
                 </div>
                  {reportStatus && (
                     <div className="flex flex-col items-end">
-                        <Badge variant={getReportStatusVariant(reportStatus)} className="capitalize">
-                           Admin Status: {reportStatus}
+                        <Badge variant={getReportStatusVariant(reportStatus)} className="capitalize text-xs md:text-sm">
+                           Admin: {reportStatus}
                         </Badge>
                     </div>
                 )}

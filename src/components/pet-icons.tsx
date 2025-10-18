@@ -28,7 +28,7 @@ export const petIcons: { [key: string]: React.FC<LucideProps> } = {
   Default: PawPrint,
 };
 
-export function PetTypeIcon({ typeName, ...props }: { typeName: string } & LucideProps) {
-    const Icon = petIcons[typeName] || petIcons.Default;
+export function PetTypeIcon({ typeName, ...props }: { typeName?: string } & LucideProps) {
+    const Icon = (typeName && petIcons[typeName]) || petIcons.Default;
     return <Icon {...props} />;
 }

@@ -124,7 +124,7 @@ export default function PetProfilePage() {
             onFavoriteToggle={handleFavoriteToggle}
           />
 
-          <div className="flex flex-wrap gap-4 items-center justify-center p-4 bg-muted/50 rounded-lg">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-center justify-center p-4 bg-muted/50 rounded-lg">
               {isAvailableForAdoption && !isOwner && (
                   <AdoptionRequestDialog petId={pet.id} petName={pet.name} onUpdate={() => fetchPetDetails(false)}>
                       <Button>
