@@ -165,12 +165,14 @@ export function StoriesClient() {
                     title="Pet Stories"
                     description="Read heartwarming stories from our community."
                 />
-                <Button asChild className="w-full sm:w-auto">
-                    <Link href="/post-story">
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Post a Story
-                    </Link>
-                </Button>
+                {user && !user.is_admin && (
+                    <Button asChild className="w-full sm:w-auto">
+                        <Link href="/post-story">
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Post a Story
+                        </Link>
+                    </Button>
+                )}
             </div>
 
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
