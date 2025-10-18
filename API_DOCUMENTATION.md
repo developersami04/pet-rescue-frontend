@@ -89,6 +89,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
     "data": { /* User object */ }
   }
   ```
+- **Failed Response Status Code**: 
+  400 BAD REQUEST
 
 ### Login User
 - **Endpoint**: `/api/user-auth/login`
@@ -111,9 +113,11 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
     "user": { /* User object */ }
   }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED, 403 FORBIDDEN
 
 ### Refresh Token
-- **Endpoint**: `/api/home/refresh-token`
+- **Endpoint**: `/api/user-auth/refresh-token`
 - **Method**: `POST`
 - **Auth Required**: No
 - **Description**: Refreshes an expired access token using a refresh token.
@@ -129,6 +133,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
     "access_token": "string"
   }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED
 
 ### Check User Auth
 - **Endpoint**: `/api/home/user-check`
@@ -150,6 +156,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
     "access_token": "string"
   }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED
 
 ### Request Password Reset
 - **Endpoint**: `/api/user-auth/password-reset-request/`
@@ -163,6 +171,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "message": "Password reset OTP sent successfully." }
   ```
+- **Failed Response Status Code**: 
+  400 BAD REQUEST, 404 NOT FOUND
 
 ### Confirm Password Reset
 - **Endpoint**: `/api/user-auth/password-reset-confirm/`
@@ -181,6 +191,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "message": "Password reset successful." }
   ```
+- **Failed Response Status Code**: 
+  400 BAD REQUEST
 
 ---
 
@@ -194,6 +206,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { /* User object */ }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED
 
 ### Update User Details
 - **Endpoint**: `/api/user-auth/update-account`
@@ -213,6 +227,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "message": "Account updated successfully." }
   ```
+- **Failed Response Status Code**: 
+  400 BAD REQUEST, 401 UNAUTHORIZED
 
 ### Change Password
 - **Endpoint**: `/api/user-auth/change-password`
@@ -229,6 +245,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "message": "Password changed successfully." }
   ```
+- **Failed Response Status Code**: 
+  400 BAD REQUEST, 401 UNAUTHORIZED
 
 ### Delete Account
 - **Endpoint**: `/api/user-auth/delete-account`
@@ -239,6 +257,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   { "password": "string" }
   ```
 - **Success Response (204 No Content)**
+- **Failed Response Status Code**: 
+  400 BAD REQUEST, 401 UNAUTHORIZED
 
 ### Send Verification Email
 - **Endpoint**: `/api/user-auth/verify-email`
@@ -248,6 +268,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "message": "Verification OTP sent to your email." }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED, 404 NOT FOUND
 
 ### Verify Email with OTP
 - **Endpoint**: `/api/user-auth/verify-email`
@@ -261,6 +283,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "message": "Email verified successfully." }
   ```
+- **Failed Response Status Code**: 
+  400 BAD REQUEST, 401 UNAUTHORIZED
 
 ---
 
@@ -279,6 +303,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
     }
   ]
   ```
+- **Failed Response Status Code**: 
+  N/A
 
 ### Get All Pets
 - **Endpoint**: `/api/pet-data/pets/`
@@ -289,6 +315,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "data": [ /* Array of Pet objects */ ] }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED
 
 ### Get My Pets
 - **Endpoint**: `/api/pet-data/my-pets/`
@@ -298,6 +326,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "data": [ /* Array of Pet objects */ ] }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED
 
 ### Get My Pet Data
 - **Endpoint**: `/api/pet-data/my-pet-data/`
@@ -308,6 +338,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "data": [ /* Array of relevant objects */ ] }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED
 
 ### Get Pet Profile by ID
 - **Endpoint**: `/api/pet-data/pet-profile/{id}`
@@ -317,6 +349,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "data": { /* Full Pet object with medical_history, etc. */ } }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED, 404 NOT FOUND
 
 ### Get Pet Request Form Data
 - **Endpoint**: `/api/pet-data/pet-request-view/{id}`
@@ -326,6 +360,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "data": { /* Pet data for form pre-filling */ } }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED, 404 NOT FOUND
 
 ### Submit Pet Request
 - **Endpoint**: `/api/pet-data/pet-request-form/`
@@ -337,6 +373,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "message": "Pet request submitted successfully." }
   ```
+- **Failed Response Status Code**: 
+  400 BAD REQUEST, 401 UNAUTHORIZED
 
 ### Update Pet Request
 - **Endpoint**: `/api/pet-data/pet-request-view/{id}`
@@ -348,12 +386,16 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "message": "Pet request updated successfully." }
   ```
+- **Failed Response Status Code**: 
+  400 BAD REQUEST, 401 UNAUTHORIZED, 404 NOT FOUND
 
 ### Delete Pet Request
 - **Endpoint**: `/api/pet-data/pet-request-view/{id}/`
 - **Method**: `DELETE`
 - **Auth Required**: Yes (Bearer Token)
 - **Success Response (204 No Content)**
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED, 404 NOT FOUND
 
 ---
 
@@ -371,6 +413,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { /* AdoptionRequest object */ }
   ```
+- **Failed Response Status Code**: 
+  400 BAD REQUEST, 401 UNAUTHORIZED, 404 NOT FOUND
 
 ### Update Adoption Request
 - **Endpoint**: `/api/pet-data/pet-adoptions/{id}/`
@@ -384,12 +428,16 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { /* AdoptionRequest object */ }
   ```
+- **Failed Response Status Code**: 
+  400 BAD REQUEST, 401 UNAUTHORIZED, 404 NOT FOUND
 
 ### Delete Adoption Request
 - **Endpoint**: `/api/pet-data/pet-adoptions/{id}`
 - **Method**: `DELETE`
 - **Auth Required**: Yes (Bearer Token)
 - **Success Response (204 No Content)**
+- **Failed Response Status Code**: 
+  401 UNAUThorized, 404 NOT FOUND
 
 ### Get Pet Reports
 - **Endpoint**: `/api/pet-data/pet-reports/`
@@ -400,6 +448,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "data": [ /* Array of PetReport objects */ ] }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED
 
 ---
 
@@ -410,44 +460,49 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
 - **Auth Required**: Yes (Bearer Token)
 - **Methods**:
   - `GET`: Fetches user's favorite pets.
-    - **Response**:
+    - **Response (200 OK)**:
       ```json
       { "data": [ /* Array of FavoritePet objects */ ] }
       ```
+    - **Failed Response Status Code**: 401 UNAUTHORIZED
   - `POST`: Adds a pet to favorites.
     - **Request**:
       ```json
       { "pet_id": "number" }
       ```
-    - **Response**:
+    - **Response (200 OK)**:
       ```json
       { /* FavoritePet object */ }
       ```
+    - **Failed Response Status Code**: 400 BAD REQUEST, 401 UNAUTHORIZED
   - `DELETE`: Removes a pet from favorites.
     - **Request**:
       ```json
       { "pet_id": "number" }
       ```
     - **Response**: 204 No Content
+    - **Failed Response Status Code**: 400 BAD REQUEST, 401 UNAUTHORIZED
 
 ### Manage User Stories
 - **Endpoint**: `/api/pet-data/user-stories/`
 - **Auth Required**: Yes (Bearer Token)
 - **Methods**:
   - `GET`: Fetches all user stories.
-    - **Response**:
+    - **Response (200 OK)**:
       ```json
       { "data": [ /* Array of UserStory objects */ ] }
       ```
+    - **Failed Response Status Code**: 401 UNAUTHORIZED
   - `POST`: Creates a new user story.
     - **Request**:
       ```json
       { "pet": "number (petId)", "title": "string", "content": "string" }
       ```
-    - **Response**:
+    - **Response (201 Created)**:
       ```json
       { /* UserStory object */ }
       ```
+    - **Failed Response Status Code**: 400 BAD REQUEST, 401 UNAUTHORIZED
 
 ### Get Home User Stories
 - **Endpoint**: `/api/home/home-user-stories/`
@@ -457,6 +512,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "data": [ /* Array of HomeUserStory objects */ ] }
   ```
+- **Failed Response Status Code**: 
+  N/A
 
 ### Search Pets
 - **Endpoint**: `/api/home/user-search-query/`
@@ -467,6 +524,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "data": [ /* Array of simplified Pet objects */ ] }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED
 
 ---
 
@@ -481,18 +540,24 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "data": [ /* Array of Notification objects */ ] }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED
 
 ### Mark Notification as Read
 - **Endpoint**: `/api/pet-data/notifications/{id}/`
 - **Method**: `PATCH`
 - **Auth Required**: Yes (Bearer Token)
 - **Success Response (200 OK or 204 No Content)**
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED, 404 NOT FOUND
 
 ### Delete Notification
 - **Endpoint**: `/api/pet-data/notifications/{id}/`
 - **Method**: `DELETE`
 - **Auth Required**: Yes (Bearer Token)
 - **Success Response (204 No Content)**
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED, 404 NOT FOUND
 
 ---
 
@@ -506,6 +571,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "data": { /* Metrics object */ } }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED, 403 FORBIDDEN
 
 ### Get Registered Users
 - **Endpoint**: `/api/admin-panel/registered-users/`
@@ -515,6 +582,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "data": [ /* Array of RegisteredUser objects */ ] }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED, 403 FORBIDDEN
 
 ### Update User Status
 - **Endpoint**: `/api/admin-panel/registered-users/{id}/`
@@ -536,6 +605,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { /* Updated RegisteredUser object */ }
   ```
+- **Failed Response Status Code**: 
+  400 BAD REQUEST, 401 UNAUTHORIZED, 403 FORBIDDEN, 404 NOT FOUND
 
 ### Get Admin Pet Reports
 - **Endpoint**: `/api/admin-panel/pet-reports/`
@@ -546,6 +617,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "data": [ /* Array of AdminPetReport objects */ ] }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED, 403 FORBIDDEN
 
 ### Update Pet Report Status
 - **Endpoint**: `/api/admin-panel/pet-reports/{id}/`
@@ -559,6 +632,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { /* Updated AdminPetReport object */ }
   ```
+- **Failed Response Status Code**: 
+  400 BAD REQUEST, 401 UNAUTHORIZED, 403 FORBIDDEN, 404 NOT FOUND
 
 ### Get Admin Adoption Requests
 - **Endpoint**: `/api/admin-panel/adoption-requests/`
@@ -569,6 +644,8 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { "data": [ /* Array of AdoptionRequest objects */ ] }
   ```
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED, 403 FORBIDDEN
 
 ### Update Adoption Request Status
 - **Endpoint**: `/api/admin-panel/adoption-requests/{id}/`
@@ -585,9 +662,13 @@ This document provides a comprehensive overview of the Pet Rescue API endpoints,
   ```json
   { /* Updated AdoptionRequest object */ }
   ```
+- **Failed Response Status Code**: 
+  400 BAD REQUEST, 401 UNAUTHORIZED, 403 FORBIDDEN, 404 NOT FOUND
 
 ### Delete Admin Adoption Request
 - **Endpoint**: `/api/admin-panel/adoption-requests/{id}/`
 - **Method**: `DELETE`
 - **Auth Required**: Yes (Admin User)
 - **Success Response (204 No Content)**
+- **Failed Response Status Code**: 
+  401 UNAUTHORIZED, 403 FORBIDDEN, 404 NOT FOUND
