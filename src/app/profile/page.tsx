@@ -9,6 +9,7 @@ import type { Pet } from "@/lib/data";
 import { getMyPets } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { PageHeader } from "@/components/page-header";
 
 
 export default function ProfilePage() {
@@ -58,12 +59,16 @@ export default function ProfilePage() {
   
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
-            <UserProfileCard />
+      <div className="flex flex-col gap-8">
+        <UserProfileCard />
+
+        <div className="space-y-4">
+            <h2 className="text-2xl font-bold font-headline">My Pets</h2>
             <MyPetsSection myPets={myPets} />
         </div>
-        <div className="lg:col-span-1">
+        
+        <div className="space-y-4">
+            <h2 className="text-2xl font-bold font-headline">Favorite Pets</h2>
             <FavoritePets />
         </div>
       </div>
