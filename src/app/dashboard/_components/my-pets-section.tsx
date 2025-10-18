@@ -5,16 +5,19 @@ import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Pet } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { BadgeCheck, Clock, LayoutGrid, List, Pen } from "lucide-react";
-import { useState } from "react";
+import { BadgeCheck, Clock, Pen, PlusCircle } from "lucide-react";
 import Link from "next/link";
-import { PlusCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { MyPetListItem } from "./my-pet-list-item";
 import { getPlaceholderImage } from "@/lib/placeholder-images";
 import { PetTypeIcon } from "@/components/pet-icons";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 type MyPetsSectionProps = {
     myPets: Pet[];
@@ -40,15 +43,22 @@ export function MyPetsSection({ myPets }: MyPetsSectionProps) {
     }
 
     return (
-        <ScrollArea className="w-full whitespace-nowrap rounded-lg">
-            <div className="flex w-max space-x-4 p-4">
-                {myPets.map(pet => {
-                    const placeholder = getPlaceholderImage(pet.type_name);
-                    const imageUrl = pet.pet_image || placeholder.url;
-                    const imageHint = pet.pet_image ? pet.type_name : placeholder.hint;
-                    const isResolved = pet.pet_report?.is_resolved ?? false;
-                    return (
-                        <Card key={pet.id} className="overflow-hidden flex flex-col w-64">
+        <Carousel 
+            opts={{
+                align: "start",
+                dragFree: true,
+            }}
+            className="w-full"
+        >
+          <CarouselContent className="-ml-4">
+            {myPets.map(pet => {
+                const placeholder = getPlaceholderImage(pet.type_name);
+                const imageUrl = pet.pet_image || placeholder.url;
+                const imageHint = pet.pet_image ? pet.type_name : placeholder.hint;
+                const isResolved = pet.pet_report?.is_resolved ?? false;
+                return (
+                    <CarouselItem key={pet.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
+                        <Card key={pet.id} className="overflow-hidden flex flex-col h-full">
                             <Link href={`/pets/${pet.id}`} className="group">
                                 <div className="relative aspect-square w-full">
                                     <Image
@@ -93,10 +103,12 @@ export function MyPetsSection({ myPets }: MyPetsSectionProps) {
                                 </Button>
                             </CardFooter>
                         </Card>
-                    )
-                })}
-            </div>
-            <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+                    </CarouselItem>
+                )
+            })}
+          </CarouselContent>
+          <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 h-10 w-10 disabled:opacity-0" />
+          <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 h-10 w-10 disabled:opacity-0" />
+        </Carousel>
     );
 }

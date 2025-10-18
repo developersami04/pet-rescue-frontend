@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader } from "@/components/ui/card";
 import { FavoritePet } from "@/lib/data";
 import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
@@ -15,7 +15,13 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export function FavoritePets() {
     const [favoritePets, setFavoritePets] = useState<FavoritePet[]>([]);
@@ -76,7 +82,7 @@ export function FavoritePets() {
             <div className="space-y-2">
                 <Skeleton className="h-6 w-1/2" />
                 <div className="flex space-x-4">
-                    {Array.from({ length: 2 }).map((_, index) => (
+                    {Array.from({ length: 4 }).map((_, index) => (
                         <div key={index} className="space-y-2 w-48">
                             <Skeleton className="aspect-square w-full" />
                             <Skeleton className="h-5 w-3/4" />
@@ -102,14 +108,21 @@ export function FavoritePets() {
 
 
     return (
-        <ScrollArea className="w-full whitespace-nowrap rounded-lg">
-            <div className="flex w-max space-x-4 p-4">
-                {favoritePets.map(pet => {
-                    const placeholder = getPlaceholderImage('Default');
-                    const imageUrl = pet.pet_image || placeholder.url;
-                    const imageHint = pet.pet_image ? 'pet' : placeholder.hint;
-                    return (
-                        <Card key={pet.id} className="overflow-hidden group w-48">
+        <Carousel 
+            opts={{
+                align: "start",
+                dragFree: true,
+            }}
+            className="w-full"
+        >
+          <CarouselContent className="-ml-4">
+            {favoritePets.map(pet => {
+                const placeholder = getPlaceholderImage('Default');
+                const imageUrl = pet.pet_image || placeholder.url;
+                const imageHint = pet.pet_image ? 'pet' : placeholder.hint;
+                return (
+                    <CarouselItem key={pet.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
+                        <Card className="overflow-hidden group h-full flex flex-col">
                              <Link href={`/pets/${pet.pet_id}`}>
                                 <div className="relative aspect-square w-full">
                                     <Image
@@ -121,15 +134,15 @@ export function FavoritePets() {
                                     />
                                 </div>
                             </Link>
-                            <CardHeader className="p-3 flex flex-row items-center justify-between">
-                                <CardTitle className="text-base font-bold">
+                            <CardHeader className="p-3 flex flex-row items-center justify-between mt-auto">
+                                <div className="text-base font-bold truncate">
                                     <Link href={`/pets/${pet.pet_id}`} className="hover:underline">
                                         {pet.pet_name}
                                     </Link>
-                                </CardTitle>
+                                </div>
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isDeleting === pet.pet_id}>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0" disabled={isDeleting === pet.pet_id}>
                                             {isDeleting === pet.pet_id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4 text-destructive" />}
                                         </Button>
                                     </AlertDialogTrigger>
@@ -150,10 +163,12 @@ export function FavoritePets() {
                                 </AlertDialog>
                             </CardHeader>
                         </Card>
-                    );
-                })}
-            </div>
-            <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+                    </CarouselItem>
+                );
+            })}
+          </CarouselContent>
+          <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 h-10 w-10 disabled:opacity-0" />
+          <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 h-10 w-10 disabled:opacity-0" />
+        </Carousel>
     );
 }
